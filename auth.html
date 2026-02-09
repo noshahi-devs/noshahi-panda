@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Noshahi Panda | Premium Delivery</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            position: relative;
+        }
+
+        .auth-visual,
+        .auth-form-side {
+            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .auth-card.signup-active .auth-visual {
+            transform: translateX(122.25%);
+        }
+
+        .auth-card.signup-active .auth-form-side {
+            transform: translateX(-81.81%);
+        }
+
+        .auth-visual {
+            background: var(--ndi-dark);
+            width: 45%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .auth-form-side {
+            width: 55%;
+            padding: 60px;
+            background: white;
+            z-index: 1;
+        }
+
+        .btn-google {
+            background: white;
+            border: 1px solid #dee2e6;
+            color: #444;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            box-shadow: var(--shadow-3d);
+            transform: translateY(-2px);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 20px;
+            border: 1px solid #eee;
+            background: #fbfbfb;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: var(--ndi-red);
+            box-shadow: 0 0 0 4px rgba(237, 28, 36, 0.1);
+        }
+
+        .auth-toggle {
+            cursor: pointer;
+            color: var(--ndi-red);
+            font-weight: 700;
+        }
+
+        @media (max-width: 991px) {
+            .auth-card {
+                flex-direction: column;
+            }
+
+            .auth-visual {
+                width: 100%;
+                padding: 40px 20px;
+            }
+
+            .auth-form-side {
+                width: 100%;
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-page">
+        <div class="auth-card" id="auth-card" data-aos="zoom-in" data-aos-duration="1000">
+            <!-- Visual Welcome Side -->
+            <div class="auth-visual" id="visual-side">
+                <div class="mb-4">
+                    <img id="welcome-img"
+                        src="https://img.freepik.com/free-psd/3d-delivery-man-holding-box_23-2148902091.jpg"
+                        alt="Welcome Panda" class="img-fluid rounded-4 mb-4"
+                        style="max-height: 250px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); transition: all 0.5s ease;">
+                </div>
+                <h2 class="fw-900 mb-3" id="visual-title">Welcome Back!</h2>
+                <p class="text-secondary opacity-75" id="visual-desc">Delicious moments are just a few clicks away. Join
+                    the Noshahi Panda community today.</p>
+
+                <div class="mt-5 d-none d-lg-block">
+                    <div class="badge bg-ndi-red p-3 rounded-pill">
+                        <i class="bi bi-shield-check me-2"></i> Trusted by 1M+ Foodies
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Side -->
+            <div class="auth-form-side" id="form-side">
+                <div class="text-center mb-5">
+                    <a href="index.html" class="text-decoration-none">
+                        <span class="brand-panda text-ndi-red h3">Noshahi</span>
+                        <span class="brand-text ms-1 h3">Panda</span>
+                    </a>
+                </div>
+
+                <!-- Google Button -->
+                <button class="btn btn-google w-100 mb-4">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" width="20">
+                    Continue with Google
+                </button>
+
+                <div class="d-flex align-items-center mb-4">
+                    <hr class="flex-grow-1">
+                    <span class="mx-3 text-muted small">or continue with email</span>
+                    <hr class="flex-grow-1">
+                </div>
+
+                <!-- Login Form -->
+                <div id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address</label>
+                        <input type="email" class="form-control" placeholder="panda@noshahi.dev">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Password</label>
+                        <input type="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-ndi-red w-100 py-3 fw-bold rounded-3 shadow-lg mb-4">Sign In to
+                        Panda</button>
+                    <p class="text-center text-muted small">
+                        Don't have an account? <span class="auth-toggle" onclick="toggleAuth()">Sign Up</span>
+                    </p>
+                </div>
+
+                <!-- Signup Form -->
+                <div id="signup-form" class="d-none">
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">First Name</label>
+                            <input type="text" class="form-control" placeholder="Abdul">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Last Name</label>
+                            <input type="text" class="form-control" placeholder="Abaid">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address</label>
+                        <input type="email" class="form-control" placeholder="panda@noshahi.dev">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Password</label>
+                        <input type="password" class="form-control" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-ndi-red w-100 py-3 fw-bold rounded-3 shadow-lg mb-4">Create Account</button>
+                    <p class="text-center text-muted small">
+                        Already have an account? <span class="auth-toggle" onclick="toggleAuth()">Sign In</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-5 py-4 border-top">
+        <div class="container text-center">
+            <p class="mb-0 text-secondary small">&copy; 2026 Noshahi Panda. Powered by <span
+                    class="text-ndi-red fw-bold">NDI Ecosystem</span>.</p>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            offset: 0
+        });
+
+        const images = {
+            signin: "https://img.freepik.com/free-psd/3d-delivery-man-holding-box_23-2148902091.jpg",
+            signup: "https://img.freepik.com/free-psd/3d-delivery-boy-character-holding-order-on-scooter_23-2148827725.jpg"
+        };
+
+        function toggleAuth() {
+            const card = document.getElementById('auth-card');
+            const login = document.getElementById('login-form');
+            const signup = document.getElementById('signup-form');
+            const visualTitle = document.getElementById('visual-title');
+            const welcomeImg = document.getElementById('welcome-img');
+            const visualDesc = document.getElementById('visual-desc');
+
+            card.classList.toggle('signup-active');
+
+            // Wait for slide half-way to swap content
+            setTimeout(() => {
+                if (card.classList.contains('signup-active')) {
+                    login.classList.add('d-none');
+                    signup.classList.remove('d-none');
+                    visualTitle.innerText = "Join the Panda!";
+                    welcomeImg.src = images.signup;
+                    visualDesc.innerText = "Join the most elite food community. Special perks waiting for new members!";
+                } else {
+                    login.classList.remove('d-none');
+                    signup.classList.add('d-none');
+                    visualTitle.innerText = "Welcome Back!";
+                    welcomeImg.src = images.signin;
+                    visualDesc.innerText = "Delicious moments are just a few clicks away. Join the Noshahi Panda community today.";
+                }
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>
