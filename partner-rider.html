@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Rider | Noshahi Panda</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .rider-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1617722731945-84aac232f55c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .benefit-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--brand-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-logo me-2">
+                    <span class="logo-n">N</span>
+                </div>
+                <span class="brand-text fw-bold"><span class="text-orange">Noshahi</span> <span
+                        class="text-dark">Panda</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a href="index.html" class="nav-link fw-bold">Home</a></li>
+                    <li class="nav-item"><a href="partner-restaurant.html" class="nav-link fw-bold">For Restaurants</a>
+                    </li>
+                    <li class="nav-item"><a href="#" class="nav-link fw-bold active">For Riders</a></li>
+                    <li class="nav-item ms-3"><a href="login.html" class="btn btn-outline-brand-red">Login</a></li>
+                    <li class="nav-item ms-2"><a href="signup.html" class="btn btn-brand-red">Sign up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="rider-hero">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Earn on Your Own Schedule</h1>
+            <p class="lead mb-4">Become a Noshahi Panda Rider and turn your free time into earnings.</p>
+            <a href="#apply-section" class="btn btn-brand-red btn-lg px-5 py-3 fw-bold rounded-pill">Become a Rider</a>
+        </div>
+    </header>
+
+    <!-- Benefits Section -->
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Why Ride with Us?</h2>
+                <p class="text-muted">Freedom flexibility, and great earnings.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card benefit-card h-100 p-4 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="icon-box mx-auto"><i class="fa-solid fa-clock"></i></div>
+                            <h4 class="fw-bold mb-3">Flexible Hours</h4>
+                            <p class="text-muted">You are your own boss. Choose when you want to work and for how long.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card benefit-card h-100 p-4 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="icon-box mx-auto"><i class="fa-solid fa-wallet"></i></div>
+                            <h4 class="fw-bold mb-3">Competitive Earnings</h4>
+                            <p class="text-muted">Get paid weekly and keep 100% of your tips.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card benefit-card h-100 p-4 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="icon-box mx-auto"><i class="fa-solid fa-motorcycle"></i></div>
+                            <h4 class="fw-bold mb-3">Easy to Start</h4>
+                            <p class="text-muted">All you need is a vehicle and a smartphone to get started.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Form -->
+    <section id="apply-section" class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="card-header bg-brand-red text-white p-4 text-center">
+                            <h3 class="fw-bold mb-0">Join Our Rider Fleet</h3>
+                        </div>
+                        <div class="card-body p-5">
+                            <form id="partner-form">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">First Name</label>
+                                        <input type="text" class="form-control form-control-lg" placeholder="John">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Last Name</label>
+                                        <input type="text" class="form-control form-control-lg" placeholder="Doe">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Email Address</label>
+                                        <input type="email" class="form-control form-control-lg"
+                                            placeholder="email@example.com">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Phone Number</label>
+                                        <input type="tel" class="form-control form-control-lg"
+                                            placeholder="+92 300 1234567">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">City</label>
+                                        <select class="form-select form-select-lg">
+                                            <option selected>Select City...</option>
+                                            <option>Lahore</option>
+                                            <option>Karachi</option>
+                                            <option>Islamabad</option>
+                                            <option>Faisalabad</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Vehicle Type</label>
+                                        <select class="form-select form-select-lg">
+                                            <option selected>Select Vehicle...</option>
+                                            <option>Motorbike</option>
+                                            <option>Bicycle</option>
+                                            <option>Car</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Rider Photo / ID Picture</label>
+                                        <input type="file" class="form-control form-control-lg" accept="image/*">
+                                        <div class="form-text">Upload a recent photo of yourself for your profile.</div>
+                                    </div>
+                                    <div class="col-12 mt-4">
+                                        <button type="submit"
+                                            class="btn btn-brand-red w-100 btn-lg fw-bold rounded-3">Sign Up</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Footer (Same as index) -->
+    <footer class="footer-main bg-light pt-5 pb-3">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold mb-4 text-brand-red">Noshahi Panda</h5>
+                    <p class="text-muted small pe-lg-4">Delivering happiness to your doorstep. We are the
+                        fastest-growing food delivery network in the region.</p>
+                    <div class="contact-info small text-muted mb-3">
+                        <p class="mb-1"><i class="fa-solid fa-phone text-brand-red me-2"></i> +92 322 6342320</p>
+                        <p class="mb-1"><i class="fa-solid fa-envelope text-brand-red me-2"></i> info@noshahipanda.com
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Top Cuisines</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Pizza</a></li>
+                        <li><a href="#">Burgers</a></li>
+                        <li><a href="#">Chinese</a></li>
+                        <li><a href="#">Italian</a></li>
+                        <li><a href="#">Street Food</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Partnerships</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="partner-restaurant.html">For Restaurants</a></li>
+                        <li><a href="partner-rider.html" class="text-brand-red fw-bold">For Riders</a></li>
+                        <li><a href="#">For Corporate</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Legal</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted small mt-4">
+                <p>&copy; 2024 Noshahi Developers INC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('partner-form');
+            const modalEl = document.getElementById('verificationModal');
+            const modal = new bootstrap.Modal(modalEl);
+            const emailInput = form.querySelector('input[type="email"]');
+            const emailDisplay = document.getElementById('user-email-display');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Simple Validation
+                if (form.checkValidity()) {
+                    const email = emailInput.value;
+                    // Simulate API Call / Processing
+                    setTimeout(() => {
+                        emailDisplay.innerText = email;
+                        modal.show();
+                        form.reset();
+                    }, 500);
+                } else {
+                    form.reportValidity();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
