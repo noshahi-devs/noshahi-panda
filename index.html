@@ -1,239 +1,288 @@
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Custom CSS -->
-<link rel="stylesheet" href="style.css">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noshahi Panda | Food & Groceries Delivery</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/923281642297" class="whatsapp-float" target="_blank">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <!-- Navbar Upgrade -->
-    <nav class="navbar navbar-expand-lg sticky-top glass-effect border-bottom">
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white border-bottom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <span class="brand-panda text-ndi-red">Noshahi</span>
-                <span class="brand-text ms-1">Panda</span>
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="brand-logo me-2">
+                    <span class="logo-n">N</span>
+                </div>
+                <span class="brand-text fw-bold"><span class="text-orange">Noshahi</span> <span
+                        class="text-dark">Panda</span></span>
             </a>
 
-            <div class="d-flex align-items-center order-lg-last">
-                <a href="auth.html"
-                    class="btn btn-link text-dark text-decoration-none d-none d-md-block me-3 fw-bold">Login</a>
-                <button class="btn btn-ndi-red cart-btn position-relative" data-bs-toggle="modal"
-                    data-bs-target="#checkoutModal">
-                    <i class="bi bi-bag-heart-fill"></i> <span class="d-none d-sm-inline">Cart</span>
-                    <span id="cart-count"
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-ndi-orange shadow-sm">0</span>
-                </button>
-                <button class="navbar-toggler ms-2 border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav">
-                    <i class="bi bi-grid-fill text-ndi-red fs-2"></i>
-                </button>
+            <div class="d-flex align-items-center order-lg-3">
+                <a href="login.html" class="nav-btn-link d-none d-md-block">Login</a>
+                <a href="signup.html" class="btn btn-brand-red ms-3">Sign up</a>
+                <a href="#" class="cart-icon ms-3">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span class="cart-badge">0</span>
+                </a>
             </div>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold text-dark" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold text-dark" href="offers.html">Offers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fw-semibold text-dark" href="pandamart.html">Pandamart</a>
-                    </li>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    <!-- Placeholder for potential categories or search -->
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section Upgrade -->
-    <section class="hero-section">
-        <div class="container py-4 py-lg-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start">
-                    <h1 class="hero-title fw-900 mb-4">Delicious Food,<br><span class="text-ndi-red">Delivered with NDI
-                            Pride!</span></h1>
-                    <p class="lead mb-5 text-muted">Experience the most premium food delivery service in Pakistan.</p>
-
-                    <div class="search-box-3d p-2">
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-0 ps-3">
-                                <i class="bi bi-geo-alt-fill text-ndi-red"></i>
-                            </span>
-                            <input type="text" id="search-input"
-                                class="form-control form-control-lg border-0 shadow-none fs-6"
-                                placeholder="Search for restaurants or cuisines...">
-                            <button class="btn btn-ndi-red btn-lg rounded-pill px-4 ms-2" type="button"
-                                id="search-btn">Find Food</button>
+    <!-- Hero Section -->
+    <section class="hero-container">
+        <div class="hero-content container">
+            <div class="row align-items-center min-vh-75 py-5">
+                <div class="col-lg-6">
+                    <div class="hero-text-box">
+                        <h1 class="hero-title mb-4">It's the food and groceries you love, delivered</h1>
+                        <div class="address-card p-4 shadow-lg mb-4">
+                            <div class="input-group input-group-lg search-group">
+                                <span class="input-group-text bg-white border-end-0"><i
+                                        class="fa-solid fa-location-dot text-brand-red"></i></span>
+                                <input type="text" class="form-control border-start-0"
+                                    placeholder="Enter your full address">
+                                <button class="btn btn-brand-red px-4 fw-bold">Find Food</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 hero-image-wrapper position-relative">
-                    <img src="https://images.deliveryhero.io/image/foodpanda/home-vendor-pk.jpg?width=1200&height=1000"
-                        alt="Premium Food" class="img-fluid rounded-4 shadow-3d">
-                    <div
-                        class="position-absolute top-0 end-0 bg-ndi-orange text-white p-3 rounded-4 shadow-lg m-3 d-none d-md-block">
-                        <h4 class="mb-0 fw-bold">FAST DELIVERY</h4>
-                        <p class="small mb-0">Under 20 Mins</p>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <div class="hero-image-wrapper">
+                        <!-- We use a background image in CSS but can put a placeholder decoration here -->
+                        <div class="floating-badge badge-1"><i class="fa-solid fa-burger"></i> Burgers</div>
+                        <div class="floating-badge badge-2"><i class="fa-solid fa-pizza-slice"></i> Pizza</div>
+                        <div class="floating-badge badge-3"><i class="fa-solid fa-ice-cream"></i> Desserts</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="hero-bg-accent"></div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="categories-section py-5">
+    <!-- Category Sliders (Cuisines) -->
+    <section class="cuisine-categories py-5">
         <div class="container">
-            <h2 class="fw-bold mb-5 ps-3 border-start border-4 border-ndi-red">Top Cuisines</h2>
-            <div class="row gx-3 gy-5 text-center" id="category-container">
-                <!-- Categories will be rendered here by JS -->
+            <div class="mb-4">
+                <h3 class="fw-bold mb-0">Explore by Cuisines</h3>
+            </div>
+
+            <div class="position-relative px-5">
+                <button id="prevCuisine" class="btn cuisine-nav-btn start-btn d-none d-md-flex" aria-label="Previous">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div class="cuisine-scroll d-flex gap-4 overflow-auto pb-3 no-scrollbar">
+                    <!-- Data from JS -->
+                </div>
+
+                <button id="nextCuisine" class="btn cuisine-nav-btn end-btn d-none d-md-flex" aria-label="Next">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     </section>
 
-    <!-- Filter Bar Section -->
-    <div class="filter-bar sticky-top shadow-sm" style="top: 70px; z-index: 1020;">
-        <div class="container d-flex align-items-center">
-            <span class="fw-bold me-3 d-none d-md-inline text-muted">Sort by:</span>
-            <button class="filter-btn active" onclick="renderRestaurants(restaurants)">All</button>
-            <button class="filter-btn" onclick="filterBy('rating')">⭐ Rating</button>
-            <button class="filter-btn" onclick="filterBy('deals')">🎁 Deals</button>
-            <button class="filter-btn" onclick="filterBy('fast')">⚡ Fast Delivery</button>
-        </div>
-    </div>
 
-    <!-- Restaurants Section -->
-    <section class="restaurants-section py-5 px-3 px-lg-0">
-        <div class="container card-3d bg-white p-4 p-lg-5">
-            <div class="d-flex justify-content-between align-items-center mb-5">
+
+    <!-- Main Restaurant List -->
+    <section class="restaurant-section py-5 bg-white">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
                 <div>
-                    <h2 class="fw-900 mb-1">Pick Your Favorite</h2>
-                    <p class="text-muted small">Hand-picked premium restaurants for you</p>
+                    <h2 class="fw-bold mb-1">Popluar Restaurants</h2>
+                    <p class="text-muted">High rated restaurants near you</p>
                 </div>
-                <a href="#" class="btn btn-outline-dark rounded-pill px-4 fw-bold d-none d-md-block">Explore All</a>
+                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
+                        class="fa-solid fa-arrow-right ms-1"></i></a>
             </div>
-            <div class="row g-4" id="restaurant-container">
-                <!-- Restaurants will be rendered here by JS -->
+
+            <div class="row g-4" id="restaurant-grid">
+                <!-- Dynamically Populated -->
             </div>
         </div>
     </section>
 
-    <!-- Footer Upgrade -->
-    <footer>
+    <!-- New Arrivals Section -->
+    <section class="restaurant-section py-5 bg-light-subtle">
         <div class="container">
-            <div class="row g-4 mb-5">
-                <div class="col-lg-4 col-md-6">
-                    <div class="footer-brand mb-4">
-                        <span class="brand-panda text-ndi-red">Noshahi</span>
-                        <span class="brand-text text-white ms-1">Panda</span>
-                    </div>
-                    <p class="text-secondary mb-4">Delivering happiness to your doorstep through technology and trust.
-                        Powered by NDI Ecosystem.</p>
-                    <div class="social-icons">
-                        <a href="https://facebook.com" class="social-link" target="_blank"><i
-                                class="bi bi-facebook"></i></a>
-                        <a href="https://instagram.com" class="social-link" target="_blank"><i
-                                class="bi bi-instagram"></i></a>
-                        <a href="https://linkedin.com" class="social-link" target="_blank"><i
-                                class="bi bi-linkedin"></i></a>
-                        <a href="https://twitter.com" class="social-link" target="_blank"><i
-                                class="bi bi-twitter-x"></i></a>
-                    </div>
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">New on Noshahi Panda</h2>
+                    <p class="text-muted">Explore our latest additions</p>
                 </div>
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="text-white fw-bold mb-4">Company</h6>
-                    <ul class="list-unstyled text-secondary">
-                        <li class="mb-2"><a href="about.html" class="text-decoration-none text-secondary">About Us</a>
-                        </li>
-                        <li class="mb-2"><a href="careers.html" class="text-decoration-none text-secondary">Careers</a>
-                        </li>
-                        <li class="mb-2"><a href="press.html" class="text-decoration-none text-secondary">Press</a></li>
-                    </ul>
+                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
+                        class="fa-solid fa-arrow-right ms-1"></i></a>
+            </div>
+
+            <div class="row g-4" id="restaurant-grid-new">
+                <!-- Dynamically Populated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Offers Section -->
+    <section class="restaurant-section py-5 bg-white">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Best Food Offers</h2>
+                    <p class="text-muted">Save big on your favorite meals</p>
                 </div>
-                <div class="col-lg-2 col-md-3 col-6">
-                    <h6 class="text-white fw-bold mb-4">Support</h6>
-                    <ul class="list-unstyled text-secondary">
-                        <li class="mb-2"><a href="help.html" class="text-decoration-none text-secondary">Help Center</a>
-                        </li>
-                        <li class="mb-2"><a href="refund-policy.html" class="text-decoration-none text-secondary">Refund
-                                Policy</a></li>
-                        <li class="mb-2"><a href="auth.html" class="text-decoration-none text-secondary">Join NDI</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 col-md-12">
-                    <h6 class="text-white fw-bold mb-4">Contact Us</h6>
-                    <p class="text-secondary mb-2"><i class="bi bi-geo-alt-fill text-ndi-red me-2"></i> Phase 6, DHA,
-                        Karachi, Pakistan</p>
-                    <p class="text-secondary mb-2"><i class="bi bi-envelope-fill text-ndi-red me-2"></i>
-                        info@noshahi.dev</p>
-                    <p class="text-secondary mb-0"><i class="bi bi-phone-fill text-ndi-red me-2"></i> +92 328 1642297
-                    </p>
+                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
+                        class="fa-solid fa-arrow-right ms-1"></i></a>
+            </div>
+
+            <div class="row g-4" id="restaurant-grid-offers">
+                <!-- Dynamically Populated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section class="app-section my-5 py-5 rounded-5 container overflow-hidden shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-6 p-5">
+                <h2 class="display-5 fw-bold mb-4">Put us in your pocket</h2>
+                <p class="lead text-muted mb-4">Download the app and find food faster. Track your order on the go and
+                    get exclusive deals.</p>
+                <div class="d-flex gap-3">
+                    <a href="#"
+                        class="app-store-btn bg-dark text-white p-3 rounded-3 text-center text-decoration-none d-flex align-items-center gap-2">
+                        <i class="fa-brands fa-apple fa-2x"></i>
+                        <div class="text-start">
+                            <div class="small">Download on</div>
+                            <div class="fw-bold">App Store</div>
+                        </div>
+                    </a>
+                    <a href="#"
+                        class="app-store-btn bg-dark text-white p-3 rounded-3 text-center text-decoration-none d-flex align-items-center gap-2">
+                        <i class="fa-brands fa-google-play fa-2x"></i>
+                        <div class="text-start">
+                            <div class="small">Get it on</div>
+                            <div class="fw-bold">Google Play</div>
+                        </div>
+                    </a>
                 </div>
             </div>
-            <hr class="border-secondary mb-4">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0 text-secondary small">&copy; 2026 Noshahi Panda. All rights reserved.</p>
+            <div class="col-md-6 d-none d-md-block">
+                <div class="app-mockup text-center">
+                    <div class="phone-frame mx-auto shadow-lg">
+                        <div class="phone-screen bg-light">
+                            <div class="p-3 text-center pt-5">
+                                <span class="text-orange fw-bold">Noshahi</span> Panda App
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0 fw-bold text-white small">Made by <span class="text-ndi-red">Noshahi Developers
-                            Inc</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Footer -->
+    <footer class="footer-main bg-light pt-5 pb-3">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold mb-4 text-brand-red">Noshahi Panda</h5>
+                    <p class="text-muted small pe-lg-4">Delivering happiness to your doorstep. We are the
+                        fastest-growing food delivery network in the region.</p>
+                    <div class="contact-info small text-muted mb-3">
+                        <p class="mb-1"><i class="fa-solid fa-phone text-brand-red me-2"></i> +92 322 6342320</p>
+                        <p class="mb-1"><i class="fa-solid fa-envelope text-brand-red me-2"></i> info@noshahipanda.com
+                        </p>
+                    </div>
+                    <div class="social-links mt-4">
+                        <a href="#" class="me-3"><i class="fa-brands fa-facebook-f text-dark"></i></a>
+                        <a href="#" class="me-3"><i class="fa-brands fa-instagram text-dark"></i></a>
+                        <a href="#" class="me-3"><i class="fa-brands fa-twitter text-dark"></i></a>
+                    </div>
                 </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Top Cuisines</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Pizza</a></li>
+                        <li><a href="#">Burgers</a></li>
+                        <li><a href="#">Chinese</a></li>
+                        <li><a href="#">Italian</a></li>
+                        <li><a href="#">Street Food</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Partnerships</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">For Restaurants</a></li>
+                        <li><a href="#">For Riders</a></li>
+                        <li><a href="#">For Corporate</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Legal</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted small mt-4">
+                <p>&copy; 2024 Noshahi Developers INC. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Checkout Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content card-3d">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-900" id="exampleModalLabel">Your Order Summary</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="cart-items">
-                        <!-- Items rendered by JS -->
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-ndi-red w-100 py-3" onclick="placeOrder()">PLACE ORDER
-                        NOW</button>
-                    <p class="text-center w-100 x-small mt-3 text-muted">By placing your order, you agree to NDI's
-                        Terms.</p>
-                </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/923226342320" class="whatsapp-float shadow-lg" target="_blank"
+        title="Contact us on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar shadow-lg">
+        <div class="p-4 d-flex justify-content-between align-items-center border-bottom bg-white sticky-top">
+            <h4 class="fw-bold mb-0">Your Basket</h4>
+            <button class="btn-close" onclick="toggleCart()"></button>
+        </div>
+
+        <div class="cart-items-container p-4" id="cart-drawer-items">
+            <!-- Dynamic Items -->
+        </div>
+
+        <div class="cart-footer p-4 border-top bg-white">
+            <div class="d-flex justify-content-between mb-3 text-brand-dark">
+                <span class="fw-bold">Subtotal</span>
+                <span class="fw-bold h5 mb-0" id="cart-total-price">Rs. 0</span>
             </div>
+            <a href="checkout.html" class="btn btn-brand-red w-100 py-3 fw-bold rounded-3">Proceed to Checkout</a>
         </div>
     </div>
 
-    <!-- Success Modal -->
-    <div class="modal fade" id="orderSuccessModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content card-3d text-center p-5">
-                <div class="mb-4">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-                </div>
-                <h3 class="fw-900 mb-3">Order Placed!</h3>
-                <p class="text-muted mb-4">Your delicious meal is being prepared. Noshahi Panda is on the way! 🐼🚀</p>
-                <button type="button" class="btn btn-ndi-red w-100 py-3 fw-bold"
-                    data-bs-dismiss="modal">AWESOME!</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
