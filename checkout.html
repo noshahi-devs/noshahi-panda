@@ -84,8 +84,11 @@
                         <div class="p-3 border rounded-3 d-flex align-items-center pointer">
                             <input type="radio" name="payment" id="jazzcash" class="me-3">
                             <label for="jazzcash" class="d-flex align-items-center flex-grow-1 pointer">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/JazzCash_logo.png"
-                                    style="width: 40px; margin-right: 15px;">
+                                <div class="bg-white p-1 rounded-2 me-3"
+                                    style="width: 50px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05)">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/JazzCash_logo.png/256px-JazzCash_logo.png"
+                                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
                                 <div>
                                     <div class="fw-bold">JazzCash</div>
                                     <div class="small text-muted">Pay securely with your JazzCash account</div>
@@ -97,8 +100,11 @@
                         <div class="p-3 border rounded-3 d-flex align-items-center pointer">
                             <input type="radio" name="payment" id="easypaisa" class="me-3">
                             <label for="easypaisa" class="d-flex align-items-center flex-grow-1 pointer">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Easypaisa_logo.png"
-                                    style="width: 40px; margin-right: 15px;">
+                                <div class="bg-white p-1 rounded-2 me-3"
+                                    style="width: 50px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05)">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Easypaisa_logo.png/256px-Easypaisa_logo.png"
+                                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                </div>
                                 <div>
                                     <div class="fw-bold">EasyPaisa</div>
                                     <div class="small text-muted">Pay securely with your EasyPaisa account</div>
@@ -150,8 +156,14 @@
                     </div>
                     <h3 class="fw-bold">Order Placed Successfully!</h3>
                     <p class="text-muted">Thank you for ordering with Noshahi Panda. Your food is on its way!</p>
-                    <button class="btn btn-brand-red px-5 py-2 mt-3 rounded-3 fw-bold"
-                        onclick="window.location.href='index.html'">Go Home</button>
+                    <div class="d-flex flex-column gap-2 mt-3">
+                        <button class="btn btn-brand-red py-3 rounded-3 fw-bold h5 mb-0"
+                            onclick="window.location.href='order-confirmed.html'">
+                            <i class="fa-solid fa-map-location-dot me-2"></i> Track My Order
+                        </button>
+                        <button class="btn btn-link text-muted text-decoration-none small"
+                            onclick="window.location.href='index.html'">Go to Homepage</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,11 +208,29 @@
         function placeOrder() {
             // Get selected payment method
             const paymentMethod = document.querySelector('input[name="payment"]:checked').id;
+            const cartItems = JSON.parse(localStorage.getItem('pandaCart') || '[]');
+            const total = document.getElementById('checkout-total').innerText;
+
+            // Save active order info for tracking and reviews
+            const activeOrder = {
+                restaurant: cartItems[0] ? cartItems[0].restaurant : 'Unknown',
+                total: total,
+                date: new Date().toISOString(),
+                method: paymentMethod,
+                status: 'active'
+            };
+            localStorage.setItem('noshahi_active_order', JSON.stringify(activeOrder));
 
             if (paymentMethod === 'cod') {
-                const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                const modalElem = document.getElementById('successModal');
+                const modal = new bootstrap.Modal(modalElem);
                 modal.show();
                 localStorage.removeItem('pandaCart');
+
+                // Redirect to tracking after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'order-confirmed.html';
+                }, 3000);
             } else if (paymentMethod === 'jazzcash') {
                 window.location.href = 'payment-jazzcash.html';
             } else if (paymentMethod === 'easypaisa') {

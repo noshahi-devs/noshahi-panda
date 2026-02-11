@@ -234,7 +234,7 @@
                     <ul class="list-unstyled footer-links">
                         <li><a href="partner-restaurant.html">For Restaurants</a></li>
                         <li><a href="partner-rider.html">For Riders</a></li>
-                        <li><a href="#">For Corporate</a></li>
+                        <li><a href="dashboard-admin.html" class="text-brand-red fw-bold">Admin Dashboard</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -254,11 +254,48 @@
     </footer>
 
 
+    <!-- Active Order Tracking Bar -->
+    <div id="active-order-bar" class="fixed-bottom bg-white p-3 shadow-lg d-none animate__animated animate__slideInUp"
+        style="z-index: 2000; border-radius: 25px 25px 0 0; border-top: 4px solid var(--brand-red);">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="bg-brand-red bg-opacity-10 p-2 rounded-circle me-3">
+                        <i class="fa-solid fa-motorcycle text-brand-red"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold small text-dark">Order in progress!</div>
+                        <div class="text-muted small" id="active-order-res-name">The Burger Club</div>
+                    </div>
+                </div>
+                <a href="order-confirmed.html" class="btn btn-brand-red rounded-pill px-4 fw-bold shadow-sm">
+                    Live Tracking <i class="fa-solid fa-location-crosshairs ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating WhatsApp Button -->
     <a href="https://wa.me/923226342320" class="whatsapp-float shadow-lg" target="_blank"
         title="Contact us on WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeOrder = JSON.parse(localStorage.getItem('noshahi_active_order'));
+            const cart = JSON.parse(localStorage.getItem('pandaCart') || '[]');
+
+            // Only show bar if an order was placed AND cart is empty AND status is active
+            if (activeOrder && cart.length === 0 && activeOrder.status === 'active') {
+                const orderBar = document.getElementById('active-order-bar');
+                const resNameDisplay = document.getElementById('active-order-res-name');
+
+                resNameDisplay.innerText = activeOrder.restaurant || "Preparing your meal...";
+                orderBar.classList.remove('d-none');
+            }
+        });
+    </script>
 
     <!-- Cart Sidebar -->
     <div class="cart-overlay" onclick="toggleCart()"></div>

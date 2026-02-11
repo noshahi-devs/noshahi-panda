@@ -79,9 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Realistic Restaurant Data ---
     // Expose data globally so new pages can access it
-    window.PandaData = {};
-
-    const restaurants = [
+    // --- Dynamic Restaurant Data Loading ---
+    const defaultRestaurants = [
         {
             id: 1,
             name: "The Burger Club",
@@ -147,77 +146,39 @@ document.addEventListener('DOMContentLoaded', () => {
             fee: "Rs. 40 Delivery",
             image: "https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=500&h=300&fit=crop",
             offer: "15% Welcome Offer"
-        },
-        {
-            id: 7,
-            name: "KFC - Street Center",
-            categories: "Fast Food • American",
-            rating: "4.4",
-            reviews: "10k+",
-            time: "25-35 min",
-            fee: "Rs. 120 Delivery",
-            image: "https://images.unsplash.com/photo-1513639776629-9269d0d905dd?w=500&h=300&fit=crop",
-            offer: "Limited Time"
-        },
-        {
-            id: 8,
-            name: "Sushi Zen",
-            categories: "Japanese • Sushi",
-            rating: "4.9",
-            reviews: "150+",
-            time: "45-55 min",
-            fee: "Free Delivery",
-            image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&h=300&fit=crop",
-            offer: ""
-        },
-        {
-            id: 9,
-            name: "Taco Fiesta",
-            categories: "Mexican • Tacos",
-            rating: "4.2",
-            reviews: "300+",
-            time: "30-45 min",
-            fee: "Rs. 60 Delivery",
-            image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=500&h=300&fit=crop",
-            offer: "Tuesday Deal"
-        },
-        {
-            id: 10,
-            name: "The Bagel Shop",
-            categories: "Breakfast • Bakery",
-            rating: "4.6",
-            reviews: "150+",
-            time: "15-25 min",
-            fee: "Rs. 30 Delivery",
-            image: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=500&h=300&fit=crop",
-            offer: ""
-        },
-        {
-            id: 11,
-            name: "Spice Route",
-            categories: "Indian • Curry",
-            rating: "4.5",
-            reviews: "600+",
-            time: "35-50 min",
-            fee: "Free Delivery",
-            image: "https://images.unsplash.com/photo-1585937421612-70a008356f36?w=500&h=300&fit=crop",
-            offer: "Family Feast"
-        },
-        {
-            id: 12,
-            name: "Wok & Roll",
-            categories: "Asian • Noodles",
-            rating: "4.4",
-            reviews: "400+",
-            time: "25-40 min",
-            fee: "Rs. 50 Delivery",
-            image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500&h=300&fit=crop",
-            offer: "10% OFF"
         }
     ];
 
-    // Assign to global
-    window.PandaData.restaurants = restaurants;
+    function getCombinedRestaurants() {
+        const stored = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+
+        // Map stored restaurants (from dashboard) to homepage format
+        const mappedStored = stored.map((res, index) => {
+            return {
+                id: `stored-${index}`,
+                name: res.name,
+                categories: res.cuisine || "Multi-cuisine",
+                rating: res.rating || "4.5",
+                reviews: "New",
+                time: "25-35 min",
+                fee: "Free Delivery",
+                image: res.image || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&h=300&fit=crop",
+                offer: "New"
+            };
+        });
+
+        // Combine default and stored, avoiding duplicates by name
+        const all = [...defaultRestaurants];
+        mappedStored.forEach(res => {
+            if (!all.find(a => a.name.toLowerCase() === res.name.toLowerCase())) {
+                all.push(res);
+            }
+        });
+        return all;
+    }
+
+    const restaurants = getCombinedRestaurants();
+    window.PandaData = { restaurants };
 
     // --- Grid Rendering Logic ---
     const renderGrid = (containerId, data, isItemView) => {
@@ -288,13 +249,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryFilter = params.get('category');
 
     if (categoryFilter) {
-        // FILTERED VIEW: Show items, hide extra sections
+        // FILTERED VIEW: Show items
         const matchingRestaurants = restaurants.filter(r => r.categories.includes(categoryFilter));
 
-        const itemData = matchingRestaurants.flatMap(res => {
+        // 1. Get products from localStorage added by restaurants
+        const storedProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+        const filteredStored = storedProducts.filter(p => p.category === categoryFilter);
+
+        // 2. Generate hardcoded items (fallback/variety)
+        const generatedItems = matchingRestaurants.flatMap(res => {
             return [1, 2, 3].map(i => {
                 let itemName = `${categoryFilter} Item ${i}`;
-                let itemImg = res.image; // Default to restaurant image
+                let itemImg = res.image;
 
                 if (categoryFilter === 'Burgers') {
                     const names = ['Classic Beef Burger', 'Zinger Crunch', 'Mushroom Melt'];
@@ -308,11 +274,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (categoryFilter === 'Breakfast') {
                     const names = ['Pancakes Stack', 'Classic Omelette', 'Full English Breakfast'];
                     const images = [
-                        'https://images.unsplash.com/photo-1598214886806-c87b84b707bc?w=500&h=300&fit=crop', // Pancakes
-                        'https://images.unsplash.com/photo-1599321955726-e04842d99462?w=500&h=300&fit=crop', // Omelette
-                        'https://images.unsplash.com/photo-1533089862017-ec13714b62e4?w=500&h=300&fit=crop'  // Breakfast Plate
+                        'https://images.unsplash.com/photo-1598214886806-c87b84b707bc?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1599321955726-e04842d99462?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1533089862017-ec13714b62e4?w=500&h=300&fit=crop'
                     ];
                     itemName = names[i - 1] || `Breakfast ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Healthy') {
+                    const names = ['Quinoa Power Bowl', 'Avocado Garden Salad', 'Grilled Chicken Caesar'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1511688858344-18350bb96df6?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Healthy ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Asian') {
+                    const names = ['California Rolls', 'Spicy Chicken Ramen', 'Kung Pao Chicken'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1552611052-33e04de081de?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Asian ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Desserts') {
+                    const names = ['Triple Chocolate Brownie', 'Vanilla Bean Cheesecake', 'Artisan Gelato Scoop'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1564355808539-22fda35bcd09?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Dessert ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Coffee') {
+                    const names = ['Signature Caramel Macchiato', 'Double Shot Espresso', 'Fluffy Flat White'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Coffee ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Desi') {
+                    const names = ['Seekh Kebab Platter', 'Chicken Karahi (Half)', 'Garlic Naan Basket'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1626777553733-bb02998396ec?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Desi ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Pasta') {
+                    const names = ['Creamy Alfredo Pasta', 'Spicy Arrabbiata', 'Pesto Genovese Penne'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1516100882582-96c3a05fe590?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Pasta ${i}`;
+                    itemImg = images[i - 1] || res.image;
+                } else if (categoryFilter === 'Sandwiches') {
+                    const names = ['Classic Club Sandwich', 'Chicken Tikka Sub', 'Grilled Cheese Sourdough'];
+                    const images = [
+                        'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1509722747041-619f383b8646?w=500&h=300&fit=crop',
+                        'https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=500&h=300&fit=crop'
+                    ];
+                    itemName = names[i - 1] || `Sandwich ${i}`;
                     itemImg = images[i - 1] || res.image;
                 }
 
@@ -326,6 +355,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             });
         });
+
+        // 3. Combine stored products and generated items
+        const itemData = [
+            ...filteredStored.map(p => ({
+                name: p.name,
+                price: `Rs. ${p.price}`,
+                restaurant: p.restaurant,
+                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop", // Default food img
+                resId: p.resId,
+                rating: "5.0"
+            })),
+            ...generatedItems
+        ];
 
         // Update Title
         const titleElem = document.querySelector('.restaurant-section h2');

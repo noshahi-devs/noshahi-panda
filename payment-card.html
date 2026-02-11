@@ -108,12 +108,28 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Retrieve actual total from localStorage if exists
+            const cart = JSON.parse(localStorage.getItem('pandaCart') || '[]');
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity;
+            });
+
+            if (subtotal > 0) {
+                const total = subtotal + 99;
+                const btn = document.querySelector('button[type="submit"]');
+                btn.innerText = `Pay Rs. ${total.toLocaleString()}`;
+            }
+        });
+
         document.getElementById('payment-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Processing...';
             btn.disabled = true;
             setTimeout(() => {
+                localStorage.removeItem('pandaCart'); // Clear cart on success
                 window.location.href = 'order-confirmed.html';
             }, 2500);
         });

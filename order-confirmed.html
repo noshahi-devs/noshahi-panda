@@ -1,81 +1,455 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmed | Noshahi Panda</title>
+    <title>Track Your Order | Noshahi Panda</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --brand-red: #D70F64;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
         }
 
-        .confirmation-card {
-            max-width: 500px;
+        .tracking-header {
+            background: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        #map {
+            height: 450px;
             width: 100%;
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            z-index: 1;
         }
 
-        .icon-circle {
-            width: 100px;
-            height: 100px;
-            background-color: #e8f5e9;
+        .status-container {
+            background: white;
+            border-radius: 30px 30px 0 0;
+            margin-top: -30px;
+            position: relative;
+            z-index: 100;
+            padding: 2rem;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .eta-card {
+            background: var(--brand-red);
+            color: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #eee;
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+        .timeline-step i {
+            position: absolute;
+            left: -42px;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border: 2px solid #ddd;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
+            font-size: 0.75rem;
+            color: #ccc;
+            z-index: 2;
         }
 
-        .success-icon {
-            font-size: 50px;
-            color: #4caf50;
+        .timeline-step.active i {
+            background: var(--brand-red);
+            border-color: var(--brand-red);
+            color: white;
+            box-shadow: 0 0 10px rgba(215, 15, 100, 0.4);
         }
 
-        .order-id {
-            background-color: #fff3e0;
-            color: #ef6c00;
-            font-weight: bold;
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-bottom: 20px;
+        .timeline-step.completed i {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .timeline-step.active h6 {
+            color: var(--brand-red);
+            font-weight: 700;
+        }
+
+        .rider-profile {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0px rgba(215, 15, 100, 0.2);
+            }
+
+            100% {
+                box-shadow: 0 0 0 20px rgba(215, 15, 100, 0);
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="card confirmation-card border-0 bg-white p-5">
-        <div class="icon-circle">
-            <i class="fa-solid fa-check success-icon"></i>
+    <header class="tracking-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="text-decoration-none d-flex align-items-center">
+                <div class="bg-brand-red text-white rounded-3 px-2 py-1 me-2 fw-bold"
+                    style="background: var(--brand-red)">N</div>
+                <span class="fw-bold text-dark">Noshahi Panda</span>
+            </a>
+            <span class="badge bg-light text-dark border">Order #NP-9021</span>
         </div>
-        <h2 class="fw-bold mb-3">Order Confirmed!</h2>
-        <div class="order-id">Order ID: #NP-8293</div>
-        <p class="text-muted mb-4">Thank you for your order! Your delicious food is being prepared and will be on its
-            way shortly.</p>
+    </header>
 
-        <div class="alert alert-info border-0 bg-opacity-10 mb-4 text-start small">
-            <i class="fa-solid fa-circle-info me-2"></i> You will receive an email confirmation with tracking details.
+    <!-- Leaflet Map Container -->
+    <div id="map"></div>
+
+    <div class="status-container">
+        <div class="container" style="max-width: 600px;">
+
+            <div class="eta-card shadow-lg">
+                <div>
+                    <div class="small opacity-75">Estimated Arrival</div>
+                    <h2 class="fw-bold mb-0" id="eta-timer">18 Mins</h2>
+                </div>
+                <i class="fa-solid fa-motorcycle fa-3x opacity-50"></i>
+            </div>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-step completed" id="step-1">
+                    <i class="fa-solid fa-check"></i>
+                    <h6>Order Confirmed</h6>
+                    <p class="small text-muted mb-0">Restaurant has accepted your order</p>
+                </div>
+                <div class="timeline-step active" id="step-2">
+                    <i class="fa-solid fa-utensils"></i>
+                    <h6>Preparing Food</h6>
+                    <p class="small text-muted mb-0">Chef is preparing your delicious meal</p>
+                </div>
+                <div class="timeline-step" id="step-3">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <h6>Rider on the Way</h6>
+                    <p class="small text-muted mb-0">Rider will pick up your food soon</p>
+                </div>
+                <div class="timeline-step" id="step-4">
+                    <i class="fa-solid fa-house-chimney"></i>
+                    <h6>Delivered</h6>
+                    <p class="small text-muted mb-0">Enjoy your meal!</p>
+                </div>
+            </div>
+
+            <div class="rider-profile shadow-sm border">
+                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
+                    class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                <div class="flex-grow-1">
+                    <div class="fw-bold">Hamza Malik</div>
+                    <div class="small text-muted"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 • Your Rider
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="tel:+923226342321"
+                        class="btn btn-brand-red rounded-circle p-2 d-flex align-items-center justify-content-center"
+                        style="background:var(--brand-red); color:white; width:40px; height:40px" title="Call Rider">
+                        <i class="fa-solid fa-phone"></i>
+                    </a>
+                    <button
+                        class="btn btn-light rounded-circle p-2 border d-flex align-items-center justify-content-center"
+                        style="width:40px; height:40px" title="Message Rider" data-bs-toggle="modal"
+                        data-bs-target="#chatModal">
+                        <i class="fa-solid fa-message"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="index.html" class="text-brand-red fw-bold text-decoration-none small">Cancel My Order</a>
+            </div>
         </div>
-
-        <a href="index.html" class="btn btn-dark btn-lg w-100 fw-bold py-3"
-            style="background-color: var(--brand-red, #D70F64); border:none;">Return to Home</a>
-        <a href="index.html" class="btn btn-link text-muted mt-3 text-decoration-none">View Order Details</a>
     </div>
 
-</body>
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="bg-brand-red p-3 text-white d-flex align-items-center">
+                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
+                        class="rounded-circle me-2" style="width:35px; height:35px">
+                    <div>
+                        <div class="fw-bold small">Hamza Malik</div>
+                        <div class="small opacity-75" style="font-size: 0.75rem">Online • Your Rider</div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0 bg-light" style="height: 350px; overflow-y: auto;" id="chat-box">
+                    <div class="p-3">
+                        <div class="bg-white rounded-3 p-2 mb-2 small shadow-sm d-inline-block" style="max-width: 80%">
+                            Assalam o Alaikum! I have picked up your order and I'm on my way.
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 bg-white border-top">
+                    <form id="chat-form" class="d-flex gap-2">
+                        <input type="text" class="form-control form-control-sm border-0 bg-light" id="msg-input"
+                            placeholder="Type a message...">
+                        <button type="submit" class="btn btn-brand-red btn-sm px-3 rounded-3">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-</html>
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 p-4 text-center">
+                <div class="mb-3 text-warning"><i class="fa-solid fa-star fa-3x"></i></div>
+                <h3 class="fw-bold">How was your food?</h3>
+                <p class="text-muted small">Your feedback helps us and the restaurant improve!</p>
+
+                <div class="star-rating my-4 fs-2 d-flex justify-content-center gap-2">
+                    <i class="fa-solid fa-star text-muted star-btn" data-value="1" style="cursor:pointer"></i>
+                    <i class="fa-solid fa-star text-muted star-btn" data-value="2" style="cursor:pointer"></i>
+                    <i class="fa-solid fa-star text-muted star-btn" data-value="3" style="cursor:pointer"></i>
+                    <i class="fa-solid fa-star text-muted star-btn" data-value="4" style="cursor:pointer"></i>
+                    <i class="fa-solid fa-star text-muted star-btn" data-value="5" style="cursor:pointer"></i>
+                </div>
+
+                <div class="mb-3 text-start">
+                    <label class="form-label small fw-bold">Write a comment (optional)</label>
+                    <textarea class="form-control rounded-3" id="reviewContent" placeholder="Was it tasty?"></textarea>
+                </div>
+
+                <button class="btn btn-brand-red w-100 py-3 fw-bold rounded-3" onclick="submitReview()">Submit
+                    Feedback</button>
+                <button class="btn btn-link text-muted mt-2 text-decoration-none small" data-bs-dismiss="modal">Skip for
+                    now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Map
+            // Coordinates for a mockup path (e.g., Lahore areas)
+            const restaurantCoords = [31.5204, 74.3587];
+            const userCoords = [31.4800, 74.3200];
+
+            const map = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView(restaurantCoords, 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+            // Custom Icons
+            const resIcon = L.divIcon({
+                html: '<div style="background: #fff; padding: 5px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.2)"><i class="fa-solid fa-utensils text-danger"></i></div>',
+                className: 'custom-div-icon',
+                iconSize: [30, 30]
+            });
+
+            const userIcon = L.divIcon({
+                html: '<div style="background: #fff; padding: 5px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.2)"><i class="fa-solid fa-house-user text-primary"></i></div>',
+                className: 'custom-div-icon',
+                iconSize: [30, 30]
+            });
+
+            const riderIcon = L.divIcon({
+                html: '<div class="pulse" style="background: #D70F64; color: #fff; padding: 8px; border-radius: 50%;"><i class="fa-solid fa-motorcycle"></i></div>',
+                className: 'custom-div-icon',
+                iconSize: [35, 35]
+            });
+
+            L.marker(restaurantCoords, { icon: resIcon }).addTo(map);
+            L.marker(userCoords, { icon: userIcon }).addTo(map);
+
+            let riderMarker = L.marker(restaurantCoords, { icon: riderIcon }).addTo(map);
+
+            // Animation Logic
+            let progress = 0;
+            const animateRider = () => {
+                if (progress <= 1) {
+                    const lat = restaurantCoords[0] + (userCoords[0] - restaurantCoords[0]) * progress;
+                    const lng = restaurantCoords[1] + (userCoords[1] - restaurantCoords[1]) * progress;
+                    riderMarker.setLatLng([lat, lng]);
+                    map.panTo([lat, lng]);
+
+                    progress += 0.005;
+
+                    // Update Status Timeline based on progress
+                    if (progress > 0.3) {
+                        document.getElementById('step-2').classList.remove('active');
+                        document.getElementById('step-2').classList.add('completed');
+                        document.getElementById('step-2').querySelector('i').className = 'fa-solid fa-check';
+
+                        document.getElementById('step-3').classList.add('active');
+                        document.getElementById('eta-timer').innerText = "12 Mins";
+                    }
+                    if (progress > 0.8) {
+                        document.getElementById('eta-timer').innerText = "2 Mins";
+                    }
+
+                    setTimeout(animateRider, 500);
+                } else {
+                    document.getElementById('step-3').classList.remove('active');
+                    document.getElementById('step-3').classList.add('completed');
+                    document.getElementById('step-3').querySelector('i').className = 'fa-solid fa-check';
+
+                    document.getElementById('step-4').classList.add('active');
+                    document.getElementById('eta-timer').innerText = "Arrived!";
+
+                    // Mark as delivered in local storage
+                    const orderData = JSON.parse(localStorage.getItem('noshahi_active_order') || '{}');
+                    orderData.status = 'delivered';
+                    localStorage.setItem('noshahi_active_order', JSON.stringify(orderData));
+
+                    // Show Review Modal
+                    setTimeout(() => {
+                        const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+                        reviewModal.show();
+                    }, 1500);
+                }
+            };
+
+            // Chat Logic
+            const chatForm = document.getElementById('chat-form');
+            const chatBox = document.getElementById('chat-box');
+            const msgInput = document.getElementById('msg-input');
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const msg = msgInput.value.trim();
+                if (msg) {
+                    // Add User Message
+                    const userMsg = document.createElement('div');
+                    userMsg.className = 'p-3 text-end';
+                    userMsg.innerHTML = `<div class="bg-brand-red text-white rounded-3 p-2 mb-2 small shadow-sm d-inline-block" style="max-width: 80%">${msg}</div>`;
+                    chatBox.appendChild(userMsg);
+
+                    msgInput.value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+
+                    // Simulated Rider Response
+                    setTimeout(() => {
+                        const riderMsg = document.createElement('div');
+                        riderMsg.className = 'p-3';
+                        riderMsg.innerHTML = `<div class="bg-white rounded-3 p-2 mb-2 small shadow-sm d-inline-block" style="max-width: 80%">Got it! I will call you when I arrive.</div>`;
+                        chatBox.appendChild(riderMsg);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 2000);
+                }
+            });
+
+            // Star Rating Logic
+            let selectedRating = 0;
+            const stars = document.querySelectorAll('.star-btn');
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    selectedRating = parseInt(star.getAttribute('data-value'));
+                    stars.forEach((s, i) => {
+                        if (i < selectedRating) {
+                            s.classList.remove('text-muted');
+                            s.classList.add('text-warning');
+                        } else {
+                            s.classList.add('text-muted');
+                            s.classList.remove('text-warning');
+                        }
+                    });
+                });
+            });
+
+            window.submitReview = () => {
+                if (selectedRating === 0) {
+                    alert('Please select a star rating!');
+                    return;
+                }
+
+                const activeOrder = JSON.parse(localStorage.getItem('noshahi_active_order') || '{}');
+                const comment = document.getElementById('reviewContent').value;
+                const review = {
+                    id: Date.now(),
+                    rating: selectedRating,
+                    comment: comment,
+                    date: new Date().toLocaleDateString(),
+                    orderId: 'NP-9021',
+                    restaurantName: activeOrder.restaurant || 'The Burger Club'
+                };
+
+                // Store review
+                let reviews = JSON.parse(localStorage.getItem('noshahi_reviews') || '[]');
+                reviews.push(review);
+                localStorage.setItem('noshahi_reviews', JSON.stringify(reviews));
+
+                // Record Sale data for Analytics
+                let sales = JSON.parse(localStorage.getItem('noshahi_sales_data') || '[]');
+                sales.push({
+                    id: Date.now(),
+                    amount: parseInt((activeOrder.total || '1250').replace(/[^\d]/g, '')),
+                    date: new Date().toISOString(),
+                    restaurant: activeOrder.restaurant || 'The Burger Club'
+                });
+                localStorage.setItem('noshahi_sales_data', JSON.stringify(sales));
+
+                bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
+                localStorage.removeItem('noshahi_active_order'); // Clear tracker
+                alert('Thank you for your feedback!');
+                window.location.href = 'index.html';
+            };
+
+            setTimeout(animateRider, 3000); // Start moving after 3 seconds
+        });
+    </script>
+</body>

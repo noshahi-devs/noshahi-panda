@@ -166,6 +166,31 @@
         </div>
     </div>
 
+    <!-- Detailed Footer (Same as index) -->
+    <footer class="footer-main bg-light pt-5 pb-3">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold mb-4 text-brand-red">Noshahi Panda</h5>
+                    <p class="text-muted small">Delivering happiness to your doorstep. We are the fastest-growing food
+                        delivery network.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Partnerships</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="partner-restaurant.html">For Restaurants</a></li>
+                        <li><a href="partner-rider.html">For Riders</a></li>
+                        <li><a href="partner-corporate.html">For Corporate</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted small mt-4">
+                <p>&copy; 2024 Noshahi Developers INC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
     <script>
@@ -203,11 +228,19 @@
             const menuContainer = document.getElementById('menu-container');
             const catsContainer = document.getElementById('menu-cats');
 
-            // Simulating Categories based on restaurant type
+            // simulating Categories based on restaurant type
             let categories = [];
             if (res.categories.includes('Burgers')) categories = ['Popular', 'Burgers', 'Sides', 'Drinks'];
             else if (res.categories.includes('Pizza')) categories = ['Deals', 'Classic Pizza', 'Premium Pizza', 'Drinks'];
             else categories = ['Popular', 'Main Course', 'Appetizers', 'Beverages'];
+
+            // Fetch Real Products for this restaurant from localStorage
+            const allStoredProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+            const realProducts = allStoredProducts.filter(p => p.resId === res.id);
+
+            if (realProducts.length > 0) {
+                categories.unshift('Signature Menu'); // Add a special category for real items
+            }
 
             // Render Categories
             catsContainer.innerHTML = categories.map((cat, i) =>
@@ -215,26 +248,73 @@
             ).join('');
 
             // Render Items
-            menuContainer.innerHTML = categories.map((cat, i) => `
+            menuContainer.innerHTML = categories.map((cat, i) => {
+                let itemsToShow = [1, 2, 3].map(item => ({
+                    name: `${cat} Item ${item}`,
+                    price: `Rs. ${450 + (item * 50)}`,
+                    image: res.image,
+                    desc: 'Delicious description of this amazing food item with secret spices.'
+                }));
+
+                // If it's the signature category, show REAL products
+                if (cat === 'Signature Menu') {
+                    itemsToShow = realProducts.map(p => ({
+                        name: p.name,
+                        price: `Rs. ${p.price}`,
+                        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop",
+                        desc: p.desc
+                    }));
+                }
+
+                return `
                 <div id="cat-${i}" class="mb-5">
                     <h3 class="fw-bold mb-4">${cat}</h3>
                     <div class="d-flex flex-column gap-3">
-                        ${[1, 2, 3].map(item => `
-                            <div class="menu-item-card p-3 d-flex justify-content-between align-items-center" onclick="addToCart('${res.name} Item ${item}', 'Rs. ${450 + (item * 50)}', '${res.image}', '${res.name}')">
+                        ${itemsToShow.map(item => `
+                            <div class="menu-item-card p-3 d-flex justify-content-between align-items-center" onclick="addToCart('${item.name}', '${item.price}', '${item.image}', '${res.name}')">
                                 <div>
-                                    <h5 class="fw-bold mb-1">${cat} Item ${item}</h5>
-                                    <p class="text-muted small mb-2 line-clamp-2">Delicious description of this amazing food item with secret spices.</p>
-                                    <span class="fw-bold text-brand-red">Rs. ${450 + (item * 50)}</span>
+                                    <h5 class="fw-bold mb-1">${item.name}</h5>
+                                    <p class="text-muted small mb-2 line-clamp-2">${item.desc}</p>
+                                    <span class="fw-bold text-brand-red">${item.price}</span>
                                 </div>
                                 <div class="position-relative">
-                                    <img src="${res.image}" class="menu-img">
+                                    <img src="${item.image}" class="menu-img">
                                     <button class="btn btn-light btn-sm shadow-sm position-absolute bottom-0 end-0 m-2 rounded-circle fw-bold" style="width:30px;height:30px;padding:0;">+</button>
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
+
+            // NEW: Render User Reviews
+            const reviews = JSON.parse(localStorage.getItem('noshahi_reviews') || '[]');
+            // Filter reviews for the current restaurant by name
+            const restaurantReviews = reviews.filter(review => review.restaurantName === res.name);
+
+            if (restaurantReviews.length > 0) {
+                const reviewsSection = document.createElement('div');
+                reviewsSection.className = 'mt-5 pt-5 border-top';
+                reviewsSection.innerHTML = `
+                    <h3 class="fw-bold mb-4">Customer Reviews</h3>
+                    <div class="row g-3">
+                        ${restaurantReviews.map(rev => `
+                            <div class="col-md-6">
+                                <div class="p-3 bg-white rounded-4 shadow-sm border">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div class="text-warning small">
+                                            ${Array(rev.rating).fill('<i class="fa-solid fa-star"></i>').join('')}
+                                        </div>
+                                        <span class="text-muted small">${rev.date}</span>
+                                    </div>
+                                    <p class="small mb-0">"${rev.comment || 'No comment provided'}"</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                menuContainer.appendChild(reviewsSection);
+            }
         }
     </script>
 </body>

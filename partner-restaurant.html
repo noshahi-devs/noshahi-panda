@@ -258,7 +258,7 @@
                     <ul class="list-unstyled footer-links">
                         <li><a href="partner-restaurant.html">For Restaurants</a></li>
                         <li><a href="partner-rider.html">For Riders</a></li>
-                        <li><a href="#">For Corporate</a></li>
+                        <li><a href="partner-corporate.html">For Corporate</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -292,6 +292,28 @@
                 // Simple Validation
                 if (form.checkValidity()) {
                     const email = emailInput.value;
+                    const resName = form.querySelector('input[placeholder="Your Amazing Restaurant"]').value;
+                    const firstName = form.querySelector('input[placeholder="John"]').value;
+                    const cuisine = form.querySelector('select').value;
+
+                    // Store for Dashboard Simulation
+                    const restaurantData = {
+                        name: resName,
+                        owner: firstName,
+                        email: email,
+                        cuisine: cuisine,
+                        date: new Date().toLocaleDateString(),
+                        status: 'Pending Verification'
+                    };
+
+                    // Save as current active session
+                    localStorage.setItem('noshahi_active_restaurant', JSON.stringify(restaurantData));
+
+                    // Add to master list for Corporate Dashboard
+                    let allRestaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+                    allRestaurants.push(restaurantData);
+                    localStorage.setItem('noshahi_all_restaurants', JSON.stringify(allRestaurants));
+
                     // Simulate API Call / Processing
                     setTimeout(() => {
                         emailDisplay.innerText = email;

@@ -4,82 +4,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay with EasyPaisa | Noshahi Panda</title>
+    <title>Secure Payment | EasyPaisa</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #f0fdf4;
+            background: linear-gradient(135deg, #00AC5F 0%, #00703e 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
 
         .payment-card {
-            max-width: 400px;
+            max-width: 440px;
             width: 100%;
-            border-radius: 20px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header-bg {
-            background-color: #00AC5F;
+            background: #00AC5F;
             padding: 30px;
             text-align: center;
+            color: white;
+            position: relative;
         }
 
-        .logo {
+        .header-bg img {
             width: 100px;
             background: white;
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .amount-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-body {
+            padding: 40px;
+        }
+
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #f1f1f1;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .form-control {
+            border: 2px solid #f1f1f1;
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #00AC5F;
+            box-shadow: none;
+            background: #fafffb;
+        }
+
+        .btn-pay {
+            background: #00AC5F;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-pay:hover {
+            background: #008f4f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 172, 95, 0.3);
+            color: white;
+        }
+
+        .security-footer {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            border-top: 1px solid #eee;
+        }
+
+        .loader {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00AC5F;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="card payment-card border-0 bg-white">
+    <div class="card payment-card border-0">
         <div class="header-bg">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Easypaisa_logo.png" class="logo mb-2">
-            <h5 class="text-white fw-bold mb-0">EasyPaisa Payment</h5>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Easypaisa_logo.png" alt="EasyPaisa">
+            <h5 class="fw-bold mb-0">Merchant: Noshahi Panda</h5>
+            <div class="amount-badge">
+                <div class="small opacity-75">Payable Amount</div>
+                <h3 class="fw-bold mb-0" id="total-amount">Rs. 1,549</h3>
+            </div>
         </div>
-        <div class="card-body p-4">
-            <p class="text-center text-muted mb-4">Enter your EasyPaisa Mobile Account details to pay.</p>
+
+        <div class="card-body">
             <form id="payment-form">
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Mobile Number</label>
-                    <input type="text" class="form-control form-control-lg" placeholder="03XX XXXXXXX" required>
-                </div>
                 <div class="mb-4">
-                    <label class="form-label fw-bold small">PIN</label>
-                    <input type="password" class="form-control form-control-lg" placeholder="Enter 5-digit PIN"
-                        maxlength="5" required>
+                    <label class="form-label fw-bold small text-uppercase opacity-75">EasyPaisa Mobile Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                        <input type="text" class="form-control" placeholder="03XX XXXXXXX" required maxlength="11">
+                    </div>
                 </div>
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-success btn-lg fw-bold"
-                        style="background-color: #00AC5F; border: none;">Pay Now</button>
-                    <a href="checkout.html" class="btn btn-link text-muted mt-2 text-decoration-none">Cancel</a>
-                </div>
+
+
+
+                <button type="submit" class="btn btn-pay" id="pay-btn">
+                    <span id="btn-text">Pay Securely</span>
+                    <div class="loader" id="btn-loader"></div>
+                </button>
+
+                <a href="checkout.html" class="btn btn-link w-100 text-muted mt-3 text-decoration-none small">
+                    <i class="fa-solid fa-chevron-left me-1"></i> Back to Checkout
+                </a>
             </form>
+        </div>
+
+        <div class="security-footer">
+            <i class="fa-solid fa-shield-halved me-1"></i> Fast, Secure and Encrypted Payment Gateway
         </div>
     </div>
 
     <script>
-        document.getElementById('payment-form').addEventListener('submit', (e) => {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Retrieve actual total from localStorage if exists
+            const cart = JSON.parse(localStorage.getItem('pandaCart') || '[]');
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity;
+            });
+            if (subtotal > 0) {
+                document.getElementById('total-amount').innerText = `Rs. ${(subtotal + 99).toLocaleString()}`;
+            }
+        });
+
+        document.getElementById('payment-form').addEventListener('submit', function (e) {
             e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.innerHTML = 'Processing...';
+            const btn = document.getElementById('pay-btn');
+            const btnText = document.getElementById('btn-text');
+            const loader = document.getElementById('btn-loader');
+
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
             btn.disabled = true;
+
             setTimeout(() => {
+                localStorage.removeItem('pandaCart'); // Clear cart on success
                 window.location.href = 'order-confirmed.html';
-            }, 2000);
+            }, 3000);
         });
     </script>
+
 </body>
 
 </html>

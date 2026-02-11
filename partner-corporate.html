@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corporate Solutions | Noshahi Panda</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .corp-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&h=1080&fit=crop');
+            background-size: cover;
+            background-position: center;
+            padding: 120px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .solution-card {
+            border: none;
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .solution-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(208, 2, 27, 0.1);
+        }
+
+        .icon-box-corp {
+            width: 70px;
+            height: 70px;
+            background: rgba(208, 2, 27, 0.1);
+            color: var(--brand-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .cta-section-corp {
+            background: var(--brand-dark);
+            color: white;
+            padding: 80px 0;
+            border-radius: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-logo me-2">
+                    <span class="logo-n">N</span>
+                </div>
+                <span class="brand-text fw-bold"><span class="text-orange">Noshahi</span> <span
+                        class="text-dark">Panda</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a href="index.html" class="nav-link fw-bold">Home</a></li>
+                    <li class="nav-item"><a href="partner-restaurant.html" class="nav-link fw-bold">For Restaurants</a>
+                    </li>
+                    <li class="nav-item"><a href="partner-rider.html" class="nav-link fw-bold">For Riders</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link fw-bold text-brand-red">For Corporate</a></li>
+                    <li class="nav-item ms-lg-4"><a href="dashboard-corporate.html"
+                            class="btn btn-brand-red px-4 fw-bold rounded-pill">Corporate Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="corp-hero">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-3 fw-bold mb-4">Elevate Your Team's Productivity with Premium Meals</h1>
+                    <p class="lead mb-5 opacity-75">Noshahi Panda for Business provides flexible meal solutions for your
+                        office, team events, and remote employees across Pakistan.</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="signup-corporate.html"
+                            class="btn btn-brand-red btn-lg px-5 py-3 fw-bold rounded-pill">Get
+                            Started</a>
+                        <a href="dashboard-corporate.html"
+                            class="btn btn-outline-light btn-lg px-5 py-3 fw-bold rounded-pill">View Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Solutions Section -->
+    <section class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h6 class="text-brand-red fw-bold text-uppercase mb-2">Our Solutions</h6>
+                <h2 class="fw-bold display-5 text-dark">Tailored for Every Business</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="solution-card text-center h-100">
+                        <div class="icon-box-corp"><i class="fa-solid fa-briefcase"></i></div>
+                        <h4 class="fw-bold mb-3">Employee Allowances</h4>
+                        <p class="text-muted small">Set daily or monthly meal budgets for your employees to use on the
+                            Noshahi Panda app.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="solution-card text-center h-100">
+                        <div class="icon-box-corp"><i class="fa-solid fa-people-group"></i></div>
+                        <h4 class="fw-bold mb-3">Group Ordering</h4>
+                        <p class="text-muted small">Order for the whole office in one go. Perfect for meetings, and
+                            corporate events.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="solution-card text-center h-100">
+                        <div class="icon-box-corp"><i class="fa-solid fa-gifts"></i></div>
+                        <h4 class="fw-bold mb-3">Gift Vouchers</h4>
+                        <p class="text-muted small">Reward your team or clients with customizable Noshahi Panda digital
+                            gift cards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
+                        class="img-fluid rounded-5 shadow-lg" alt="Team Office">
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold display-5 mb-4">Complete Control at Your Fingertips</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-4 d-flex gap-3">
+                            <i class="fa-solid fa-circle-check text-success fa-xl pt-1"></i>
+                            <div>
+                                <h5 class="fw-bold">Centralized Billing</h5>
+                                <p class="text-muted">One monthly invoice for all company orders. No more expense
+                                    reports!</p>
+                            </div>
+                        </li>
+                        <li class="mb-4 d-flex gap-3">
+                            <i class="fa-solid fa-circle-check text-success fa-xl pt-1"></i>
+                            <div>
+                                <h5 class="fw-bold">Compliance Controls</h5>
+                                <p class="text-muted">Set specific ordering hours, location limits, and spending caps
+                                    for employees.</p>
+                            </div>
+                        </li>
+                        <li class="mb-4 d-flex gap-3">
+                            <i class="fa-solid fa-circle-check text-success fa-xl pt-1"></i>
+                            <div>
+                                <h5 class="fw-bold">Dedicated Support</h5>
+                                <p class="text-muted">Get a dedicated account manager to help you with logistics and
+                                    reporting.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact-corp" class="py-5 bg-light">
+        <div class="container py-5">
+            <div class="cta-section-corp overflow-hidden position-relative">
+                <div class="row align-items-center p-5">
+                    <div class="col-lg-7">
+                        <h2 class="fw-bold display-4 mb-3">Ready to transform your office meals?</h2>
+                        <p class="lead opacity-75 mb-0">Join 500+ companies already using Noshahi Panda for Business.
+                        </p>
+                    </div>
+                    <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+                        <a href="signup-corporate.html"
+                            class="btn btn-brand-red btn-lg px-5 py-3 fw-bold rounded-pill shadow-lg">Register Your
+                            Business</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Standard) -->
+    <footer class="footer-main bg-light pt-5 pb-3">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold mb-4 text-brand-red">Noshahi Panda</h5>
+                    <p class="text-muted small">Delivering happiness to your doorstep. We are the fastest-growing food
+                        delivery network.</p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Partnerships</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="partner-restaurant.html">For Restaurants</a></li>
+                        <li><a href="partner-rider.html">For Riders</a></li>
+                        <li><a href="partner-corporate.html" class="text-brand-red fw-bold">For Corporate</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="fw-bold mb-4">Top Cities</h6>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="#">Lahore</a></li>
+                        <li><a href="#">Karachi</a></li>
+                        <li><a href="#">Islamabad</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 text-lg-end">
+                    <h6 class="fw-bold mb-4">Follow Us</h6>
+                    <div class="d-flex gap-3 justify-content-lg-end">
+                        <a href="#" class="text-dark"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="text-dark"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-dark"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted small mt-4">
+                <p>&copy; 2024 Noshahi Developers INC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
