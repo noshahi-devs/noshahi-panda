@@ -160,6 +160,8 @@
             <div class="nav-category">Main</div>
             <button class="nav-link-admin active" data-section="section-analytics"><i
                     class="fa-solid fa-chart-line"></i> Analytics</button>
+            <button class="nav-link-admin" data-section="section-orders"><i class="fa-solid fa-bag-shopping"></i>
+                Orders</button>
             <button class="nav-link-admin" data-section="section-restaurants"><i class="fa-solid fa-utensils"></i>
                 Restaurants</button>
             <button class="nav-link-admin" data-section="section-riders"><i class="fa-solid fa-motorcycle"></i> Riders
@@ -315,6 +317,32 @@
             </div>
         </section>
 
+        <!-- SECTION: ORDERS -->
+        <section id="section-orders" class="dashboard-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold mb-0">Platform Orders Management</h4>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control rounded-pill px-3" placeholder="Search orders..."
+                        style="width: 250px;">
+                </div>
+            </div>
+            <div class="table-premium">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Order ID</th>
+                            <th>Restaurant</th>
+                            <th>Date & Time</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="master-order-list"></tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
     <!-- MODALS -->
@@ -427,6 +455,7 @@
 
                     if (target === 'section-restaurants') renderRestaurants();
                     if (target === 'section-riders') renderRiders();
+                    if (target === 'section-orders') renderOrders();
                 });
             });
 
@@ -477,6 +506,29 @@
                     transList.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No transactions found</td></tr>';
                 }
             }
+
+            window.renderOrders = () => {
+                const data = getStore('noshahi_sales_data');
+                const list = document.getElementById('master-order-list');
+                if (data.length > 0) {
+                    list.innerHTML = data.slice().reverse().map((sale, i) => `
+                        <tr>
+                            <td class="ps-4 fw-bold">#NP-${sale.id.toString().slice(-4)}</td>
+                            <td>${sale.restaurant}</td>
+                            <td>${new Date(sale.date).toLocaleString()}</td>
+                            <td class="fw-bold text-brand-red">Rs. ${sale.amount}</td>
+                            <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Delivered</span></td>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-sm btn-light border-0 me-1" onclick="alert('Viewing order details...')">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No orders found on the platform</td></tr>';
+                }
+            };
 
             window.renderRestaurants = () => {
                 const data = getStore('noshahi_all_restaurants');

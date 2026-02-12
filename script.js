@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Auto Year Update ---
+    const yearElem = document.getElementById('current-year');
+    if (yearElem) yearElem.innerText = new Date().getFullYear();
 
     // --- Cuisine Categories Data ---
     const cuisines = [
@@ -403,12 +406,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (searchBtn) {
         searchBtn.addEventListener('click', () => {
-            const val = searchInput.value.trim();
+            const val = searchInput.value.trim().toLowerCase();
             if (!val) {
                 searchInput.classList.add('is-invalid');
                 setTimeout(() => searchInput.classList.remove('is-invalid'), 1000);
             } else {
-                alert(`Perfect! Finding restaurants near ${val}...`);
+                // Filter restaurants based on name or category
+                const filtered = restaurants.filter(r => 
+                    r.name.toLowerCase().includes(val) || 
+                    r.categories.toLowerCase().includes(val)
+                );
+                
+                // Update grid title
+                const titleElem = document.querySelector('.restaurant-section h2');
+                if (titleElem) titleElem.innerText = `Search Results for "${val}"`;
+
+                // Scroll to grid
+                document.getElementById('restaurant-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                renderGrid('restaurant-grid', filtered, false);
+                
+                // Hide other sections if searching
+                const newSec = document.getElementById('restaurant-grid-new')?.closest('section');
+                const offerSec = document.getElementById('restaurant-grid-offers')?.closest('section');
+                if (newSec) newSec.style.display = 'none';
+                if (offerSec) offerSec.style.display = 'none';
             }
         });
     }

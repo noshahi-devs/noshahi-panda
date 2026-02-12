@@ -11,19 +11,87 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --brand-red: #D70F64;
+            --brand-red: #D0021B;
+            --brand-orange: #F5A623;
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #f4f7f6;
+            background-color: #fcebeb;
             margin: 0;
             padding: 0;
+            overflow: hidden;
+        }
+
+        /* Re-using some styles from index.html for consistency */
+        .brand-logo {
+            width: 35px;
+            height: 35px;
+            background-color: var(--brand-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-n {
+            color: white;
+            font-weight: 800;
+            font-size: 1.4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-logo::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--brand-orange);
+            top: -5px;
+            left: -5px;
+            border-radius: 50%;
+        }
+
+        .navbar {
+            height: 75px;
+        }
+
+        .header-tracking-title {
+            background: #fff5f5;
+            color: var(--brand-red);
+            padding: 8px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(208, 2, 27, 0.08);
+            box-shadow: 0 2px 8px rgba(208, 2, 27, 0.05);
+        }
+
+        .cancel-order-container {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            border-top: 1px dashed #eee;
+        }
+
+        .btn-cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 12px 32px;
+            border-radius: 50px;
+            border: none;
+            background: var(--brand-red);
+            box-shadow: 0 4px 12px rgba(208, 2, 27, 0.2);
         }
 
         .tracking-header {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
@@ -31,19 +99,19 @@
         }
 
         #map {
-            height: 450px;
+            height: calc(100vh - 75px);
             width: 100%;
             z-index: 1;
         }
 
         .status-container {
             background: white;
-            border-radius: 30px 30px 0 0;
-            margin-top: -30px;
+            height: calc(100vh - 75px);
+            overflow-y: auto;
             position: relative;
             z-index: 100;
             padding: 2rem;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.05);
         }
 
         .eta-card {
@@ -139,82 +207,118 @@
 
 <body>
 
-    <header class="tracking-header">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="index.html" class="text-decoration-none d-flex align-items-center">
-                <div class="bg-brand-red text-white rounded-3 px-2 py-1 me-2 fw-bold"
-                    style="background: var(--brand-red)">N</div>
-                <span class="fw-bold text-dark">Noshahi Panda</span>
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
+        <div class="container-fluid px-4 position-relative d-flex align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-logo me-2">
+                    <span class="logo-n">N</span>
+                </div>
+                <span class="brand-text fw-bold">
+                    <span class="text-orange" style="color: var(--brand-orange)">Noshahi</span>
+                    <span class="text-dark">Panda</span>
+                </span>
             </a>
-            <span class="badge bg-light text-dark border">Order #NP-9021</span>
+
+            <!-- Centered Header Title -->
+            <div class="position-absolute start-50 translate-middle-x d-none d-md-block">
+                <div class="header-tracking-title">
+                    <h5 class="fw-bold mb-0 d-flex align-items-center">
+                        <i class="fa-solid fa-map-location-dot me-2"></i> Track Rider Location
+                    </h5>
+                </div>
+            </div>
+
+            <div class="ms-auto d-flex align-items-center">
+                <span class="badge bg-light text-dark border-0 shadow-sm px-3 py-2 rounded-pill">
+                    <i class="fa-solid fa-receipt me-2 text-brand-red"></i> Order #NP-9021
+                </span>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Leaflet Map Container -->
-    <div id="map"></div>
-
-    <div class="status-container">
-        <div class="container" style="max-width: 600px;">
-
-            <div class="eta-card shadow-lg">
-                <div>
-                    <div class="small opacity-75">Estimated Arrival</div>
-                    <h2 class="fw-bold mb-0" id="eta-timer">18 Mins</h2>
-                </div>
-                <i class="fa-solid fa-motorcycle fa-3x opacity-50"></i>
+    <main class="container-fluid p-0 overflow-hidden">
+        <div class="row g-0">
+            <!-- Left Side: Map -->
+            <div class="col-lg-7 col-xl-8">
+                <div id="map"></div>
             </div>
 
-            <div class="timeline-wrapper">
-                <div class="timeline-step completed" id="step-1">
-                    <i class="fa-solid fa-check"></i>
-                    <h6>Order Confirmed</h6>
-                    <p class="small text-muted mb-0">Restaurant has accepted your order</p>
-                </div>
-                <div class="timeline-step active" id="step-2">
-                    <i class="fa-solid fa-utensils"></i>
-                    <h6>Preparing Food</h6>
-                    <p class="small text-muted mb-0">Chef is preparing your delicious meal</p>
-                </div>
-                <div class="timeline-step" id="step-3">
-                    <i class="fa-solid fa-motorcycle"></i>
-                    <h6>Rider on the Way</h6>
-                    <p class="small text-muted mb-0">Rider will pick up your food soon</p>
-                </div>
-                <div class="timeline-step" id="step-4">
-                    <i class="fa-solid fa-house-chimney"></i>
-                    <h6>Delivered</h6>
-                    <p class="small text-muted mb-0">Enjoy your meal!</p>
-                </div>
-            </div>
+            <!-- Right Side: Status Details -->
+            <div class="col-lg-5 col-xl-4">
+                <div class="status-container">
+                    <div class="mb-4">
+                        <h3 class="fw-bold mb-1">Arriving Soon!</h3>
+                        <p class="text-muted small">Your delicious meal is on its way to you.</p>
+                    </div>
 
-            <div class="rider-profile shadow-sm border">
-                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
-                    class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                <div class="flex-grow-1">
-                    <div class="fw-bold">Hamza Malik</div>
-                    <div class="small text-muted"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 • Your Rider
+                    <div class="eta-card shadow-lg">
+                        <div>
+                            <div class="small opacity-75">Estimated Arrival</div>
+                            <h2 class="fw-bold mb-0" id="eta-timer">18 Mins</h2>
+                        </div>
+                        <i class="fa-solid fa-motorcycle fa-3x opacity-50"></i>
+                    </div>
+
+                    <div class="timeline-wrapper">
+                        <div class="timeline-step completed" id="step-1">
+                            <i class="fa-solid fa-check"></i>
+                            <h6>Order Confirmed</h6>
+                            <p class="small text-muted mb-0">Restaurant has accepted your order</p>
+                        </div>
+                        <div class="timeline-step active" id="step-2">
+                            <i class="fa-solid fa-utensils"></i>
+                            <h6>Preparing Food</h6>
+                            <p class="small text-muted mb-0">Chef is preparing your delicious meal</p>
+                        </div>
+                        <div class="timeline-step" id="step-3">
+                            <i class="fa-solid fa-motorcycle"></i>
+                            <h6>Rider on the Way</h6>
+                            <p class="small text-muted mb-0">Rider will pick up your food soon</p>
+                        </div>
+                        <div class="timeline-step" id="step-4">
+                            <i class="fa-solid fa-house-chimney"></i>
+                            <h6>Delivered</h6>
+                            <p class="small text-muted mb-0">Enjoy your meal!</p>
+                        </div>
+                    </div>
+
+                    <div class="rider-profile shadow-sm border">
+                        <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
+                            class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Hamza Malik</div>
+                            <div class="small text-muted"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 • Your
+                                Rider
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="tel:+923226342321"
+                                class="btn btn-brand-red rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                style="background:var(--brand-red); color:white; width:40px; height:40px"
+                                title="Call Rider">
+                                <i class="fa-solid fa-phone"></i>
+                            </a>
+                            <button
+                                class="btn btn-light rounded-circle p-2 border d-flex align-items-center justify-content-center"
+                                style="width:40px; height:40px" title="Message Rider" data-bs-toggle="modal"
+                                data-bs-target="#chatModal">
+                                <i class="fa-solid fa-message"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cancel-order-container text-center">
+                        <p class="small text-muted mb-3">Change of plans? You can cancel your order if the restaurant
+                            hasn't started preparing it.</p>
+                        <a href="index.html" class="btn-cancel-link">
+                            <i class="fa-solid fa-xmark"></i> Cancel My Order
+                        </a>
                     </div>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="tel:+923226342321"
-                        class="btn btn-brand-red rounded-circle p-2 d-flex align-items-center justify-content-center"
-                        style="background:var(--brand-red); color:white; width:40px; height:40px" title="Call Rider">
-                        <i class="fa-solid fa-phone"></i>
-                    </a>
-                    <button
-                        class="btn btn-light rounded-circle p-2 border d-flex align-items-center justify-content-center"
-                        style="width:40px; height:40px" title="Message Rider" data-bs-toggle="modal"
-                        data-bs-target="#chatModal">
-                        <i class="fa-solid fa-message"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="index.html" class="text-brand-red fw-bold text-decoration-none small">Cancel My Order</a>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Chat Modal -->
     <div class="modal fade" id="chatModal" tabindex="-1">
