@@ -79,20 +79,89 @@
         </div>
     </div>
 
+    <!-- Login Success Overlay -->
+    <div id="loginOverlay"
+        class="position-fixed top-0 start-0 w-100 h-100 d-none flex-column align-items-center justify-content-center bg-white"
+        style="z-index: 9999;">
+        <div class="text-center animate__animated animate__fadeIn">
+            <div class="bg-orange bg-opacity-10 p-4 rounded-circle mb-4 mx-auto"
+                style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-user-shield fs-1 text-orange"></i>
+            </div>
+            <h2 class="fw-bold mb-1" id="loginMsg">Authenticating...</h2>
+            <p class="text-muted" id="loginSub">Verifying your credentials</p>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
             const email = document.querySelector('input[type="email"]').value.toLowerCase();
+            const password = document.querySelector('input[type="password"]').value;
 
-            if (email.includes('restaurant')) {
-                window.location.href = 'dashboard-restaurant.html';
-            } else if (email.includes('rider')) {
-                window.location.href = 'dashboard-rider.html';
-            } else if (email.includes('corp') || email.includes('google')) {
-                window.location.href = 'dashboard-corporate.html';
-            } else {
-                window.location.href = 'index.html';
+            // Show Loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Logging in...';
+
+            setTimeout(() => {
+                // 1. Check if this is a registered seller
+                const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+                const seller = apps.find(a => a.email.toLowerCase() === email && a.password === password);
+
+                if (seller) {
+                    if (seller.status === 'Approved') {
+                        localStorage.setItem('noshahi_active_restaurant', JSON.stringify(seller));
+                        showSuccess('Welcome, ' + seller.restaurant, 'Redirecting to Seller Dashboard...', 'seller-dashboard.html');
+                        return;
+                    } else {
+                        alert('Your application is still PENDING. Please wait for admin approval.');
+                        resetBtn();
+                        return;
+                    }
+                }
+
+                // 2. Check if this is a registered rider
+                const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+                const rider = riders.find(r => r.email.toLowerCase() === email && r.password === password);
+
+                if (rider) {
+                    localStorage.setItem('noshahi_active_rider', JSON.stringify(rider));
+                    showSuccess('Welcome, ' + rider.name, 'Redirecting to Rider Dashboard...', 'rider-dashboard.html');
+                    return;
+                }
+
+                // 3. Check if this is a registered customer
+                const customers = JSON.parse(localStorage.getItem('noshahi_customers') || '[]');
+                const customer = customers.find(c => c.email === email && c.password === password);
+
+                if (customer) {
+                    localStorage.setItem('noshahi_active_customer', JSON.stringify(customer));
+                    showSuccess('Welcome Back, ' + customer.firstName, 'Taking you to the menu...', 'index.html');
+                    return;
+                }
+
+                // 4. Admin shortcut
+                if (email === 'admin@noshahipanda.com' && password === 'admin123') {
+                    showSuccess('Welcome, Admin', 'Accessing Management Portal...', 'admin-dashboard.html');
+                    return;
+                }
+
+                alert('❌ Invalid email or password. Please try again.');
+                resetBtn();
+            }, 1000);
+
+            function showSuccess(msg, sub, url) {
+                document.getElementById('loginMsg').innerText = msg;
+                document.getElementById('loginSub').innerText = sub;
+                document.getElementById('loginOverlay').classList.replace('d-none', 'd-flex');
+                setTimeout(() => { window.location.href = url; }, 1500);
+            }
+
+            function resetBtn() {
+                btn.disabled = false;
+                btn.innerHTML = 'Log In';
             }
         });
     </script>

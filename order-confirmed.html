@@ -11,8 +11,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+<<<<<<< Updated upstream
             --brand-red: #D0021B;
             --brand-orange: #F5A623;
+=======
+            --brand-orange: #FF9800;
+            /* Primary from logo curve */
+            --brand-red: #E53935;
+            /* Accent from logo dot */
+            --brand-dark: #2D2D2D;
+            /* Text from logo */
+>>>>>>> Stashed changes
         }
 
         body {
@@ -115,11 +124,11 @@
         }
 
         .eta-card {
-            background: var(--brand-red);
+            background: var(--brand-orange);
             color: white;
             border-radius: 20px;
             padding: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -163,20 +172,20 @@
         }
 
         .timeline-step.active i {
-            background: var(--brand-red);
-            border-color: var(--brand-red);
+            background: var(--brand-orange);
+            border-color: var(--brand-orange);
             color: white;
-            box-shadow: 0 0 10px rgba(215, 15, 100, 0.4);
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);
         }
 
         .timeline-step.completed i {
-            background: #4caf50;
-            border-color: #4caf50;
+            background: var(--brand-red);
+            border-color: var(--brand-red);
             color: white;
         }
 
         .timeline-step.active h6 {
-            color: var(--brand-red);
+            color: var(--brand-orange);
             font-weight: 700;
         }
 
@@ -207,6 +216,7 @@
 
 <body>
 
+<<<<<<< Updated upstream
     <!-- Header / Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
         <div class="container-fluid px-4 position-relative d-flex align-items-center">
@@ -233,12 +243,25 @@
                 <span class="badge bg-light text-dark border-0 shadow-sm px-3 py-2 rounded-pill">
                     <i class="fa-solid fa-receipt me-2 text-brand-red"></i> Order #NP-9021
                 </span>
+=======
+    <header class="tracking-header">
+        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
+            <a href="index.html" class="text-decoration-none d-flex align-items-center">
+                <div class="bg-brand-red text-white rounded-3 px-2 py-1 me-2 fw-bold"
+                    style="background: var(--brand-red)">N</div>
+                <span class="fw-bold text-dark">Noshahi Panda</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-light text-dark border d-none d-sm-inline">Order #NP-9021</span>
+                <a href="index.html" class="btn btn-sm btn-outline-secondary rounded-pill">Back to Home</a>
+>>>>>>> Stashed changes
             </div>
         </div>
     </nav>
 
     <main class="container-fluid p-0 overflow-hidden">
         <div class="row g-0">
+<<<<<<< Updated upstream
             <!-- Left Side: Map -->
             <div class="col-lg-7 col-xl-8">
                 <div id="map"></div>
@@ -316,6 +339,80 @@
                         </a>
                     </div>
                 </div>
+=======
+            <!-- Left Side: Status Info -->
+            <div class="col-lg-5 col-xl-4 bg-white border-end order-2 order-lg-1"
+                style="height: calc(100vh - 75px); overflow-y: auto;">
+                <div class="p-4 p-xl-5">
+                    <div class="eta-card shadow-sm mb-4">
+                        <div>
+                            <div class="small opacity-75">Estimated Arrival</div>
+                            <h2 class="fw-bold mb-0" id="eta-timer">18 Mins</h2>
+                        </div>
+                        <i class="fa-solid fa-motorcycle fa-3x opacity-50"></i>
+                    </div>
+
+                    <h5 class="fw-bold mb-4">Tracking Details</h5>
+                    <div class="timeline-wrapper">
+                        <div class="timeline-step completed" id="step-1">
+                            <i class="fa-solid fa-check"></i>
+                            <h6>Order Confirmed</h6>
+                            <p class="small text-muted mb-0">Restaurant has accepted your order</p>
+                        </div>
+                        <div class="timeline-step active" id="step-2">
+                            <i class="fa-solid fa-utensils"></i>
+                            <h6>Preparing Food</h6>
+                            <p class="small text-muted mb-0">Chef is preparing your delicious meal</p>
+                        </div>
+                        <div class="timeline-step" id="step-3">
+                            <i class="fa-solid fa-motorcycle"></i>
+                            <h6>Rider on the Way</h6>
+                            <p class="small text-muted mb-0">Rider will pick up your food soon</p>
+                        </div>
+                        <div class="timeline-step" id="step-4">
+                            <i class="fa-solid fa-house-chimney"></i>
+                            <h6>Delivered</h6>
+                            <p class="small text-muted mb-0">Enjoy your meal!</p>
+                        </div>
+                    </div>
+
+                    <div class="rider-profile shadow-sm border p-3">
+                        <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
+                            class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Hamza Malik</div>
+                            <div class="small text-muted"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 • Your
+                                Rider
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="tel:+923226342321"
+                                class="btn btn-brand-red rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                style="background:var(--brand-red); color:white; width:40px; height:40px"
+                                title="Call Rider">
+                                <i class="fa-solid fa-phone"></i>
+                            </a>
+                            <button
+                                class="btn btn-light rounded-circle p-2 border d-flex align-items-center justify-content-center"
+                                style="width:40px; height:40px" title="Message Rider" data-bs-toggle="modal"
+                                data-bs-target="#chatModal">
+                                <i class="fa-solid fa-message"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a href="index.html" class="text-muted small text-decoration-none">Need help with your order?
+                            <span class="text-brand-red fw-bold">Contact Support</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Map -->
+            <div class="col-lg-7 col-xl-8 order-1 order-lg-2">
+                <!-- Leaflet Map Container -->
+                <div id="map" style="height: calc(100vh - 75px); width: 100%;"></div>
+>>>>>>> Stashed changes
             </div>
         </div>
     </main>

@@ -1,11 +1,12 @@
 :root {
-    --brand-red: #D0021B;
-    /* Noshahi Primary */
-    --brand-orange: #F5A623;
-    /* Noshahi Secondary */
-    --brand-dark: #212529;
-    /* Brand Dark */
-    --soft-bg: #f7f7f7;
+    --brand-orange: #FF9800;
+    /* Primary from logo curve */
+    --brand-red: #E53935;
+    /* Accent from logo dot */
+    --brand-dark: #2D2D2D;
+    /* Text from logo */
+    --brand-light: #FFFFFF;
+    --soft-bg: #F8F9FA;
     --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -15,19 +16,32 @@ body {
     line-height: 1.6;
 }
 
-/* Scrollbar Utility */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
+/* Color Utilities */
+.text-orange {
+    color: var(--brand-orange) !important;
+}
+
+.text-brand-red {
+    color: var(--brand-red) !important;
+}
+
+.bg-orange {
+    background-color: var(--brand-orange) !important;
+}
+
+.bg-brand-red {
+    background-color: var(--brand-red) !important;
+}
+
 /* Buttons */
 .btn-brand-red {
-    background-color: var(--brand-red);
+    background-color: var(--brand-orange);
+    /* Using logo primary */
     color: white;
     border-radius: 8px;
     padding: 10px 24px;
@@ -36,10 +50,11 @@ body {
 }
 
 .btn-brand-red:hover {
-    background-color: #b00217;
+    background-color: var(--brand-red);
+    /* Using logo accent */
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(208, 2, 27, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
 }
 
 .nav-btn-link {
@@ -57,7 +72,8 @@ body {
 .brand-logo {
     width: 35px;
     height: 35px;
-    background-color: var(--brand-red);
+    background-color: var(--brand-orange);
+    /* Logo Curve Color */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -77,11 +93,12 @@ body {
 .brand-logo::after {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: var(--brand-orange);
-    top: -5px;
-    left: -5px;
+    width: 15px;
+    height: 15px;
+    background-color: var(--brand-red);
+    /* Logo Red Dot */
+    top: 5px;
+    right: 5px;
     border-radius: 50%;
 }
 
@@ -96,7 +113,7 @@ body {
     position: absolute;
     top: -8px;
     right: -10px;
-    background-color: var(--brand-red);
+    background-color: var(--brand-orange);
     color: white;
     font-size: 0.65rem;
     padding: 2px 6px;
@@ -105,8 +122,8 @@ body {
 
 /* Hero Section - The Foodpanda Look */
 .hero-container {
-    background-color: #fcebeb;
-    /* Soft red tint */
+    background-color: #FFF3E0;
+    /* Light Orange Tint from logo palette */
     position: relative;
     overflow: hidden;
     min-height: 480px;
@@ -470,20 +487,105 @@ body {
         bottom: 20px;
         left: 20px;
     }
-}
 
-@media (max-width: 768px) {
     .hero-bg-accent {
         display: none;
     }
 
     .hero-container {
-        background-color: #fcebeb;
+        background: linear-gradient(rgba(255, 243, 224, 1), rgba(252, 235, 235, 1)) !important;
+        text-align: center;
+        min-height: auto;
     }
 
     .hero-title {
-        font-size: 2.2rem;
+        font-size: 2.4rem;
+        margin-top: 1rem;
     }
+
+    .address-card {
+        padding: 1.5rem !important;
+    }
+
+    .search-group {
+        flex-direction: column;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .search-group .input-group-text,
+    .search-group input {
+        background: white !important;
+        border-radius: 12px !important;
+        margin-bottom: 15px;
+        border: 1px solid #eee !important;
+        height: 58px;
+    }
+
+    .search-group button {
+        width: 100%;
+        height: 58px;
+        border-radius: 12px !important;
+        font-size: 1.1rem;
+    }
+
+    /* App Section */
+    .app-section {
+        border-radius: 0 !important;
+        margin: 20px 0 !important;
+        text-align: center;
+    }
+
+    .app-section .p-5 {
+        padding: 3rem 1.5rem !important;
+    }
+
+    .app-store-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 15px 10px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .cuisines-container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .cuisine-item {
+        min-width: 90px;
+    }
+
+    .cuisine-img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .app-store-btn {
+        width: 100%;
+        flex: none;
+    }
+
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+}
+
+/* Fix for horizontal scroll on some mobile browsers */
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
 }
 
 /* Cart Sidebar Styling */
@@ -498,10 +600,23 @@ body {
     transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     flex-direction: column;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
 }
 
 .cart-sidebar.active {
     right: 0;
+}
+
+/* Internal Padding for all sections */
+.cart-sidebar>div {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+}
+
+/* Header specific padding */
+.cart-sidebar>div:first-child {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
 }
 
 .cart-overlay {
@@ -517,24 +632,56 @@ body {
     display: block;
 }
 
-.cart-items-container {
+.cart-items-container,
+#cart-drawer-items {
     flex-grow: 1;
     overflow-y: auto;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .cart-item {
     display: flex;
     gap: 15px;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .cart-item-img {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
     object-fit: cover;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+}
+
+.qty-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    background: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.qty-btn:hover {
+    background: var(--brand-red);
+    color: white;
+    border-color: var(--brand-red);
 }
 
 /* Make Cart Icon Clickable */
@@ -546,5 +693,161 @@ body {
     .cart-sidebar {
         width: 100%;
         right: -100%;
+    }
+}
+
+/* Enhanced Tracking Bar */
+.active-tracking-glass {
+    background: linear-gradient(135deg, rgba(208, 2, 27, 0.95), rgba(245, 166, 35, 0.95));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tracking-pulse-container {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.pulse-dot {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+/* Premium Sidebar Button */
+.btn-sidebar-signup {
+    background: linear-gradient(135deg, var(--brand-orange), #FFB74D);
+    color: white !important;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-sidebar-signup:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+    background: linear-gradient(135deg, #f57c00, var(--brand-orange));
+}
+
+/* Dashboard Shared Responsiveness */
+.dashboard-header {
+    padding: 1.5rem 0 !important;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        margin-bottom: 1rem;
+        padding: 1.25rem !important;
+    }
+
+    .stat-card h3 {
+        font-size: 1.75rem !important;
+    }
+
+    .order-card,
+    .delivery-card {
+        padding: 1.25rem !important;
+    }
+
+    .menu-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+
+    .menu-item .d-flex {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+.track-btn {
+    color: var(--brand-red) !important;
+    transition: all 0.3s ease;
+}
+
+.track-btn:hover {
+    transform: translateX(5px);
+    background: white !important;
+}
+
+/* Menu Sidebar Styling */
+.menu-sidebar {
+    position: fixed;
+    top: 0;
+    left: -350px;
+    width: 350px;
+    height: 100vh;
+    background: white;
+    z-index: 2001;
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+}
+
+.menu-sidebar.active {
+    left: 0;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: var(--brand-dark);
+    font-weight: 500;
+    border-radius: 12px;
+    margin-bottom: 5px;
+    transition: 0.3s;
+}
+
+.menu-link i {
+    width: 24px;
+    font-size: 1.1rem;
+    color: var(--brand-orange);
+}
+
+.menu-link:hover {
+    background: #FFF3E0;
+    color: var(--brand-orange);
+}
+
+.menu-link.active {
+    background: var(--brand-orange);
+    color: white;
+}
+
+.menu-link.active i {
+    color: white;
+}
+
+@media (max-width: 450px) {
+    .menu-sidebar {
+        width: 100%;
+        left: -100%;
     }
 }

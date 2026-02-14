@@ -38,13 +38,22 @@
                 </a>
             </div>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="menu-toggler border-0 bg-transparent me-2" onclick="toggleMenuSidebar()">
+                <i class="fa-solid fa-bars fs-4 text-dark"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto">
-                    <!-- Placeholder for potential categories or search -->
+                    <!-- Mobile Menu Items -->
+                    <li class="nav-item d-lg-none"><a href="partner-restaurant.html" class="nav-link"><i
+                                class="fa-solid fa-store me-2"></i>Join as Seller</a></li>
+                    <li class="nav-item d-lg-none"><a href="partner-rider.html" class="nav-link"><i
+                                class="fa-solid fa-motorcycle me-2"></i>Join as Rider</a></li>
+                    <li class="nav-item d-lg-none">
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li class="nav-item d-lg-none"><a href="login.html" class="nav-link">Login</a></li>
+                    <li class="nav-item d-lg-none"><a href="signup.html" class="nav-link">Sign up</a></li>
                 </ul>
             </div>
         </div>
@@ -230,11 +239,17 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h6 class="fw-bold mb-4">Partnerships</h6>
+                    <h6 class="fw-bold mb-4">Business</h6>
                     <ul class="list-unstyled footer-links">
+<<<<<<< Updated upstream
                         <li><a href="partner-restaurant.html">For Restaurants</a></li>
                         <li><a href="partner-rider.html">For Riders</a></li>
                         <li><a href="dashboard-admin.html" class="text-brand-red fw-bold">For Admin</a></li>
+=======
+                        <li><a href="seller-application.html">For Sellers</a></li>
+                        <li><a href="rider-application.html">For Riders</a></li>
+                        <li><a href="admin-login.html">For Admins</a></li>
+>>>>>>> Stashed changes
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -254,22 +269,81 @@
     </footer>
 
 
-    <!-- Active Order Tracking Bar -->
-    <div id="active-order-bar" class="fixed-bottom bg-white p-3 shadow-lg d-none animate__animated animate__slideInUp"
-        style="z-index: 2000; border-radius: 25px 25px 0 0; border-top: 4px solid var(--brand-red);">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
+    <!-- Menu Sidebar -->
+    <div id="menu-overlay" class="cart-overlay" onclick="toggleMenuSidebar()"></div>
+    <div id="menu-sidebar" class="menu-sidebar">
+        <div class="p-4 pb-5 d-flex flex-column h-100">
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <a class="navbar-brand d-flex align-items-center mb-0" href="index.html">
+                    <div class="brand-logo me-2 shadow-sm">
+                        <span class="logo-n">N</span>
+                    </div>
+                    <span class="brand-text fw-bold"><span class="text-orange">Noshahi</span> <span
+                            class="text-dark">Panda</span></span>
+                </a>
+                <button class="btn btn-light rounded-circle shadow-sm p-2" onclick="toggleMenuSidebar()"
+                    style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-xmark fs-5"></i>
+                </button>
+            </div>
+
+            <div class="menu-items flex-grow-1">
+                <div class="menu-section mb-4">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Discover</h6>
+                    <a href="index.html" class="menu-link active"><i class="fa-solid fa-house me-3"></i> Home</a>
+                    <a href="#" class="menu-link"><i class="fa-solid fa-percent me-3"></i> Top Offers</a>
+                    <a href="#" class="menu-link"><i class="fa-solid fa-utensils me-3"></i> All Cuisines</a>
+                </div>
+
+                <div class="menu-section mb-4">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Partner with
+                        us</h6>
+                    <a href="seller-application.html" class="menu-link"><i class="fa-solid fa-store me-3"></i> Join as
+                        Seller</a>
+                    <a href="rider-application.html" class="menu-link"><i class="fa-solid fa-motorcycle me-3"></i> Join
+                        as Rider</a>
+                </div>
+
+                <div class="menu-section">
+                    <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Information
+                    </h6>
+                    <a href="#" class="menu-link"><i class="fa-solid fa-circle-info me-3"></i> Help Center</a>
+                    <a href="admin-login.html" class="menu-link"><i class="fa-solid fa-shield-halved me-3"></i> Admin
+                        Portal</a>
+                </div>
+            </div>
+
+            <div class="mt-auto" id="sidebar-auth-section">
+                <div class="p-3 rounded-4 mb-4" style="background: var(--soft-bg);">
+                    <h6 class="fw-bold mb-1">Get Started</h6>
+                    <p class="text-muted small mb-0">Join our community today</p>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <a href="login.html" class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold border-2">Log
+                        in</a>
+                    <a href="signup.html" class="btn btn-sidebar-signup w-100 py-3 rounded-pill fw-bold shadow-sm">Sign
+                        up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="active-order-bar" class="fixed-bottom d-none animate__animated animate__slideInUp"
+        style="z-index: 2000; bottom: 20px;">
+        <div class="container" style="max-width: 600px;">
+            <div class="active-tracking-glass p-3 shadow-lg d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-                    <div class="bg-brand-red bg-opacity-10 p-2 rounded-circle me-3">
-                        <i class="fa-solid fa-motorcycle text-brand-red"></i>
+                    <div class="tracking-pulse-container me-3">
+                        <div class="pulse-dot"></div>
+                        <i class="fa-solid fa-motorcycle text-white"></i>
                     </div>
                     <div>
-                        <div class="fw-bold small text-dark">Order in progress!</div>
-                        <div class="text-muted small" id="active-order-res-name">The Burger Club</div>
+                        <div class="text-white opacity-75 small fw-bold text-uppercase" style="letter-spacing: 1px;">
+                            Live Tracking</div>
+                        <div class="text-white fw-bold h5 mb-0" id="active-order-res-name">The Burger Club</div>
                     </div>
                 </div>
-                <a href="order-confirmed.html" class="btn btn-brand-red rounded-pill px-4 fw-bold shadow-sm">
-                    Live Tracking <i class="fa-solid fa-location-crosshairs ms-1"></i>
+                <a href="order-confirmed.html" class="btn btn-light rounded-pill px-4 fw-bold shadow-sm track-btn">
+                    Details <i class="fa-solid fa-arrow-right ms-1"></i>
                 </a>
             </div>
         </div>
@@ -285,6 +359,46 @@
         document.addEventListener('DOMContentLoaded', () => {
             const activeOrder = JSON.parse(localStorage.getItem('noshahi_active_order'));
             const cart = JSON.parse(localStorage.getItem('pandaCart') || '[]');
+            const activeCustomer = JSON.parse(localStorage.getItem('noshahi_active_customer'));
+
+            // Show Customer Name in Header if logged in
+            if (activeCustomer) {
+                const navContainer = document.querySelector('.navbar .order-lg-3');
+                navContainer.innerHTML = `
+                    <div class="dropdown me-3">
+                        <button class="btn btn-light rounded-pill px-3 dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-user-circle me-1 text-orange"></i> Hi, ${activeCustomer.firstName}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-3 mt-2">
+                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-clock-rotate-left me-2 opacity-50"></i> Orders</a></li>
+                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-heart me-2 opacity-50"></i> Favorites</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="#" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="cart-icon" onclick="toggleCart()">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span class="cart-badge">0</span>
+                    </a>
+                `;
+
+                // Also update Sidebar Auth Section
+                const sidebarAuth = document.getElementById('sidebar-auth-section');
+                if (sidebarAuth) {
+                    sidebarAuth.innerHTML = `
+                        <div class="d-flex align-items-center mb-3 bg-light p-3 rounded-4">
+                            <i class="fa-solid fa-user-circle fs-2 text-orange me-3"></i>
+                            <div>
+                                <div class="fw-bold text-dark">${activeCustomer.firstName} ${activeCustomer.lastName}</div>
+                                <div class="small text-muted">${activeCustomer.email}</div>
+                            </div>
+                        </div>
+                        <button onclick="logoutUser()" class="btn btn-sidebar-signup w-100 py-3 rounded-pill fw-bold">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+                        </button>
+                    `;
+                }
+            }
 
             // Only show bar if an order was placed AND cart is empty AND status is active
             if (activeOrder && cart.length === 0 && activeOrder.status === 'active') {
@@ -295,6 +409,16 @@
                 orderBar.classList.remove('d-none');
             }
         });
+
+        function toggleMenuSidebar() {
+            document.getElementById('menu-sidebar').classList.toggle('active');
+            document.getElementById('menu-overlay').classList.toggle('active');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('noshahi_active_customer');
+            window.location.href = 'index.html';
+        }
     </script>
 
     <!-- Cart Sidebar -->

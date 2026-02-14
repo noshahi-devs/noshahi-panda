@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Time Demo Setup | Noshahi Panda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .setup-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .btn-brand {
+            background: #D70F64;
+            color: white;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-brand:hover {
+            background: #b00d52;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="setup-card">
+        <div class="mb-4">
+            <i class="fa-solid fa-clock-rotate-left fa-4x text-danger"></i>
+        </div>
+        <h2 class="fw-bold mb-3">Delivery Time Demo</h2>
+        <p class="text-muted mb-4">This setup will create a demo restaurant and a pending order so you can test the "Set
+            Delivery Time" feature.</p>
+
+        <div class="alert alert-info small text-start mb-4">
+            <strong>What will happen:</strong>
+            <ul class="mb-0">
+                <li>Create "Demo Pizza Hut" account</li>
+                <li>Add **3 sample orders** with different statuses:
+                    <br> - 1 Preparing (New)
+                    <br> - 1 Ready (For Pickup)
+                    <br> - 1 Delivered (History)
+                </li>
+                <li>Log you in as the Seller</li>
+            </ul>
+        </div>
+
+        <button onclick="startDemo()" class="btn btn-brand w-100 mb-3">Initialize & Go to Dashboard</button>
+        <a href="index.html" class="text-muted small text-decoration-none">Back to Home</a>
+    </div>
+
+    <script>
+        function startDemo() {
+            // 1. Create Demo Seller
+            const demoSeller = {
+                id: 999111,
+                name: "Demo Pizza Hut",
+                owner: "Demo User",
+                email: "demo@seller.com",
+                password: "123",
+                cuisine: "Pizza",
+                status: "Approved",
+                date: new Date().toLocaleDateString()
+            };
+
+            // Save to apps and active restaurants
+            let apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+            apps = apps.filter(a => a.id !== 999111);
+            apps.push(demoSeller);
+            localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+
+            localStorage.setItem('noshahi_active_restaurant', JSON.stringify(demoSeller));
+
+            // 2. Create Demo Orders
+            const demoOrders = [
+                {
+                    id: Math.floor(Math.random() * 9000) + 1000,
+                    restaurant: "Demo Pizza Hut",
+                    customer: "Ali Khan",
+                    items: [{ name: "Zinger Burger", price: 550 }],
+                    total: "Rs. 550",
+                    status: "Preparing",
+                    date: new Date().toLocaleString(),
+                    address: "Plot 12, Gulberg III, Lahore"
+                },
+                {
+                    id: Math.floor(Math.random() * 9000) + 1000,
+                    restaurant: "Demo Pizza Hut",
+                    customer: "Sara Ahmed",
+                    items: [
+                        { name: "Large Pepperoni Pizza", price: 1800 },
+                        { name: "Garlic Bread", price: 350 }
+                    ],
+                    total: "Rs. 2,150",
+                    status: "Ready",
+                    date: new Date().toLocaleString(),
+                    address: "H-Block, DHA Phase 5, Lahore"
+                },
+                {
+                    id: Math.floor(Math.random() * 9000) + 1000,
+                    restaurant: "Demo Pizza Hut",
+                    customer: "Bilal Sheikh",
+                    items: [
+                        { name: "Family Deal 1", price: 2500 }
+                    ],
+                    total: "Rs. 2,500",
+                    status: "Delivered",
+                    date: "2/13/2026, 8:30:00 PM",
+                    address: "Model Town, C-Block, Lahore"
+                }
+            ];
+
+            let orders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            // Filter out old demo orders to prevent duplication
+            orders = orders.filter(o => o.restaurant !== "Demo Pizza Hut");
+            orders.push(...demoOrders);
+            localStorage.setItem('noshahi_all_orders', JSON.stringify(orders));
+
+            // 3. Redirect
+            window.location.href = 'seller-dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

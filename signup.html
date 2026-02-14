@@ -31,15 +31,17 @@
                             <p class="text-muted small">Join Noshahi Panda and start ordering</p>
                         </div>
 
-                        <form>
+                        <form id="signupForm">
                             <div class="row g-3 mb-3">
                                 <div class="col-6">
                                     <label class="form-label small fw-bold">First Name</label>
-                                    <input type="text" class="form-control bg-light border-0" placeholder="John">
+                                    <input type="text" id="firstName" class="form-control bg-light border-0"
+                                        placeholder="John" required>
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label small fw-bold">Last Name</label>
-                                    <input type="text" class="form-control bg-light border-0" placeholder="Doe">
+                                    <input type="text" id="lastName" class="form-control bg-light border-0"
+                                        placeholder="Doe" required>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -47,8 +49,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-0"><i
                                             class="fa-regular fa-envelope text-muted"></i></span>
-                                    <input type="email" class="form-control bg-light border-0"
-                                        placeholder="name@example.com">
+                                    <input type="email" id="email" class="form-control bg-light border-0"
+                                        placeholder="name@example.com" required>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -56,7 +58,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-0"><span
                                             class="small fw-bold text-muted">+92</span></span>
-                                    <input type="tel" class="form-control bg-light border-0" placeholder="300 0000000">
+                                    <input type="tel" id="mobile" class="form-control bg-light border-0"
+                                        placeholder="300 0000000" required>
                                 </div>
                             </div>
                             <div class="mb-4">
@@ -64,8 +67,8 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-0"><i
                                             class="fa-solid fa-lock text-muted"></i></span>
-                                    <input type="password" class="form-control bg-light border-0"
-                                        placeholder="Minimum 8 characters">
+                                    <input type="password" id="password" class="form-control bg-light border-0"
+                                        placeholder="Minimum 8 characters" required minlength="8">
                                 </div>
                             </div>
 
@@ -85,6 +88,67 @@
             </div>
         </div>
     </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay"
+        class="position-fixed top-0 start-0 w-100 h-100 d-none flex-column align-items-center justify-content-center bg-white"
+        style="z-index: 9999;">
+        <div class="text-center animate__animated animate__zoomIn">
+            <div class="bg-success bg-opacity-10 p-4 rounded-circle mb-4 mx-auto"
+                style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-check fs-1 text-success"></i>
+            </div>
+            <h2 class="fw-bold mb-2">Welcome Aboard!</h2>
+            <p class="text-muted">Setting up your profile...</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const btn = e.target.querySelector('button[type="submit"]');
+
+            const userData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value.toLowerCase(),
+                mobile: document.getElementById('mobile').value,
+                password: document.getElementById('password').value,
+                date: new Date().toLocaleDateString()
+            };
+
+            // Get existing customers
+            let customers = JSON.parse(localStorage.getItem('noshahi_customers') || '[]');
+
+            // Check if email already exists
+            if (customers.some(c => c.email === userData.email)) {
+                alert('An account with this email already exists!');
+                return;
+            }
+
+            // Show Loading State
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating Account...';
+
+            setTimeout(() => {
+                // Save new customer
+                customers.push(userData);
+                localStorage.setItem('noshahi_customers', JSON.stringify(customers));
+
+                // Auto-login after signup
+                localStorage.setItem('noshahi_active_customer', JSON.stringify(userData));
+
+                // Show Success Overlay
+                document.getElementById('successOverlay').classList.replace('d-none', 'd-flex');
+
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }, 1000);
+        });
+    </script>
 
 </body>
 

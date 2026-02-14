@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         data.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'col-lg-3 col-md-4 col-sm-6';
+            card.className = 'col-lg-3 col-md-6 col-12';
 
             if (isItemView) {
                 // RENDER FOOD ITEM CARD
@@ -477,20 +477,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.innerHTML += `
                 <div class="cart-item">
-                    <img src="${item.img}" class="cart-item-img">
+                    <img src="${item.img}" class="cart-item-img shadow-sm">
                     <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h6 class="fw-bold mb-0">${item.name}</h6>
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold mb-0" style="font-size: 0.95rem;">${item.name}</h6>
                             <button class="btn-close" style="font-size:0.6rem" onclick="removeItem(${index})"></button>
                         </div>
-                        <div class="small text-muted mb-2">${item.price}</div>
+                        <div class="small text-muted mb-3" style="font-size: 0.8rem;">${item.restaurant} • ${item.price}</div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center gap-2">
-                                <button class="btn btn-sm btn-light py-0 px-2" onclick="changeQty(${index}, -1)">-</button>
-                                <span class="small fw-bold">${item.quantity}</span>
-                                <button class="btn btn-sm btn-light py-0 px-2" onclick="changeQty(${index}, 1)">+</button>
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                                <span class="fw-bold" style="min-width: 20px; text-align: center;">${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
                             </div>
-                            <span class="small fw-bold">Rs. ${priceNum * item.quantity}</span>
+                            <span class="fw-bold text-dark">Rs. ${priceNum * item.quantity}</span>
                         </div>
                     </div>
                 </div>

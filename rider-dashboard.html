@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rider Dashboard | Noshahi Panda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --brand-orange: #FF9800;
+            /* Primary from logo curve */
+            --brand-red: #E53935;
+            /* Accent from logo dot */
+            --brand-dark: #2D2D2D;
+            /* Text from logo */
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-orange) 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-orange);
+            margin: 0;
+        }
+
+        .stat-card p {
+            color: #6c757d;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .delivery-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--brand-orange);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-picked {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 15px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--brand-orange);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="mb-0" id="rider-name">Welcome, Rider!</h1>
+                    <p class="mb-0 opacity-75" id="current-date"></p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="index.html" class="btn btn-light rounded-pill px-4">
+                        <i class="fa-solid fa-home me-2"></i>Homepage
+                    </a>
+                    <button onclick="logout()" class="btn btn-outline-light rounded-pill px-4">
+                        <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container pb-5">
+
+        <!-- Statistics -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-dollar-sign fa-2x text-primary mb-3"></i>
+                    <h3 id="total-earnings">Rs. 0</h3>
+                    <p>Total Earnings</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-box fa-2x text-primary mb-3"></i>
+                    <h3 id="total-deliveries">0</h3>
+                    <p>Total Deliveries</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-star fa-2x text-warning mb-3"></i>
+                    <h3 id="rider-rating">5.0</h3>
+                    <p>Your Rating</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="fa-solid fa-clock fa-2x text-success mb-3"></i>
+                    <h3 id="active-orders">0</h3>
+                    <p>Active Deliveries</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4" id="dashboardTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#available-tab">
+                    <i class="fa-solid fa-list me-2"></i>Available Orders
+                </button>
+            </li>
+            <li class="nav-item ms-2">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#active-tab">
+                    <i class="fa-solid fa-motorcycle me-2"></i>My Deliveries
+                </button>
+            </li>
+            <li class="nav-item ms-2">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#history-tab">
+                    <i class="fa-solid fa-history me-2"></i>History
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+            <!-- Available Orders Tab -->
+            <div class="tab-pane fade show active" id="available-tab">
+                <h4 class="mb-4">Orders Ready for Pickup</h4>
+                <div id="available-list">
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-inbox fa-3x mb-3"></i>
+                        <p>No orders available right now</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Deliveries Tab -->
+            <div class="tab-pane fade" id="active-tab">
+                <h4 class="mb-4">Your Active Deliveries</h4>
+                <div id="active-list">
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-motorcycle fa-3x mb-3"></i>
+                        <p>No active deliveries</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-pane fade" id="history-tab">
+                <h4 class="mb-4">Delivery History</h4>
+                <div id="history-list">
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-history fa-3x mb-3"></i>
+                        <p>No delivery history yet</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if rider is logged in
+        const riderData = JSON.parse(localStorage.getItem('noshahi_active_rider'));
+
+        if (!riderData) {
+            alert('Please login to access the Rider Dashboard');
+            window.location.href = 'login.html';
+        }
+
+        // Display rider info
+        document.getElementById('rider-name').textContent = `Welcome, ${riderData.name}!`;
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Load dashboard data
+        loadDashboard();
+
+        function loadDashboard() {
+            loadAvailableOrders();
+            loadActiveDeliveries();
+            loadHistory();
+            updateStats();
+        }
+
+        function loadAvailableOrders() {
+            const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const availableOrders = allOrders.filter(o => o.status === 'Ready' && !o.riderId);
+            const list = document.getElementById('available-list');
+
+            if (availableOrders.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-inbox fa-3x mb-3"></i>
+                        <p>No orders available right now</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = availableOrders.map(order => `
+                <div class="delivery-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="mb-1 fw-bold">Order #${order.id}</h6>
+                            <p class="mb-0 small text-muted">${order.restaurant}</p>
+                        </div>
+                        <span class="status-badge status-pending">Ready for Pickup</span>
+                    </div>
+                    <div class="mb-2">
+                        <i class="fa-solid fa-location-dot me-2 text-primary"></i>
+                        <strong>Delivery to:</strong> ${order.address || 'Customer Address'}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="mb-0 fw-bold text-primary">${order.total}</h5>
+                        <button onclick="acceptOrder(${order.id})" class="btn btn-action" style="background: var(--brand-orange); color: white;">
+                            <i class="fa-solid fa-check me-2"></i>Accept Order
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadActiveDeliveries() {
+            const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const myDeliveries = allOrders.filter(o => o.riderId === riderData.id && o.status !== 'Delivered');
+            const list = document.getElementById('active-list');
+
+            document.getElementById('active-orders').textContent = myDeliveries.length;
+
+            if (myDeliveries.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-motorcycle fa-3x mb-3"></i>
+                        <p>No active deliveries</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = myDeliveries.map(order => `
+                <div class="delivery-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="mb-1 fw-bold">Order #${order.id}</h6>
+                            <p class="mb-0 small text-muted">${order.restaurant}</p>
+                        </div>
+                        <span class="status-badge status-picked">In Transit</span>
+                    </div>
+                    <div class="mb-2">
+                        <i class="fa-solid fa-location-dot me-2 text-primary"></i>
+                        <strong>Deliver to:</strong> ${order.address || 'Customer Address'}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="mb-0 fw-bold text-primary">${order.total}</h5>
+                        <button onclick="completeDelivery(${order.id})" class="btn btn-action" style="background: #198754; color: white;">
+                            <i class="fa-solid fa-check-double me-2"></i>Mark Delivered
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadHistory() {
+            const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const completedDeliveries = allOrders.filter(o => o.riderId === riderData.id && o.status === 'Delivered');
+            const list = document.getElementById('history-list');
+
+            document.getElementById('total-deliveries').textContent = completedDeliveries.length;
+
+            if (completedDeliveries.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-history fa-3x mb-3"></i>
+                        <p>No delivery history yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = completedDeliveries.map(order => `
+                <div class="delivery-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h6 class="mb-1 fw-bold">Order #${order.id}</h6>
+                            <p class="mb-0 small text-muted">${order.date}</p>
+                        </div>
+                        <span class="status-badge status-delivered">Delivered</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Restaurant:</strong> ${order.restaurant}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="mb-0 fw-bold text-success">${order.total}</h5>
+                        <span class="text-muted small">Earning: Rs. 150</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const myDeliveries = allOrders.filter(o => o.riderId === riderData.id && o.status === 'Delivered');
+
+            const earnings = myDeliveries.length * 150; // Rs. 150 per delivery
+            document.getElementById('total-earnings').textContent = `Rs. ${earnings.toLocaleString()}`;
+            document.getElementById('rider-rating').textContent = riderData.rating || '5.0';
+        }
+
+        function acceptOrder(orderId) {
+            let allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const orderIndex = allOrders.findIndex(o => o.id === orderId);
+
+            if (orderIndex !== -1) {
+                allOrders[orderIndex].riderId = riderData.id;
+                allOrders[orderIndex].riderName = riderData.name;
+                allOrders[orderIndex].status = 'Picked Up';
+                localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
+                loadDashboard();
+                alert('✅ Order accepted! Head to the restaurant to pick it up.');
+            }
+        }
+
+        function completeDelivery(orderId) {
+            if (!confirm('Mark this order as delivered?')) return;
+
+            let allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+            const orderIndex = allOrders.findIndex(o => o.id === orderId);
+
+            if (orderIndex !== -1) {
+                allOrders[orderIndex].status = 'Delivered';
+                localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
+                loadDashboard();
+                alert('✅ Delivery completed! Rs. 150 added to your earnings.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('noshahi_active_rider');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+
+</html>
