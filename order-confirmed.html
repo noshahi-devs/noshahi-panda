@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,17 +14,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-<<<<<<< Updated upstream
-            --brand-red: #D0021B;
-            --brand-orange: #F5A623;
-=======
             --brand-orange: #FF9800;
-            /* Primary from logo curve */
             --brand-red: #E53935;
-            /* Accent from logo dot */
             --brand-dark: #2D2D2D;
-            /* Text from logo */
->>>>>>> Stashed changes
         }
 
         body {
@@ -32,7 +27,6 @@
             overflow: hidden;
         }
 
-        /* Re-using some styles from index.html for consistency */
         .brand-logo {
             width: 35px;
             height: 35px;
@@ -96,15 +90,6 @@
             border: none;
             background: var(--brand-red);
             box-shadow: 0 4px 12px rgba(208, 2, 27, 0.2);
-        }
-
-        .tracking-header {
-            background: white;
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
         }
 
         #map {
@@ -216,7 +201,6 @@
 
 <body>
 
-<<<<<<< Updated upstream
     <!-- Header / Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
         <div class="container-fluid px-4 position-relative d-flex align-items-center">
@@ -243,25 +227,12 @@
                 <span class="badge bg-light text-dark border-0 shadow-sm px-3 py-2 rounded-pill">
                     <i class="fa-solid fa-receipt me-2 text-brand-red"></i> Order #NP-9021
                 </span>
-=======
-    <header class="tracking-header">
-        <div class="container-fluid px-4 d-flex justify-content-between align-items-center">
-            <a href="index.html" class="text-decoration-none d-flex align-items-center">
-                <div class="bg-brand-red text-white rounded-3 px-2 py-1 me-2 fw-bold"
-                    style="background: var(--brand-red)">N</div>
-                <span class="fw-bold text-dark">Noshahi Panda</span>
-            </a>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-light text-dark border d-none d-sm-inline">Order #NP-9021</span>
-                <a href="index.html" class="btn btn-sm btn-outline-secondary rounded-pill">Back to Home</a>
->>>>>>> Stashed changes
             </div>
         </div>
     </nav>
 
     <main class="container-fluid p-0 overflow-hidden">
         <div class="row g-0">
-<<<<<<< Updated upstream
             <!-- Left Side: Map -->
             <div class="col-lg-7 col-xl-8">
                 <div id="map"></div>
@@ -339,80 +310,6 @@
                         </a>
                     </div>
                 </div>
-=======
-            <!-- Left Side: Status Info -->
-            <div class="col-lg-5 col-xl-4 bg-white border-end order-2 order-lg-1"
-                style="height: calc(100vh - 75px); overflow-y: auto;">
-                <div class="p-4 p-xl-5">
-                    <div class="eta-card shadow-sm mb-4">
-                        <div>
-                            <div class="small opacity-75">Estimated Arrival</div>
-                            <h2 class="fw-bold mb-0" id="eta-timer">18 Mins</h2>
-                        </div>
-                        <i class="fa-solid fa-motorcycle fa-3x opacity-50"></i>
-                    </div>
-
-                    <h5 class="fw-bold mb-4">Tracking Details</h5>
-                    <div class="timeline-wrapper">
-                        <div class="timeline-step completed" id="step-1">
-                            <i class="fa-solid fa-check"></i>
-                            <h6>Order Confirmed</h6>
-                            <p class="small text-muted mb-0">Restaurant has accepted your order</p>
-                        </div>
-                        <div class="timeline-step active" id="step-2">
-                            <i class="fa-solid fa-utensils"></i>
-                            <h6>Preparing Food</h6>
-                            <p class="small text-muted mb-0">Chef is preparing your delicious meal</p>
-                        </div>
-                        <div class="timeline-step" id="step-3">
-                            <i class="fa-solid fa-motorcycle"></i>
-                            <h6>Rider on the Way</h6>
-                            <p class="small text-muted mb-0">Rider will pick up your food soon</p>
-                        </div>
-                        <div class="timeline-step" id="step-4">
-                            <i class="fa-solid fa-house-chimney"></i>
-                            <h6>Delivered</h6>
-                            <p class="small text-muted mb-0">Enjoy your meal!</p>
-                        </div>
-                    </div>
-
-                    <div class="rider-profile shadow-sm border p-3">
-                        <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
-                            class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                        <div class="flex-grow-1">
-                            <div class="fw-bold">Hamza Malik</div>
-                            <div class="small text-muted"><i class="fa-solid fa-star text-warning me-1"></i> 4.9 • Your
-                                Rider
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="tel:+923226342321"
-                                class="btn btn-brand-red rounded-circle p-2 d-flex align-items-center justify-content-center"
-                                style="background:var(--brand-red); color:white; width:40px; height:40px"
-                                title="Call Rider">
-                                <i class="fa-solid fa-phone"></i>
-                            </a>
-                            <button
-                                class="btn btn-light rounded-circle p-2 border d-flex align-items-center justify-content-center"
-                                style="width:40px; height:40px" title="Message Rider" data-bs-toggle="modal"
-                                data-bs-target="#chatModal">
-                                <i class="fa-solid fa-message"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-5">
-                        <a href="index.html" class="text-muted small text-decoration-none">Need help with your order?
-                            <span class="text-brand-red fw-bold">Contact Support</span></a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side: Map -->
-            <div class="col-lg-7 col-xl-8 order-1 order-lg-2">
-                <!-- Leaflet Map Container -->
-                <div id="map" style="height: calc(100vh - 75px); width: 100%;"></div>
->>>>>>> Stashed changes
             </div>
         </div>
     </main>
@@ -481,10 +378,10 @@
 
     <!-- Map Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Initialize Map
-            // Coordinates for a mockup path (e.g., Lahore areas)
             const restaurantCoords = [31.5204, 74.3587];
             const userCoords = [31.4800, 74.3200];
 
@@ -495,7 +392,6 @@
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-            // Custom Icons
             const resIcon = L.divIcon({
                 html: '<div style="background: #fff; padding: 5px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.2)"><i class="fa-solid fa-utensils text-danger"></i></div>',
                 className: 'custom-div-icon',
@@ -519,7 +415,6 @@
 
             let riderMarker = L.marker(restaurantCoords, { icon: riderIcon }).addTo(map);
 
-            // Animation Logic
             let progress = 0;
             const animateRider = () => {
                 if (progress <= 1) {
@@ -530,7 +425,6 @@
 
                     progress += 0.005;
 
-                    // Update Status Timeline based on progress
                     if (progress > 0.3) {
                         document.getElementById('step-2').classList.remove('active');
                         document.getElementById('step-2').classList.add('completed');
@@ -552,12 +446,10 @@
                     document.getElementById('step-4').classList.add('active');
                     document.getElementById('eta-timer').innerText = "Arrived!";
 
-                    // Mark as delivered in local storage
                     const orderData = JSON.parse(localStorage.getItem('noshahi_active_order') || '{}');
                     orderData.status = 'delivered';
                     localStorage.setItem('noshahi_active_order', JSON.stringify(orderData));
 
-                    // Show Review Modal
                     setTimeout(() => {
                         const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
                         reviewModal.show();
@@ -565,7 +457,6 @@
                 }
             };
 
-            // Chat Logic
             const chatForm = document.getElementById('chat-form');
             const chatBox = document.getElementById('chat-box');
             const msgInput = document.getElementById('msg-input');
@@ -574,7 +465,6 @@
                 e.preventDefault();
                 const msg = msgInput.value.trim();
                 if (msg) {
-                    // Add User Message
                     const userMsg = document.createElement('div');
                     userMsg.className = 'p-3 text-end';
                     userMsg.innerHTML = `<div class="bg-brand-red text-white rounded-3 p-2 mb-2 small shadow-sm d-inline-block" style="max-width: 80%">${msg}</div>`;
@@ -583,7 +473,6 @@
                     msgInput.value = '';
                     chatBox.scrollTop = chatBox.scrollHeight;
 
-                    // Simulated Rider Response
                     setTimeout(() => {
                         const riderMsg = document.createElement('div');
                         riderMsg.className = 'p-3';
@@ -594,7 +483,6 @@
                 }
             });
 
-            // Star Rating Logic
             let selectedRating = 0;
             const stars = document.querySelectorAll('.star-btn');
             stars.forEach(star => {
@@ -629,12 +517,10 @@
                     restaurantName: activeOrder.restaurant || 'The Burger Club'
                 };
 
-                // Store review
                 let reviews = JSON.parse(localStorage.getItem('noshahi_reviews') || '[]');
                 reviews.push(review);
                 localStorage.setItem('noshahi_reviews', JSON.stringify(reviews));
 
-                // Record Sale data for Analytics
                 let sales = JSON.parse(localStorage.getItem('noshahi_sales_data') || '[]');
                 sales.push({
                     id: Date.now(),
@@ -645,12 +531,14 @@
                 localStorage.setItem('noshahi_sales_data', JSON.stringify(sales));
 
                 bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
-                localStorage.removeItem('noshahi_active_order'); // Clear tracker
+                localStorage.removeItem('noshahi_active_order');
                 alert('Thank you for your feedback!');
                 window.location.href = 'index.html';
             };
 
-            setTimeout(animateRider, 3000); // Start moving after 3 seconds
+            setTimeout(animateRider, 3000);
         });
     </script>
 </body>
+
+</html>
