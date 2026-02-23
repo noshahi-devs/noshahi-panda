@@ -71,8 +71,11 @@
                         </form>
                     </div>
                     <div class="bg-white border-top p-4 text-center">
-                        <p class="small mb-0 text-muted">Don't have an account? <a href="signup.html"
+                        <p class="small mb-1 text-muted">Don't have an account? <a href="signup.html"
                                 class="text-brand-red fw-bold text-decoration-none">Sign up</a></p>
+                        <p class="small mb-0"><a href="seller-track.html" class="text-muted text-decoration-none"><i
+                                    class="fa-solid fa-magnifying-glass me-1" style="font-size: 0.7rem;"></i> Track
+                                seller application</a></p>
                     </div>
                 </div>
             </div>
@@ -106,23 +109,39 @@
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Logging in...';
 
             setTimeout(() => {
-                // 1. Check if this is a registered seller
-                const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
-                const seller = apps.find(a => a.email.toLowerCase() === email && a.password === password);
+                // 1. Check for Admin-Generated Seller Credentials
+                const sellerAuth = JSON.parse(localStorage.getItem('noshahi_seller_auth') || '[]');
+                const authUser = sellerAuth.find(a => a.email.toLowerCase() === email && a.password === password);
 
-                if (seller) {
-                    if (seller.status === 'Approved') {
+                if (authUser) {
+                    const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+                    const seller = apps.find(a => a.id === authUser.restaurantId);
+                    if (seller) {
                         localStorage.setItem('noshahi_active_restaurant', JSON.stringify(seller));
-                        showSuccess('Welcome, ' + seller.restaurant, 'Redirecting to Seller Dashboard...', 'seller-dashboard.html');
+                        showSuccess('Welcome, ' + seller.name, 'Redirecting to Seller Dashboard...', 'seller-dashboard.html');
+                        return;
+                    }
+                }
+
+                // 2. Check for Pending/Direct Seller Applications (Legacy/Safety)
+                const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+                const directSeller = apps.find(a => a.owner.email.toLowerCase() === email && a.password === password);
+
+                if (directSeller) {
+                    if (directSeller.status === 'Approved') {
+                        localStorage.setItem('noshahi_active_restaurant', JSON.stringify(directSeller));
+                        showSuccess('Welcome, ' + directSeller.name, 'Redirecting to Seller Dashboard...', 'seller-dashboard.html');
                         return;
                     } else {
-                        alert('Your application is still PENDING. Please wait for admin approval.');
+                        if (confirm('Your application is still PENDING. \n\nOur team is reviewing your documents. Would you like to track your application status?')) {
+                            window.location.href = 'seller-track.html';
+                        }
                         resetBtn();
                         return;
                     }
                 }
 
-                // 2. Check if this is a registered rider
+                // 3. Check if this is a registered rider
                 const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
                 const rider = riders.find(r => r.email.toLowerCase() === email && r.password === password);
 
@@ -132,7 +151,7 @@
                     return;
                 }
 
-                // 3. Check if this is a registered customer
+                // 4. Check if this is a registered customer
                 const customers = JSON.parse(localStorage.getItem('noshahi_customers') || '[]');
                 const customer = customers.find(c => c.email === email && c.password === password);
 
@@ -142,9 +161,9 @@
                     return;
                 }
 
-                // 4. Admin shortcut
+                // 5. Admin Portal
                 if (email === 'admin@noshahipanda.com' && password === 'admin123') {
-                    showSuccess('Welcome, Admin', 'Accessing Management Portal...', 'dashboard-admin.html');
+                    showSuccess('Welcome, Admin', 'Accessing Management Portal...', 'admin-dashboard.html');
                     return;
                 }
 

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Application | Noshahi Panda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .track-card {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .tracking-stepper {
+            margin: 3rem 0;
+            text-align: left;
+            position: relative;
+        }
+
+        .tracking-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .tracking-item:not(:last-child):after {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: #eee;
+        }
+
+        .tracking-icon {
+            width: 36px;
+            height: 36px;
+            background: #eee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #888;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .tracking-item.active .tracking-icon {
+            background: var(--brand-red);
+            color: white;
+            box-shadow: 0 0 0 5px rgba(229, 57, 53, 0.1);
+        }
+
+        .tracking-item.completed .tracking-icon {
+            background: #4caf50;
+            color: white;
+        }
+
+        .tracking-item.completed:not(:last-child):after {
+            background: #4caf50;
+        }
+
+        .tracking-content h6 {
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+
+        .tracking-content p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-review {
+            background: #e3f2fd;
+            color: #1565c2;
+        }
+
+        .status-approved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        #trackForm {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="track-card">
+        <div class="brand-logo mx-auto mb-3">
+            <span class="logo-n">N</span>
+        </div>
+        <h2 class="fw-bold">Track Your Application</h2>
+        <p class="text-muted small">Enter your business email to check live status</p>
+
+        <form id="trackForm" class="mt-4">
+            <div class="input-group">
+                <input type="email" id="trackEmail" class="form-control py-3" placeholder="Enter your business email"
+                    required>
+                <button class="btn btn-brand-red px-4" type="submit">Track <i
+                        class="fa-solid fa-magnifying-glass ms-2"></i></button>
+            </div>
+        </form>
+
+        <div id="trackResult" class="d-none animate__animated animate__fadeIn">
+            <div class="border rounded-4 p-4 text-start bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-0" id="resName">The Spicy Kitchen</h5>
+                        <small class="text-muted" id="resId">ID: 123456789</small>
+                    </div>
+                    <span class="status-badge status-pending" id="statusBadge">Pending</span>
+                </div>
+
+                <div class="tracking-stepper">
+                    <div class="tracking-item completed" id="step-1">
+                        <div class="tracking-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="tracking-content">
+                            <h6>Application Received</h6>
+                            <p id="step-1-time">Submitted on June 12, 2024</p>
+                        </div>
+                    </div>
+                    <div class="tracking-item" id="step-2">
+                        <div class="tracking-icon">2</div>
+                        <div class="tracking-content">
+                            <h6>Document Verification</h6>
+                            <p>Our team is reviewing your PFA License & CNIC</p>
+                        </div>
+                    </div>
+                    <div class="tracking-item" id="step-3">
+                        <div class="tracking-icon">3</div>
+                        <div class="tracking-content">
+                            <h6>Manual Site Review</h6>
+                            <p>Final quality check of your store presentation</p>
+                        </div>
+                    </div>
+                    <div class="tracking-item" id="step-4">
+                        <div class="tracking-icon">4</div>
+                        <div class="tracking-content">
+                            <h6>Approval & Credentials</h6>
+                            <p>Account creation & email generation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="credentialBox"
+                    class="bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 p-3 d-none">
+                    <p class="small fw-bold text-success mb-1"><i class="fa-solid fa-key me-2"></i> Your Credentials are
+                        Ready!</p>
+                    <div class="small text-dark">
+                        Email: <strong id="credEmail"></strong><br>
+                        Password: <strong id="credPass"></strong>
+                    </div>
+                    <a href="login.html" class="btn btn-sm btn-success w-100 mt-3">Login to Dashboard</a>
+                </div>
+            </div>
+
+            <a href="index.html" class="btn btn-link link-secondary text-decoration-none mt-4 small"><i
+                    class="fa-solid fa-arrow-left me-2"></i> Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('trackForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('trackEmail').value.toLowerCase();
+            const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+            const app = apps.find(a => a.owner.email.toLowerCase() === email);
+
+            if (app) {
+                showResult(app);
+            } else {
+                alert('No application found with this email. Please check your spelling or register first.');
+            }
+        });
+
+        function showResult(app) {
+            document.getElementById('trackForm').classList.add('d-none');
+            const result = document.getElementById('trackResult');
+            result.classList.remove('d-none');
+
+            document.getElementById('resName').innerText = app.name;
+            document.getElementById('resId').innerText = 'ID: ' + app.id;
+            document.getElementById('step-1-time').innerText = 'Submitted on ' + (app.date || 'Today');
+
+            // Reset steps
+            document.querySelectorAll('.tracking-item').forEach((item, i) => {
+                if (i > 0) item.classList.remove('completed', 'active');
+            });
+
+            const statusBadge = document.getElementById('statusBadge');
+            const credBox = document.getElementById('credentialBox');
+            credBox.classList.add('d-none');
+
+            if (app.status === 'Pending') {
+                statusBadge.innerText = 'Pending Review';
+                statusBadge.className = 'status-badge status-pending';
+                document.getElementById('step-2').classList.add('active');
+            } else if (app.status === 'Approved') {
+                statusBadge.innerText = 'Approved';
+                statusBadge.className = 'status-badge status-approved';
+
+                // Complete all steps
+                document.getElementById('step-2').classList.add('completed');
+                document.getElementById('step-3').classList.add('completed');
+                document.getElementById('step-4').classList.add('completed');
+
+                // Show Credentials if they exist
+                if (app.approvedEmail && app.approvedPassword) {
+                    credBox.classList.remove('d-none');
+                    document.getElementById('credEmail').innerText = app.approvedEmail;
+                    document.getElementById('credPass').innerText = app.approvedPassword;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
