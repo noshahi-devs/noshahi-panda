@@ -62,14 +62,56 @@
             font-weight: 600;
         }
 
-        .btn-approve {
-            background: #10b981;
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-suspended {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .btn-suspend {
+            background: #ef4444;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
             transition: all 0.2s;
+        }
+
+        .btn-suspend:hover {
+            background: #dc2626;
+        }
+
+        .btn-activate {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-activate:hover {
+            background: #2563eb;
+        }
+
+        .verify-check {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         .btn-approve:hover {
@@ -143,16 +185,27 @@
     <main class="admin-main">
         <header class="mb-5 d-flex justify-content-between align-items-center">
             <div>
-                <h1 class="fw-bold h2 mb-1">Seller Applications</h1>
-                <p class="text-muted">Review and approve new partner requests</p>
+                <h1 class="fw-bold h2 mb-1">Seller Management</h1>
+                <p class="text-muted mb-0">Manage and verify restaurant partners</p>
             </div>
-            <div class="stat-card px-4 py-2 d-flex align-items-center gap-3">
-                <div class="text-end">
-                    <small class="text-muted d-block">Pending Requests</small>
-                    <span class="fw-bold h4 mb-0" id="pendingCount">0</span>
+            <div class="d-flex gap-3">
+                <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
+                    <div class="me-3">
+                        <p class="text-muted small mb-0">Pending</p>
+                        <h4 class="fw-bold mb-0" id="pendingCount">0</h4>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
+                        <i class="fa-solid fa-clock-rotate-left fs-4"></i>
+                    </div>
                 </div>
-                <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
-                    <i class="fa-solid fa-clock-rotate-left fs-4"></i>
+                <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
+                    <div class="me-3">
+                        <p class="text-muted small mb-0">Total Sellers</p>
+                        <h4 class="fw-bold mb-0" id="totalSellersCount">0</h4>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+                        <i class="fa-solid fa-store fs-4"></i>
+                    </div>
                 </div>
             </div>
         </header>
@@ -162,11 +215,12 @@
                 <table class="table table-hover align-middle">
                     <thead class="text-muted small text-uppercase">
                         <tr>
-                            <th>Restaurant & Owner</th>
+                            <th>Seller / Business</th>
                             <th>Documents</th>
-                            <th>Business Info</th>
+                            <th>Category</th>
                             <th>Status</th>
-                            <th class="text-end">Action</th>
+                            <th class="text-center">Verify</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="applicationTable">
@@ -295,18 +349,61 @@
         function renderApplications() {
             const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
             const table = document.getElementById('applicationTable');
-            const pending = apps.filter(a => a.status === 'Pending');
 
-            document.getElementById('pendingCount').innerText = pending.length;
+            const pendingCount = apps.filter(a => a.status === 'Pending').length;
+            document.getElementById('pendingCount').innerText = pendingCount;
+            document.getElementById('totalSellersCount').innerText = apps.length;
+
             table.innerHTML = '';
 
-            if (pending.length === 0) {
-                table.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">No pending applications found</td></tr>';
+            if (apps.length === 0) {
+                table.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">No applications or sellers found</td></tr>';
                 return;
             }
 
-            pending.forEach(app => {
+            // Sort: Pending first, then by ID
+            apps.sort((a, b) => {
+                if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+                if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+                return b.id - a.id;
+            });
+
+            apps.forEach(app => {
                 const tr = document.createElement('tr');
+
+                let statusBadge = '';
+                if (app.status === 'Pending') statusBadge = '<span class="badge-pending">Pending Review</span>';
+                else if (app.status === 'Approved') statusBadge = '<span class="badge-active">Active</span>';
+                else if (app.status === 'Suspended') statusBadge = '<span class="badge-suspended">Suspended</span>';
+
+                let verifyTd = '';
+                if (app.status === 'Pending') {
+                    verifyTd = `<input type="checkbox" class="verify-check" onclick="quickVerify(${app.id})" title="Verify & Activate Seller">`;
+                } else {
+                    verifyTd = `<i class="fa-solid fa-circle-check text-success fs-5"></i>`;
+                }
+
+                let actionsTd = '';
+                if (app.status === 'Pending') {
+                    actionsTd = `
+                        <button class="btn-approve" onclick="openReviewModal(${app.id})">
+                            Review & Approve
+                        </button>
+                    `;
+                } else if (app.status === 'Approved') {
+                    actionsTd = `
+                        <button class="btn-suspend" onclick="toggleSuspension(${app.id}, 'Suspend')">
+                            <i class="fa-solid fa-ban me-1"></i> Suspend
+                        </button>
+                    `;
+                } else if (app.status === 'Suspended') {
+                    actionsTd = `
+                        <button class="btn-activate" onclick="toggleSuspension(${app.id}, 'Activate')">
+                            <i class="fa-solid fa-check me-1"></i> Activate
+                        </button>
+                    `;
+                }
+
                 tr.innerHTML = `
                     <td>
                         <div class="fw-bold">${app.name}</div>
@@ -323,15 +420,88 @@
                         <div class="text-dark">${app.cuisine || 'Restaurant'}</div>
                         <div class="text-muted">${app.businessInfo.type}</div>
                     </td>
-                    <td><span class="badge-pending">Pending Review</span></td>
-                    <td class="text-end">
-                        <button class="btn-approve" onclick="openReviewModal(${app.id})">
-                            Review & Approve
-                        </button>
-                    </td>
+                    <td>${statusBadge}</td>
+                    <td class="text-center">${verifyTd}</td>
+                    <td class="text-end">${actionsTd}</td>
                 `;
                 table.appendChild(tr);
             });
+        }
+
+        // Quick verify function for checkbox
+        function quickVerify(id) {
+            if (!confirm('Are you sure you want to verify and activate this seller?')) {
+                renderApplications();
+                return;
+            }
+
+            const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+            const appIndex = apps.findIndex(a => a.id === id);
+
+            if (appIndex !== -1) {
+                const app = apps[appIndex];
+                const email = app.owner.email;
+                const password = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+
+                // Update status
+                apps[appIndex].status = 'Approved';
+                apps[appIndex].approvedEmail = email;
+                apps[appIndex].approvedPassword = password;
+                localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+
+                // Sync with Restaurants and Auth (similar to confirmApproval logic)
+                syncSellerToSystem(app, email, password);
+
+                alert('✅ Seller verified and activated successfully!');
+                renderApplications();
+            }
+        }
+
+        function toggleSuspension(id, action) {
+            const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
+            const appIndex = apps.findIndex(a => a.id === id);
+
+            if (appIndex !== -1) {
+                const newStatus = (action === 'Suspend') ? 'Suspended' : 'Approved';
+                apps[appIndex].status = newStatus;
+                localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+
+                // Update restaurant status too
+                let restaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+                const resIndex = restaurants.findIndex(r => r.id === id);
+                if (resIndex !== -1) {
+                    restaurants[resIndex].status = newStatus;
+                    localStorage.setItem('noshahi_all_restaurants', JSON.stringify(restaurants));
+                }
+
+                alert(`Seller has been ${newStatus.toLowerCase()}!`);
+                renderApplications();
+            }
+        }
+
+        function syncSellerToSystem(app, email, password) {
+            // Add to active restaurants list
+            let restaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+            const existingResIndex = restaurants.findIndex(r => r.id === app.id);
+
+            if (existingResIndex !== -1) {
+                restaurants[existingResIndex].status = 'Approved';
+            } else {
+                restaurants.push({
+                    id: app.id,
+                    name: app.name,
+                    cuisine: app.cuisine || 'Biryani',
+                    status: 'Approved',
+                    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800"
+                });
+            }
+            localStorage.setItem('noshahi_all_restaurants', JSON.stringify(restaurants));
+
+            // Add to Auth storage
+            let sellerAuth = JSON.parse(localStorage.getItem('noshahi_seller_auth') || '[]');
+            sellerAuth = sellerAuth.filter(s => s.email.toLowerCase() !== email.toLowerCase());
+            sellerAuth.push({ email, password, restaurantId: app.id });
+            localStorage.setItem('noshahi_seller_auth', JSON.stringify(sellerAuth));
         }
 
         function openReviewModal(id) {
@@ -407,29 +577,8 @@
 
                     localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
 
-                    // Add to active restaurants list
-                    let restaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
-                    const existingRes = restaurants.findIndex(r => r.id === currentAppId);
-                    if (existingRes !== -1) {
-                        restaurants[existingRes].status = 'Approved';
-                        restaurants[existingRes].image = "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800";
-                    } else {
-                        restaurants.push({
-                            id: apps[appIndex].id,
-                            name: apps[appIndex].name,
-                            cuisine: apps[appIndex].cuisine || 'Biryani',
-                            status: 'Approved',
-                            image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800"
-                        });
-                    }
-                    localStorage.setItem('noshahi_all_restaurants', JSON.stringify(restaurants));
-
-                    // Add to Auth storage for login
-                    let sellerAuth = JSON.parse(localStorage.getItem('noshahi_seller_auth') || '[]');
-                    // Remove if already exists to prevent duplicates
-                    sellerAuth = sellerAuth.filter(s => s.email.toLowerCase() !== email.toLowerCase());
-                    sellerAuth.push({ email, password: pass, restaurantId: currentAppId });
-                    localStorage.setItem('noshahi_seller_auth', JSON.stringify(sellerAuth));
+                    // Sync system data
+                    syncSellerToSystem(apps[appIndex], email, pass);
 
                     // SUCCESS
                     alert('✅ Restaurant Approved! Your credentials have been sent to ' + email);
