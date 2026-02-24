@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Map stored restaurants (from dashboard) to homepage format
         const mappedStored = stored.map((res, index) => {
             return {
-                id: `stored-${index}`,
+                id: res.id,
                 name: res.name,
                 categories: res.cuisine || "Multi-cuisine",
                 rating: res.rating || "4.5",
@@ -252,12 +252,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryFilter = params.get('category');
 
     if (categoryFilter) {
+        const lowerFilter = categoryFilter.toLowerCase();
         // FILTERED VIEW: Show items
-        const matchingRestaurants = restaurants.filter(r => r.categories.includes(categoryFilter));
+        const matchingRestaurants = restaurants.filter(r =>
+            r.categories.toLowerCase().includes(lowerFilter)
+        );
 
         // 1. Get products from localStorage added by restaurants
         const storedProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
-        const filteredStored = storedProducts.filter(p => p.category === categoryFilter);
+        const filteredStored = storedProducts.filter(p =>
+            (p.category && p.category.toLowerCase().includes(lowerFilter)) ||
+            (p.name && p.name.toLowerCase().includes(lowerFilter))
+        );
 
         // 2. Generate hardcoded items (fallback/variety)
         const generatedItems = matchingRestaurants.flatMap(res => {
@@ -365,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: p.name,
                 price: `Rs. ${p.price}`,
                 restaurant: p.restaurant,
-                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop", // Default food img
+                image: p.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop",
                 resId: p.resId,
                 rating: "5.0"
             })),
@@ -377,10 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (titleElem) titleElem.innerText = `Top ${categoryFilter} Nearby`;
 
         // Hide other sections
-        const newSec = document.getElementById('restaurant-grid-new')?.closest('section');
-        const offerSec = document.getElementById('restaurant-grid-offers')?.closest('section');
-        if (newSec) newSec.style.display = 'none';
-        if (offerSec) offerSec.style.display = 'none';
+        // Render the filtered grid
 
         renderGrid('restaurant-grid', itemData, true);
 
@@ -389,15 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
 
     } else {
-        // DEFAULT VIEW: Show all sections
+        // DEFAULT VIEW: Show main restaurants
         renderGrid('restaurant-grid', restaurants, false);
-
-        // New Arrivals (Last 4)
-        renderGrid('restaurant-grid-new', restaurants.slice(-4), false);
-
-        // Best Offers (Has 'offer' text)
-        const offers = restaurants.filter(r => r.offer && r.offer !== "");
-        renderGrid('restaurant-grid-offers', offers, false);
     }
 
     // --- Search Interaction ---
@@ -412,25 +408,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => searchInput.classList.remove('is-invalid'), 1000);
             } else {
                 // Filter restaurants based on name or category
-                const filtered = restaurants.filter(r => 
-                    r.name.toLowerCase().includes(val) || 
+                const filteredRes = restaurants.filter(r =>
+                    r.name.toLowerCase().includes(val) ||
                     r.categories.toLowerCase().includes(val)
                 );
-                
+
+                // Also search in items
+                const allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+                const filteredProducts = allProducts.filter(p =>
+                    p.name.toLowerCase().includes(val) ||
+                    p.category.toLowerCase().includes(val)
+                ).map(p => ({
+                    name: p.name,
+                    price: `Rs. ${p.price}`,
+                    restaurant: p.restaurant,
+                    image: p.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop",
+                    resId: p.resId,
+                    rating: "5.0"
+                }));
+
                 // Update grid title
                 const titleElem = document.querySelector('.restaurant-section h2');
                 if (titleElem) titleElem.innerText = `Search Results for "${val}"`;
 
+                // If we have items matching, show items. If only restaurants, show restaurants.
+                if (filteredProducts.length > 0) {
+                    renderGrid('restaurant-grid', filteredProducts, true);
+                } else {
+                    renderGrid('restaurant-grid', filteredRes, false);
+                }
+
                 // Scroll to grid
                 document.getElementById('restaurant-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                renderGrid('restaurant-grid', filtered, false);
-                
-                // Hide other sections if searching
-                const newSec = document.getElementById('restaurant-grid-new')?.closest('section');
-                const offerSec = document.getElementById('restaurant-grid-offers')?.closest('section');
-                if (newSec) newSec.style.display = 'none';
-                if (offerSec) offerSec.style.display = 'none';
+            }
+        });
+    }
+
+    // --- Hero Search "Find Food" Button ---
+    const heroFindBtn = document.querySelector('.hero-content .btn-brand-red');
+    const heroInput = document.querySelector('.hero-content .form-control');
+    if (heroFindBtn) {
+        heroFindBtn.addEventListener('click', () => {
+            const val = heroInput.value.trim();
+            if (val) {
+                searchInput.value = val;
+                searchBtn.click();
+            } else {
+                document.getElementById('restaurant-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         });
     }
@@ -517,5 +541,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initial population
-    updateCart();
+    setTimeout(updateCart, 100);
 });

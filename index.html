@@ -32,7 +32,7 @@
             <div class="d-flex align-items-center order-lg-3">
                 <a href="login.html" class="nav-btn-link d-none d-md-block">Login</a>
                 <a href="signup.html" class="btn btn-brand-red ms-3">Sign up</a>
-                <a href="#" class="cart-icon ms-3">
+                <a href="javascript:void(0)" class="cart-icon ms-3" onclick="toggleCart()">
                     <i class="fa-solid fa-basket-shopping"></i>
                     <span class="cart-badge">0</span>
                 </a>
@@ -47,7 +47,7 @@
                     <!-- Mobile Menu Items -->
                     <li class="nav-item d-lg-none"><a href="seller-onboarding.html" class="nav-link"><i
                                 class="fa-solid fa-store me-2"></i>Join as Seller</a></li>
-                    <li class="nav-item d-lg-none"><a href="partner-rider.html" class="nav-link"><i
+                    <li class="nav-item d-lg-none"><a href="rider-application.html" class="nav-link"><i
                                 class="fa-solid fa-motorcycle me-2"></i>Join as Rider</a></li>
                     <li class="nav-item d-lg-none">
                         <hr class="dropdown-divider">
@@ -123,47 +123,11 @@
                     <h2 class="fw-bold mb-1">Popular Restaurants</h2>
                     <p class="text-muted">High rated restaurants near you</p>
                 </div>
-                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
+                <a href="index.html" class="text-brand-red fw-bold text-decoration-none">See all restaurants <i
                         class="fa-solid fa-arrow-right ms-1"></i></a>
             </div>
 
             <div class="row g-4" id="restaurant-grid">
-                <!-- Dynamically Populated -->
-            </div>
-        </div>
-    </section>
-
-    <!-- New Arrivals Section -->
-    <section class="restaurant-section py-5 bg-light-subtle">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-end mb-4">
-                <div>
-                    <h2 class="fw-bold mb-1">New on Noshahi Panda</h2>
-                    <p class="text-muted">Explore our latest additions</p>
-                </div>
-                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
-                        class="fa-solid fa-arrow-right ms-1"></i></a>
-            </div>
-
-            <div class="row g-4" id="restaurant-grid-new">
-                <!-- Dynamically Populated -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Best Offers Section -->
-    <section class="restaurant-section py-5 bg-white">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-end mb-4">
-                <div>
-                    <h2 class="fw-bold mb-1">Best Food Offers</h2>
-                    <p class="text-muted">Save big on your favorite meals</p>
-                </div>
-                <a href="#" class="text-brand-red fw-bold text-decoration-none">See all <i
-                        class="fa-solid fa-arrow-right ms-1"></i></a>
-            </div>
-
-            <div class="row g-4" id="restaurant-grid-offers">
                 <!-- Dynamically Populated -->
             </div>
         </div>
@@ -231,11 +195,11 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="fw-bold mb-4">Top Cuisines</h6>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Pizza</a></li>
-                        <li><a href="#">Burgers</a></li>
-                        <li><a href="#">Chinese</a></li>
-                        <li><a href="#">Italian</a></li>
-                        <li><a href="#">Street Food</a></li>
+                        <li><a href="index.html?category=Pizza">Pizza</a></li>
+                        <li><a href="index.html?category=Burgers">Burgers</a></li>
+                        <li><a href="index.html?category=Chinese">Chinese</a></li>
+                        <li><a href="index.html?category=Pasta">Pasta</a></li>
+                        <li><a href="index.html?category=Asian">Street Food</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
@@ -285,8 +249,10 @@
                 <div class="menu-section mb-4">
                     <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Discover</h6>
                     <a href="index.html" class="menu-link active"><i class="fa-solid fa-house me-3"></i> Home</a>
-                    <a href="#" class="menu-link"><i class="fa-solid fa-percent me-3"></i> Top Offers</a>
-                    <a href="#" class="menu-link"><i class="fa-solid fa-utensils me-3"></i> All Cuisines</a>
+                    <a href="index.html?category=Healthy" class="menu-link"><i class="fa-solid fa-percent me-3"></i> Top
+                        Offers</a>
+                    <a href="index.html#restaurant-grid" class="menu-link"><i class="fa-solid fa-utensils me-3"></i> All
+                        Cuisines</a>
                 </div>
 
                 <div class="menu-section mb-4">

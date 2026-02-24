@@ -153,6 +153,57 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
+
+        /* Modern Toggle Switch */
+        .status-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .status-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider-round {
+            background-color: #10b981;
+        }
+
+        input:checked+.slider-round:before {
+            transform: translateX(22px);
+        }
+
+        input:disabled+.slider-round {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -166,14 +217,17 @@
             <h4 class="mb-0 fw-bold">Admin Panel</h4>
         </div>
 
-        <nav>
-            <a href="#" class="admin-nav-item active">
+        <nav id="adminNav">
+            <a href="#" class="admin-nav-item active" data-section="section-sellers">
                 <i class="fa-solid fa-users-gear"></i> Seller Approvals
             </a>
-            <a href="#" class="admin-nav-item">
+            <a href="#" class="admin-nav-item" data-section="section-active-merchants">
                 <i class="fa-solid fa-shop"></i> Active Merchants
             </a>
-            <a href="#" class="admin-nav-item">
+            <a href="#" class="admin-nav-item" data-section="section-riders">
+                <i class="fa-solid fa-motorcycle"></i> Rider Fleet
+            </a>
+            <a href="#" class="admin-nav-item" data-section="section-analytics">
                 <i class="fa-solid fa-chart-line"></i> Analytics
             </a>
             <a href="index.html" class="admin-nav-item mt-5 text-danger">
@@ -183,51 +237,100 @@
     </div>
 
     <main class="admin-main">
-        <header class="mb-5 d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="fw-bold h2 mb-1">Seller Management</h1>
-                <p class="text-muted mb-0">Manage and verify restaurant partners</p>
-            </div>
-            <div class="d-flex gap-3">
-                <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
-                    <div class="me-3">
-                        <p class="text-muted small mb-0">Pending</p>
-                        <h4 class="fw-bold mb-0" id="pendingCount">0</h4>
+        <div id="section-sellers" class="admin-section">
+            <header class="mb-5 d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="fw-bold h2 mb-1">Seller Management</h1>
+                    <p class="text-muted mb-0">Manage and verify restaurant partners</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
+                        <div class="me-3">
+                            <p class="text-muted small mb-0">Pending</p>
+                            <h4 class="fw-bold mb-0" id="pendingCount">0</h4>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
+                            <i class="fa-solid fa-clock-rotate-left fs-4"></i>
+                        </div>
                     </div>
-                    <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
-                        <i class="fa-solid fa-clock-rotate-left fs-4"></i>
+                    <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
+                        <div class="me-3">
+                            <p class="text-muted small mb-0">Total Sellers</p>
+                            <h4 class="fw-bold mb-0" id="totalSellersCount">0</h4>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+                            <i class="fa-solid fa-store fs-4"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
-                    <div class="me-3">
-                        <p class="text-muted small mb-0">Total Sellers</p>
-                        <h4 class="fw-bold mb-0" id="totalSellersCount">0</h4>
-                    </div>
-                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
-                        <i class="fa-solid fa-store fs-4"></i>
-                    </div>
-                </div>
-            </div>
-        </header>
+            </header>
 
-        <div class="table-card">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="text-muted small text-uppercase">
-                        <tr>
-                            <th>Seller / Business</th>
-                            <th>Documents</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th class="text-center">Verify</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="applicationTable">
-                        <!-- Dynamic Rows -->
-                    </tbody>
-                </table>
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-muted small text-uppercase">
+                            <tr>
+                                <th>Seller / Business</th>
+                                <th>Documents</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Manage Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationTable">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>
+
+        <!-- NEW SECTION: RIDERS -->
+        <div id="section-riders" class="admin-section" style="display: none;">
+            <header class="mb-5 d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="fw-bold h2 mb-1">Rider Fleet</h1>
+                    <p class="text-muted mb-0">Manage and track delivery partners</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="stat-card bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center mb-0">
+                        <div class="me-3">
+                            <p class="text-muted small mb-0">Active Riders</p>
+                            <h4 class="fw-bold mb-0" id="activeRidersCount">0</h4>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success">
+                            <i class="fa-solid fa-motorcycle fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-muted small text-uppercase">
+                            <tr>
+                                <th>Rider Name</th>
+                                <th>Vehicle</th>
+                                <th>ID / Documents</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Manage Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="riderTable">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLACEHOLDER FOR OTHER SECTIONS -->
+        <div id="section-active-merchants" class="admin-section" style="display: none;">
+            <div class="p-5 text-center text-muted">Active Merchants view is coming soon</div>
+        </div>
+        <div id="section-analytics" class="admin-section" style="display: none;">
+            <div class="p-5 text-center text-muted">Analytics view is coming soon</div>
         </div>
     </main>
 
@@ -372,37 +475,20 @@
                 const tr = document.createElement('tr');
 
                 let statusBadge = '';
-                if (app.status === 'Pending') statusBadge = '<span class="badge-pending">Pending Review</span>';
-                else if (app.status === 'Approved') statusBadge = '<span class="badge-active">Active</span>';
-                else if (app.status === 'Suspended') statusBadge = '<span class="badge-suspended">Suspended</span>';
+                const isActive = app.status === 'Approved';
+                const isSuspended = app.status === 'Suspended';
+                const isPending = app.status === 'Pending';
 
-                let verifyTd = '';
-                if (app.status === 'Pending') {
-                    verifyTd = `<input type="checkbox" class="verify-check" onclick="quickVerify(${app.id})" title="Verify & Activate Seller">`;
-                } else {
-                    verifyTd = `<i class="fa-solid fa-circle-check text-success fs-5"></i>`;
-                }
+                if (isPending) statusBadge = '<span class="badge-pending">Pending Review</span>';
+                else if (isActive) statusBadge = '<span class="badge-active">Active</span>';
+                else if (isSuspended) statusBadge = '<span class="badge-suspended">Suspended</span>';
 
-                let actionsTd = '';
-                if (app.status === 'Pending') {
-                    actionsTd = `
-                        <button class="btn-approve" onclick="openReviewModal(${app.id})">
-                            Review & Approve
-                        </button>
-                    `;
-                } else if (app.status === 'Approved') {
-                    actionsTd = `
-                        <button class="btn-suspend" onclick="toggleSuspension(${app.id}, 'Suspend')">
-                            <i class="fa-solid fa-ban me-1"></i> Suspend
-                        </button>
-                    `;
-                } else if (app.status === 'Suspended') {
-                    actionsTd = `
-                        <button class="btn-activate" onclick="toggleSuspension(${app.id}, 'Activate')">
-                            <i class="fa-solid fa-check me-1"></i> Activate
-                        </button>
-                    `;
-                }
+                const toggleHtml = `
+                    <label class="status-switch">
+                        <input type="checkbox" ${isActive ? 'checked' : ''} onchange="handleStatusToggle(${app.id}, this.checked)">
+                        <span class="slider-round"></span>
+                    </label>
+                `;
 
                 tr.innerHTML = `
                     <td>
@@ -411,9 +497,7 @@
                     </td>
                     <td>
                         <div class="d-flex gap-2">
-                            <div class="doc-preview" title="CNIC: ${app.owner.cnic}"><i class="fa-solid fa-id-card text-primary"></i></div>
-                            <div class="doc-preview" title="NTN: ${app.taxInfo.ntn}"><i class="fa-solid fa-file-invoice text-success"></i></div>
-                            <div class="doc-preview" title="Bank: ${app.bankInfo.name}"><i class="fa-solid fa-building-columns text-info"></i></div>
+                            <div class="doc-preview" onclick="openReviewModal(${app.id})" title="Review Documents"><i class="fa-solid fa-file-shield text-primary"></i></div>
                         </div>
                     </td>
                     <td class="small">
@@ -421,61 +505,65 @@
                         <div class="text-muted">${app.businessInfo.type}</div>
                     </td>
                     <td>${statusBadge}</td>
-                    <td class="text-center">${verifyTd}</td>
-                    <td class="text-end">${actionsTd}</td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex align-items-center justify-content-end gap-3">
+                            <span class="small fw-bold text-muted">${isActive ? 'Active' : (isPending ? 'Approve' : 'Suspended')}</span>
+                            ${toggleHtml}
+                        </div>
+                    </td>
                 `;
                 table.appendChild(tr);
             });
         }
 
-        // Quick verify function for checkbox
-        function quickVerify(id) {
-            if (!confirm('Are you sure you want to verify and activate this seller?')) {
-                renderApplications();
-                return;
-            }
-
+        function handleStatusToggle(id, isChecked) {
             const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
             const appIndex = apps.findIndex(a => a.id === id);
 
-            if (appIndex !== -1) {
-                const app = apps[appIndex];
-                const email = app.owner.email;
-                const password = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+            if (appIndex === -1) return;
+            const app = apps[appIndex];
 
-                // Update status
-                apps[appIndex].status = 'Approved';
-                apps[appIndex].approvedEmail = email;
-                apps[appIndex].approvedPassword = password;
-                localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
-
-                // Sync with Restaurants and Auth (similar to confirmApproval logic)
-                syncSellerToSystem(app, email, password);
-
-                alert('✅ Seller verified and activated successfully!');
-                renderApplications();
+            if (isChecked) {
+                // Approving or Reactivating
+                if (app.status === 'Pending') {
+                    if (confirm(`Accept and Activate "${app.name}"?`)) {
+                        const email = app.owner.email;
+                        const password = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+                        apps[appIndex].status = 'Approved';
+                        apps[appIndex].approvedEmail = email;
+                        apps[appIndex].approvedPassword = password;
+                        localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+                        syncSellerToSystem(apps[appIndex], email, password);
+                        alert('✅ Restaurant activated successfully!');
+                    } else {
+                        renderApplications();
+                        return;
+                    }
+                } else if (app.status === 'Suspended') {
+                    apps[appIndex].status = 'Approved';
+                    localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+                    updateRestaurantStatus(id, 'Approved');
+                }
+            } else {
+                // Suspending
+                if (confirm(`Are you sure you want to SUSPEND "${app.name}"?`)) {
+                    apps[appIndex].status = 'Suspended';
+                    localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+                    updateRestaurantStatus(id, 'Suspended');
+                } else {
+                    renderApplications();
+                    return;
+                }
             }
+            renderApplications();
         }
 
-        function toggleSuspension(id, action) {
-            const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
-            const appIndex = apps.findIndex(a => a.id === id);
-
-            if (appIndex !== -1) {
-                const newStatus = (action === 'Suspend') ? 'Suspended' : 'Approved';
-                apps[appIndex].status = newStatus;
-                localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
-
-                // Update restaurant status too
-                let restaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
-                const resIndex = restaurants.findIndex(r => r.id === id);
-                if (resIndex !== -1) {
-                    restaurants[resIndex].status = newStatus;
-                    localStorage.setItem('noshahi_all_restaurants', JSON.stringify(restaurants));
-                }
-
-                alert(`Seller has been ${newStatus.toLowerCase()}!`);
-                renderApplications();
+        function updateRestaurantStatus(id, status) {
+            let restaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+            const index = restaurants.findIndex(r => r.id === id);
+            if (index !== -1) {
+                restaurants[index].status = status;
+                localStorage.setItem('noshahi_all_restaurants', JSON.stringify(restaurants));
             }
         }
 
@@ -594,9 +682,254 @@
             }, 1500);
         }
 
+        // TAB SWITCHING LOGIC
+        document.querySelectorAll('.admin-nav-item[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-section');
+
+                // Update Nav UI
+                document.querySelectorAll('.admin-nav-item').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Update Section Visibility
+                document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
+                document.getElementById(target).style.display = 'block';
+
+                // Initial data load for sections
+                if (target === 'section-sellers') renderApplications();
+                if (target === 'section-riders') renderRiders();
+            });
+        });
+
+        function renderRiders() {
+            const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+            const table = document.getElementById('riderTable');
+            document.getElementById('activeRidersCount').innerText = riders.filter(r => r.status === 'Active' || !r.status).length;
+
+            table.innerHTML = '';
+            if (riders.length === 0) {
+                table.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">No riders found</td></tr>';
+                return;
+            }
+
+            // Sort: Pending first
+            riders.sort((a, b) => {
+                if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+                if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+                return b.id - a.id;
+            });
+
+            riders.forEach(rider => {
+                const tr = document.createElement('tr');
+                const isActive = rider.status === 'Active';
+                const isPending = rider.status === 'Pending';
+                const isSuspended = rider.status === 'Suspended';
+
+                let statusBadge = '';
+                if (isPending) statusBadge = '<span class="badge-pending">Pending Review</span>';
+                else if (isActive) statusBadge = '<span class="badge-active">Active</span>';
+                else statusBadge = '<span class="badge-suspended">Suspended</span>';
+
+                const profilePic = rider.profilePic
+                    ? `<img src="${rider.profilePic}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #E2E8F0;" class="me-2">`
+                    : `<div style="width:36px;height:36px;border-radius:50%;background:#E2E8F0;display:inline-flex;align-items:center;justify-content:center;" class="me-2"><i class="fa-solid fa-user text-muted small"></i></div>`;
+
+                const toggleHtml = `
+                    <label class="status-switch">
+                        <input type="checkbox" ${isActive ? 'checked' : ''} onchange="handleRiderStatusToggle(${rider.id}, this.checked)">
+                        <span class="slider-round"></span>
+                    </label>
+                `;
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="d-flex align-items-center">
+                            ${profilePic}
+                            <div>
+                                <div class="fw-bold">${rider.name}</div>
+                                <div class="small text-muted">${rider.phone || rider.email || ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="small fw-bold">${rider.vehicle || 'Bike'}</div>
+                        <div class="smaller text-muted">${rider.bikeNumber || rider.cnic || '---'}</div>
+                    </td>
+                    <td>
+                        <div class="doc-preview" onclick="openRiderModal(${rider.id})" title="Review Rider Documents"><i class="fa-solid fa-id-card text-primary"></i></div>
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex align-items-center justify-content-end gap-3">
+                            <span class="small fw-bold text-muted">${isActive ? 'Active' : (isPending ? 'Approve' : 'Suspended')}</span>
+                            ${toggleHtml}
+                        </div>
+                    </td>
+                `;
+                table.appendChild(tr);
+            });
+        }
+
+        function handleRiderStatusToggle(id, isChecked) {
+            let riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+            const index = riders.findIndex(r => r.id === id);
+
+            if (index !== -1) {
+                const rider = riders[index];
+
+                if (isChecked) {
+                    if (!confirm(`Activate rider "${rider.name}"?`)) { renderRiders(); return; }
+                    riders[index].status = 'Active';
+                    localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+                    alert(`✅ Rider "${rider.name}" is now Active!`);
+                } else {
+                    if (!confirm(`SUSPEND rider "${rider.name}"?`)) { renderRiders(); return; }
+                    riders[index].status = 'Suspended';
+                    localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+                    alert(`⚠️ Rider "${rider.name}" has been Suspended.`);
+                }
+                renderRiders();
+            }
+        }
+
+        function openRiderModal(id) {
+            const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+            const rider = riders.find(r => r.id === id);
+            if (!rider) return;
+
+            document.getElementById('rModal-name').innerText = rider.name;
+            document.getElementById('rModal-sub').innerText = `${rider.city || ''} • ${rider.vehicle || 'Bike'} • ${rider.bikeNumber || '---'}`;
+            document.getElementById('rModal-email').innerText = rider.email || '---';
+            document.getElementById('rModal-phone').innerText = rider.phone || '---';
+            document.getElementById('rModal-cnic').innerText = rider.cnic || '---';
+            document.getElementById('rModal-license').innerText = rider.license || '---';
+            document.getElementById('rModal-city').innerText = rider.city || '---';
+            document.getElementById('rModal-date').innerText = rider.date || '---';
+
+            // Profile Picture
+            const profileWrap = document.getElementById('rModal-profilePic');
+            profileWrap.src = rider.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(rider.name)}&background=D70F64&color=fff&size=120`;
+
+            // Document images
+            const cnicImg = document.getElementById('rModal-cnicImg');
+            const licenseImg = document.getElementById('rModal-licenseImg');
+            cnicImg.src = rider.cnicImage || '';
+            cnicImg.style.display = rider.cnicImage ? 'block' : 'none';
+            document.getElementById('rModal-cnicNoImg').style.display = rider.cnicImage ? 'none' : 'block';
+
+            licenseImg.src = rider.licenseImage || '';
+            licenseImg.style.display = rider.licenseImage ? 'block' : 'none';
+            document.getElementById('rModal-licenseNoImg').style.display = rider.licenseImage ? 'none' : 'block';
+
+            // Approve button state
+            const approveBtn = document.getElementById('rModal-approveBtn');
+            if (rider.status === 'Active') {
+                approveBtn.textContent = 'Already Active';
+                approveBtn.disabled = true;
+            } else {
+                approveBtn.textContent = '✅ Approve & Activate Rider';
+                approveBtn.disabled = false;
+                approveBtn.onclick = () => approveRider(id);
+            }
+
+            new bootstrap.Modal(document.getElementById('riderReviewModal')).show();
+        }
+
+        function approveRider(id) {
+            let riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+            const index = riders.findIndex(r => r.id === id);
+            if (index === -1) return;
+
+            if (!confirm(`Activate rider "${riders[index].name}"?`)) return;
+            riders[index].status = 'Active';
+            localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+
+            bootstrap.Modal.getInstance(document.getElementById('riderReviewModal')).hide();
+            alert(`✅ Rider "${riders[index].name}" has been Activated!`);
+            renderRiders();
+        }
+
         // Initialize
         renderApplications();
+        renderRiders();
     </script>
+
+    <!-- ===== RIDER REVIEW MODAL ===== -->
+    <div class="modal fade" id="riderReviewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 22px; overflow:hidden;">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <img id="rModal-profilePic" src="" alt=""
+                            style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #f1f5f9;">
+                        <div>
+                            <h5 class="fw-bold mb-0" id="rModal-name">Rider Name</h5>
+                            <p class="text-muted small mb-0" id="rModal-sub"></p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <!-- Contact Info -->
+                    <div class="bg-light rounded-4 p-3 mb-4">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="smaller text-muted">Email</div>
+                                <div class="fw-bold small" id="rModal-email">---</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="smaller text-muted">Phone</div>
+                                <div class="fw-bold small" id="rModal-phone">---</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="smaller text-muted">City</div>
+                                <div class="fw-bold small" id="rModal-city">---</div>
+                            </div>
+                            <div class="col-4">
+                                <div class="smaller text-muted">Applied On</div>
+                                <div class="fw-bold small" id="rModal-date">---</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents -->
+                    <h6 class="fw-bold text-uppercase small text-muted mb-3">Identity Documents</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 text-center">
+                                <div class="small fw-bold text-muted mb-1">CNIC (<span id="rModal-cnic">---</span>)
+                                </div>
+                                <img id="rModal-cnicImg" src="" alt="CNIC"
+                                    style="width:100%; max-height:130px; object-fit:cover; border-radius:10px;">
+                                <div id="rModal-cnicNoImg" class="text-muted small py-3"><i
+                                        class="fa-solid fa-image fa-xl opacity-25 d-block mb-2"></i>No image uploaded
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded-4 p-3 text-center">
+                                <div class="small fw-bold text-muted mb-1">License (<span
+                                        id="rModal-license">---</span>)</div>
+                                <img id="rModal-licenseImg" src="" alt="License"
+                                    style="width:100%; max-height:130px; object-fit:cover; border-radius:10px;">
+                                <div id="rModal-licenseNoImg" class="text-muted small py-3"><i
+                                        class="fa-solid fa-image fa-xl opacity-25 d-block mb-2"></i>No image uploaded
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success px-4 rounded-3 fw-bold" id="rModal-approveBtn">✅
+                        Approve & Activate Rider</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

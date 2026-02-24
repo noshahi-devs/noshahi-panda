@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Application | Noshahi Panda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #D70F64;
+            --brand-dark: #0f172a;
+            --admin-blue: #2563eb;
+            --success-green: #10b981;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: white;
+        }
+
+        .tracker-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 650px;
+            color: var(--brand-dark);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--brand-red);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 900;
+            box-shadow: 0 10px 20px rgba(215, 15, 100, 0.2);
+        }
+
+        .header-title {
+            text-align: center;
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+        }
+
+        /* --- Search Area --- */
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            padding-right: 4rem;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--brand-red);
+            background: white;
+            box-shadow: 0 0 0 5px rgba(215, 15, 100, 0.1);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--brand-red);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(215, 15, 100, 0.3);
+        }
+
+        /* --- Timeline --- */
+        .status-container {
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rider-profile {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .rider-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .rider-info h6 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .rider-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 50px;
+            margin-left: 10px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 4px;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -50px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            transition: all 0.4s;
+            z-index: 2;
+        }
+
+        .timeline-item.active::after {
+            background: var(--brand-red);
+            border-color: rgba(215, 15, 100, 0.2);
+            box-shadow: 0 0 0 5px rgba(215, 15, 100, 0.1);
+            width: 16px;
+            height: 16px;
+            left: -51px;
+        }
+
+        .timeline-item.completed::after {
+            background: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        /* Success tick icon when completed */
+        .timeline-item.completed::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: -47px;
+            top: 5px;
+            font-size: 8px;
+            color: white;
+            z-index: 3;
+        }
+
+        .timeline-item h6 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            color: #475569;
+        }
+
+        .timeline-item.active h6 {
+            color: var(--brand-red);
+        }
+
+        .timeline-item.completed h6 {
+            color: var(--success-green);
+        }
+
+        .timeline-item p {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .active-timeline-bar {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 4px;
+            background: var(--success-green);
+            z-index: 1;
+            transition: height 0.6s ease;
+            height: 0;
+            border-radius: 4px;
+        }
+
+        .status-badge-lg {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .bg-pending-light {
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+        .bg-success-light {
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .bg-danger-light {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .btn-return {
+            margin-top: 2rem;
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-return:hover {
+            background: #f1f5f9;
+            color: var(--brand-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tracker-card">
+        <div class="brand-logo">P</div>
+        <h1 class="header-title">Application Status</h1>
+        <p class="header-subtitle">Check where your journey with Noshahi Panda stands.</p>
+
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchVal" placeholder="Enter Email or Phone Number"
+                onkeypress="if(event.key==='Enter') trackApplication()">
+            <button class="search-btn" onclick="trackApplication()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+
+        <!-- Result View -->
+        <div id="statusResult" class="status-container">
+            <div class="rider-profile">
+                <img id="riderImg" src="" alt="Rider" class="rider-avatar">
+                <div class="rider-info">
+                    <h6 id="riderName">Ali Ahmed</h6>
+                    <p id="riderSub">LHR-6789 • Motorbike</p>
+                </div>
+                <div class="ms-auto">
+                    <span id="finalDate" class="small text-muted">Applied: ---</span>
+                </div>
+            </div>
+
+            <div class="position-relative">
+                <div class="timeline" id="timeline">
+                    <div class="active-timeline-bar" id="activeBar"></div>
+
+                    <div class="timeline-item" id="step-1">
+                        <h6>Application Submitted</h6>
+                        <p>We've received your details and documents.</p>
+                    </div>
+
+                    <div class="timeline-item" id="step-2">
+                        <h6>Document Verification</h6>
+                        <p>Our team is verifying your CNIC and License photos.</p>
+                    </div>
+
+                    <div class="timeline-item" id="step-3">
+                        <h6>Background Check</h6>
+                        <p>Standard safety and vehicle check in progress.</p>
+                    </div>
+
+                    <div class="timeline-item" id="step-4">
+                        <h6>Final Decision</h6>
+                        <p>Your account will be activated or rejected soon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="statusBadge" class="status-badge-lg">
+                <!-- Dynamic Badge -->
+            </div>
+
+            <a href="login.html" id="actionBtn" class="btn btn-primary mt-4 w-100 rounded-4 py-3 fw-bold d-none">
+                Proceed to Dashboard &nbsp;<i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <button class="btn-return" onclick="resetSearch()"><i class="fa-solid fa-arrow-left me-2"></i> Search
+                Another</button>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <p>No application found with these details.</p>
+            <button class="btn btn-link text-decoration-none fw-bold" style="color:var(--brand-red)"
+                onclick="window.location.href='rider-application.html'">Apply Now as a Rider</button>
+        </div>
+    </div>
+
+    <script>
+        function trackApplication() {
+            const input = document.getElementById('searchVal').value.trim().toLowerCase();
+            if (!input) {
+                alert('Please enter your email or phone number.');
+                return;
+            }
+
+            const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+            const rider = riders.find(r =>
+                (r.email && r.email.toLowerCase() === input) ||
+                (r.phone && r.phone === input)
+            );
+
+            const resultDiv = document.getElementById('statusResult');
+            const emptyDiv = document.getElementById('emptyState');
+
+            if (!rider) {
+                resultDiv.style.display = 'none';
+                emptyDiv.style.display = 'block';
+                return;
+            }
+
+            // Rider Found - Populate UI
+            emptyDiv.style.display = 'none';
+            resultDiv.style.display = 'block';
+
+            document.getElementById('riderName').innerText = rider.name;
+            document.getElementById('riderSub').innerText = `${rider.bikeNumber || 'No Number'} • ${rider.vehicle || 'Rider'}`;
+            document.getElementById('finalDate').innerText = `Applied: ${rider.date || '---'}`;
+            document.getElementById('riderImg').src = rider.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(rider.name)}&background=D70F64&color=fff&size=100`;
+
+            const status = rider.status || 'Pending';
+            updateTimeline(status);
+        }
+
+        function updateTimeline(status) {
+            const steps = [
+                document.getElementById('step-1'),
+                document.getElementById('step-2'),
+                document.getElementById('step-3'),
+                document.getElementById('step-4')
+            ];
+            const activeBar = document.getElementById('activeBar');
+            const badge = document.getElementById('statusBadge');
+            const actionBtn = document.getElementById('actionBtn');
+
+            // Reset
+            steps.forEach(s => s.className = 'timeline-item');
+            badge.className = 'status-badge-lg';
+            actionBtn.classList.add('d-none');
+
+            if (status === 'Pending') {
+                steps[0].classList.add('completed');
+                steps[1].classList.add('active');
+                activeBar.style.height = '15%';
+                badge.classList.add('bg-pending-light');
+                badge.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> &nbsp; Application Pending Review';
+            }
+            else if (status === 'Active' || status === 'Approved') {
+                steps[0].classList.add('completed');
+                steps[1].classList.add('completed');
+                steps[2].classList.add('completed');
+                steps[3].classList.add('completed');
+                steps[3].classList.add('active'); // Final step active
+                activeBar.style.height = '100%';
+                badge.classList.add('bg-success-light');
+                badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> &nbsp; Application Approved!';
+                actionBtn.classList.remove('d-none');
+            }
+            else if (status === 'Suspended') {
+                steps[0].classList.add('completed');
+                steps[1].classList.add('completed');
+                steps[2].classList.add('active');
+                activeBar.style.height = '85%';
+                badge.classList.add('bg-danger-light');
+                badge.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> &nbsp; Account Suspended';
+            }
+            else if (status === 'Rejected') {
+                steps[0].classList.add('completed');
+                steps[1].classList.add('completed');
+                steps[2].classList.add('completed');
+                steps[2].classList.add('active');
+                activeBar.style.height = '85%';
+                badge.classList.add('bg-danger-light');
+                badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> &nbsp; Application Rejected';
+            }
+        }
+
+        function resetSearch() {
+            document.getElementById('statusResult').style.display = 'none';
+            document.getElementById('searchVal').value = '';
+            document.getElementById('searchVal').focus();
+        }
+
+        // Auto-fill from URL if parameter exists (optional future feature)
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const q = params.get('q');
+            if (q) {
+                document.getElementById('searchVal').value = q;
+                trackApplication();
+            }
+        }
+    </script>
+</body>
+
+</html>

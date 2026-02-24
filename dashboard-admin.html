@@ -143,6 +143,72 @@
             position: relative;
             overflow: hidden;
         }
+
+        /* Modern Toggle Switch */
+        .status-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .status-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider-round {
+            background-color: #10b981;
+        }
+
+        input:checked+.slider-round:before {
+            transform: translateX(22px);
+        }
+
+        input:disabled+.slider-round {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-suspended {
+            background: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
 
@@ -285,7 +351,7 @@
                             <th>Owner</th>
                             <th>Cuisine</th>
                             <th>Status</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th class="text-end pe-4">Manage Status</th>
                         </tr>
                     </thead>
                     <tbody id="master-res-list"></tbody>
@@ -308,8 +374,8 @@
                             <th class="ps-4">Rider</th>
                             <th>Vehicle</th>
                             <th>Salary</th>
-                            <th>Rating</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Manage Status</th>
                         </tr>
                     </thead>
                     <tbody id="master-rider-list"></tbody>
@@ -532,34 +598,166 @@
 
             window.renderRestaurants = () => {
                 const data = getStore('noshahi_all_restaurants');
-                document.getElementById('master-res-list').innerHTML = data.slice().reverse().map((res, i) => `
-                    <tr>
-                        <td class="ps-4"><strong>${res.name}</strong></td>
-                        <td>${res.owner}</td>
-                        <td>${res.cuisine}</td>
-                        <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">${res.status || 'Active'}</span></td>
-                        <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-light border-0 me-1" onclick="viewProfile('restaurant', ${data.length - 1 - i})"><i class="fa-solid fa-briefcase"></i></button>
-                            <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteItem('noshahi_all_restaurants', ${data.length - 1 - i})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                const apps = getStore('noshahi_seller_applications');
+
+                document.getElementById('master-res-list').innerHTML = data.slice().reverse().map((res, i) => {
+                    const originalIndex = data.length - 1 - i;
+
+                    // Find owner if undefined
+                    let ownerName = res.owner;
+                    if (!ownerName || ownerName === 'undefined') {
+                        const app = apps.find(a => a.id === res.id);
+                        if (app) ownerName = `${app.owner.firstName} ${app.owner.lastName}`;
+                        else ownerName = "N/A";
+                    }
+
+                    const isActive = res.status === 'Approved' || res.status === 'Active';
+                    const isPending = res.status === 'Pending';
+                    const isSuspended = res.status === 'Suspended';
+
+                    let statusBadge = '';
+                    if (isPending) statusBadge = '<span class="badge badge-pending rounded-pill px-2">Pending</span>';
+                    else if (isActive) statusBadge = '<span class="badge badge-active rounded-pill px-2">Active</span>';
+                    else if (isSuspended) statusBadge = '<span class="badge badge-suspended rounded-pill px-2">Suspended</span>';
+
+                    const toggleHtml = `
+                        <label class="status-switch">
+                            <input type="checkbox" ${isActive ? 'checked' : ''} onchange="handleResStatusToggle(${res.id}, this.checked)">
+                            <span class="slider-round"></span>
+                        </label>
+                    `;
+
+                    return `
+                        <tr>
+                            <td class="ps-4"><strong>${res.name}</strong></td>
+                            <td>${ownerName}</td>
+                            <td>${res.cuisine}</td>
+                            <td>${statusBadge}</td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex align-items-center justify-content-end gap-3">
+                                    <span class="small fw-bold text-muted">${isActive ? 'Active' : (isPending ? 'Approve' : 'Suspended')}</span>
+                                    ${toggleHtml}
+                                    <button class="btn btn-sm btn-outline-danger border-0 ms-2" onclick="deleteItem('noshahi_all_restaurants', ${originalIndex})"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            window.handleResStatusToggle = (id, isChecked) => {
+                let restaurants = getStore('noshahi_all_restaurants');
+                let apps = getStore('noshahi_seller_applications');
+                const resIndex = restaurants.findIndex(r => r.id === id);
+                const appIndex = apps.findIndex(a => a.id === id);
+
+                if (resIndex === -1) return;
+                const restaurant = restaurants[resIndex];
+
+                if (isChecked) {
+                    if (restaurant.status === 'Pending') {
+                        if (confirm(`Accept and Activate "${restaurant.name}"?`)) {
+                            restaurants[resIndex].status = 'Approved';
+                            if (appIndex !== -1) {
+                                apps[appIndex].status = 'Approved';
+                                // Generate credentials if missing
+                                if (!apps[appIndex].approvedEmail) {
+                                    apps[appIndex].approvedEmail = apps[appIndex].owner.email;
+                                    apps[appIndex].approvedPassword = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+
+                                    // Add to Auth storage
+                                    let sellerAuth = getStore('noshahi_seller_auth');
+                                    sellerAuth.push({
+                                        email: apps[appIndex].approvedEmail,
+                                        password: apps[appIndex].approvedPassword,
+                                        restaurantId: id
+                                    });
+                                    setStore('noshahi_seller_auth', sellerAuth);
+                                }
+                            }
+                            alert('✅ Restaurant activated successfully!');
+                        } else {
+                            renderRestaurants();
+                            return;
+                        }
+                    } else {
+                        restaurants[resIndex].status = 'Approved';
+                        if (appIndex !== -1) apps[appIndex].status = 'Approved';
+                    }
+                } else {
+                    if (confirm(`Are you sure you want to SUSPEND "${restaurant.name}"?`)) {
+                        restaurants[resIndex].status = 'Suspended';
+                        if (appIndex !== -1) apps[appIndex].status = 'Suspended';
+                    } else {
+                        renderRestaurants();
+                        return;
+                    }
+                }
+
+                setStore('noshahi_all_restaurants', restaurants);
+                setStore('noshahi_seller_applications', apps);
+                renderRestaurants();
+                renderAll();
             };
 
             window.renderRiders = () => {
                 const data = getStore('noshahi_all_riders');
-                document.getElementById('master-rider-list').innerHTML = data.slice().reverse().map((r, i) => `
-                    <tr>
-                        <td class="ps-4"><strong>${r.name}</strong></td>
-                        <td>${r.vehicle}</td>
-                        <td>Rs. ${parseInt(r.salary || 25000).toLocaleString()}</td>
-                        <td><i class="fa-solid fa-star text-warning me-1"></i>${r.rating || '5.0'}</td>
-                        <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-light border-0 me-1" onclick="viewProfile('rider', ${data.length - 1 - i})"><i class="fa-solid fa-id-card"></i></button>
-                            <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteItem('noshahi_all_riders', ${data.length - 1 - i})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                document.getElementById('master-rider-list').innerHTML = data.slice().reverse().map((r, i) => {
+                    const originalIndex = data.length - 1 - i;
+                    const isActive = r.status === 'Active' || r.status === 'Approved' || !r.status;
+                    const isSuspended = r.status === 'Suspended' || r.status === 'Inactive';
+
+                    const statusBadge = isActive
+                        ? '<span class="badge badge-active rounded-pill px-2">Active</span>'
+                        : '<span class="badge badge-suspended rounded-pill px-2">Suspended</span>';
+
+                    const toggleHtml = `
+                        <label class="status-switch">
+                            <input type="checkbox" ${isActive ? 'checked' : ''} onchange="handleRiderStatusToggle(${r.id}, this.checked)">
+                            <span class="slider-round"></span>
+                        </label>
+                    `;
+
+                    return `
+                        <tr>
+                            <td class="ps-4"><strong>${r.name}</strong></td>
+                            <td>${r.vehicle}</td>
+                            <td>Rs. ${parseInt(r.salary || 25000).toLocaleString()}</td>
+                            <td>${statusBadge}</td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex align-items-center justify-content-end gap-3">
+                                    <span class="small fw-bold text-muted">${isActive ? 'Active' : 'Suspended'}</span>
+                                    ${toggleHtml}
+                                    <button class="btn btn-sm btn-outline-danger border-0 ms-2" onclick="deleteItem('noshahi_all_riders', ${originalIndex})"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            window.handleRiderStatusToggle = (id, isChecked) => {
+                let riders = getStore('noshahi_all_riders');
+                const riderIndex = riders.findIndex(r => r.id === id);
+
+                if (riderIndex === -1) return;
+
+                const rider = riders[riderIndex];
+                const newStatus = isChecked ? 'Active' : 'Suspended';
+
+                if (!isChecked) {
+                    if (!confirm(`Are you sure you want to SUSPEND rider "${rider.name}"?`)) {
+                        renderRiders();
+                        return;
+                    }
+                }
+
+                riders[riderIndex].status = newStatus;
+                setStore('noshahi_all_riders', riders);
+
+                alert(`Rider "${rider.name}" is now ${newStatus.toLowerCase()}!`);
+                renderRiders();
+                renderAll();
             };
 
             window.viewProfile = (type, idx) => {

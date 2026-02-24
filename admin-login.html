@@ -65,8 +65,8 @@
             if (activeAdmin || (email === 'admin@noshahipanda.com' && password === 'admin123')) {
                 localStorage.setItem('noshahi_active_admin', JSON.stringify(activeAdmin || { name: 'Super Admin', email }));
 
-                // IMPORTANT: Replace 'dashboard-admin.html' with your actual dashboard filename
-                window.location.href = 'dashboard-admin.html';
+                // IMPORTANT: Use admin-dashboard.html as the primary admin panel
+                window.location.href = 'admin-dashboard.html';
             } else {
                 alert('Invalid Admin credentials. Please try again.');
             }

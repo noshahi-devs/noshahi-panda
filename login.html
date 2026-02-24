@@ -146,6 +146,16 @@
                 const rider = riders.find(r => r.email.toLowerCase() === email && r.password === password);
 
                 if (rider) {
+                    if (rider.status === 'Pending') {
+                        alert('⏳ Your application is still UNDER REVIEW.\n\nYou can track your progress on our Application Tracker page.');
+                        window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
+                        return;
+                    }
+                    if (rider.status === 'Suspended') {
+                        alert('⚠️ Your account has been SUSPENDED.\n\nPlease check the Application Tracker for more details.');
+                        window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
+                        return;
+                    }
                     localStorage.setItem('noshahi_active_rider', JSON.stringify(rider));
                     showSuccess('Welcome, ' + rider.name, 'Redirecting to Rider Dashboard...', 'rider-dashboard.html');
                     return;

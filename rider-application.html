@@ -8,186 +8,699 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
+        :root {
+            --brand-red: #D70F64;
+            --brand-dark: #0f172a;
+            --success-green: #00B14F;
         }
 
-        .application-card {
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            min-height: 100vh;
+            padding: 2.5rem 0;
+        }
+
+        .app-card {
             background: white;
-            border-radius: 30px;
-            padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            max-width: 620px;
             margin: 0 auto;
         }
 
-        .brand-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .brand-logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            border-radius: 15px;
-            display: inline-flex;
+        /* --- Stepper --- */
+        .stepper {
+            display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 2.5rem;
+            gap: 0;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 22px;
+            left: 55%;
+            right: -45%;
+            height: 2px;
+            background: #E2E8F0;
+            z-index: 0;
+            transition: background 0.4s;
+        }
+
+        .step-item.completed:not(:last-child)::after {
+            background: var(--brand-red);
+        }
+
+        .step-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.4s;
+            border: 2px solid #E2E8F0;
+        }
+
+        .step-item.active .step-circle {
+            background: var(--brand-red);
+            color: white;
+            border-color: var(--brand-red);
+            box-shadow: 0 0 0 5px rgba(215, 15, 100, 0.15);
+        }
+
+        .step-item.completed .step-circle {
+            background: var(--brand-red);
+            color: white;
+            border-color: var(--brand-red);
+        }
+
+        .step-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #94A3B8;
+            margin-top: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.4s;
+        }
+
+        .step-item.active .step-label,
+        .step-item.completed .step-label {
+            color: var(--brand-red);
+        }
+
+        /* --- Form Elements --- */
+        .step-pane {
+            display: none;
+        }
+
+        .step-pane.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-heading {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .step-subheading {
+            font-size: 0.9rem;
+            color: #64748B;
+            margin-bottom: 1.75rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #475569;
+            margin-bottom: 0.4rem;
         }
 
         .form-control,
         .form-select {
+            border: 2px solid #E2E8F0;
             border-radius: 12px;
             padding: 0.75rem 1rem;
-            border: 2px solid #e9ecef;
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.1);
+            border-color: var(--brand-red);
+            box-shadow: 0 0 0 4px rgba(215, 15, 100, 0.1);
+            outline: none;
         }
 
-        .btn-submit {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        /* --- Profile Picture Upload --- */
+        .avatar-upload-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #E2E8F0;
+            background: #F8FAFC;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .avatar-preview:hover {
+            border-color: var(--brand-red);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94A3B8;
+            font-size: 0.82rem;
+            gap: 6px;
+        }
+
+        /* --- Document Upload Card --- */
+        .doc-uploader {
+            border: 2px dashed #CBD5E1;
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #F8FAFC;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-uploader:hover {
+            border-color: var(--brand-red);
+            background: rgba(215, 15, 100, 0.03);
+        }
+
+        .doc-uploader.has-file {
+            border-style: solid;
+            border-color: var(--success-green);
+            background: rgba(0, 177, 79, 0.04);
+        }
+
+        .doc-uploader input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .doc-preview-img {
+            width: 100%;
+            max-height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .doc-uploader.has-file .doc-preview-img {
+            display: block;
+        }
+
+        .doc-uploader.has-file .doc-placeholder {
+            display: none;
+        }
+
+        .doc-placeholder .icon-wrap {
+            width: 48px;
+            height: 48px;
+            background: #E2E8F0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            color: #94A3B8;
+            font-size: 1.2rem;
+        }
+
+        .doc-placeholder p {
+            font-size: 0.82rem;
+            color: #94A3B8;
+            margin: 0;
+        }
+
+        .doc-placeholder .action-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+
+        /* --- Vehicles Grid --- */
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-option {
+            border: 2px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #F8FAFC;
+        }
+
+        .vehicle-option:hover {
+            border-color: var(--brand-red);
+            background: rgba(215, 15, 100, 0.04);
+        }
+
+        .vehicle-option.selected {
+            border-color: var(--brand-red);
+            background: rgba(215, 15, 100, 0.08);
+        }
+
+        .vehicle-option .vehicle-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .vehicle-option .vehicle-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        /* --- Buttons --- */
+        .btn-next,
+        .btn-submit-app {
+            background: linear-gradient(135deg, var(--brand-red), #f72585);
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.9rem 2rem;
             border-radius: 15px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1rem;
             width: 100%;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(215, 15, 100, 0.25);
         }
 
-        .btn-submit:hover {
+        .btn-next:hover,
+        .btn-submit-app:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 25px rgba(215, 15, 100, 0.35);
+            color: white;
+        }
+
+        .btn-back {
+            background: #F1F5F9;
+            color: #475569;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            background: #E2E8F0;
+        }
+
+        /* --- Logo --- */
+        .app-logo {
+            width: 52px;
+            height: 52px;
+            background: var(--brand-red);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0 auto 1.5rem;
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
-        <div class="application-card">
-            <div class="brand-header">
-                <div class="brand-logo">
-                    <i class="fa-solid fa-motorcycle fa-2x text-white"></i>
+        <div class="app-card">
+            <div class="app-logo">P</div>
+
+            <!-- ===== STEPPER ===== -->
+            <div class="stepper" id="stepper">
+                <div class="step-item active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Profile</div>
                 </div>
-                <h2 class="fw-bold mb-2">Join as Rider</h2>
-                <p class="text-muted">Earn money delivering food on your schedule!</p>
+                <div class="step-item" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Vehicle</div>
+                </div>
+                <div class="step-item" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Documents</div>
+                </div>
             </div>
 
-            <form id="riderForm">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">First Name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="John" required>
+            <!-- ===== STEP 1: Personal Info ===== -->
+            <div class="step-pane active" id="step-1">
+                <div class="step-heading">Your Profile</div>
+                <p class="step-subheading">Let's start with your basic information and photo.</p>
+
+                <!-- Profile Picture -->
+                <div class="avatar-upload-wrap">
+                    <div class="avatar-preview" onclick="document.getElementById('profilePicInput').click()">
+                        <div class="avatar-placeholder" id="avatarPlaceholder">
+                            <i class="fa-solid fa-camera fa-xl"></i>
+                            <span>Upload Photo</span>
+                        </div>
+                        <img id="avatarPreviewImg" src="" alt=""
+                            style="display:none; width:100%; height:100%; object-fit:cover;">
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Doe" required>
-                    </div>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display:none"
+                        onchange="previewAvatar(this)">
+                    <span class="small text-muted">Profile Picture (Optional)</span>
                 </div>
 
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="e.g. Ali" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="e.g. Ahmed">
+                    </div>
+                </div>
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Email Address</label>
+                    <label class="form-label">Email Address</label>
                     <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Phone Number</label>
+                    <label class="form-label">Phone Number</label>
                     <input type="tel" class="form-control" id="phone" placeholder="+92 300 1234567" required>
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Create a strong password"
-                        required minlength="6">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" placeholder="e.g. Lahore" required>
                 </div>
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password"
+                        placeholder="Create a strong password (min. 6 chars)" required minlength="6">
+                </div>
+                <button class="btn-next" onclick="goToStep(2)">Continue &nbsp;<i
+                        class="fa-solid fa-arrow-right"></i></button>
+                <div class="text-center mt-3 d-flex flex-column gap-2">
+                    <a href="login.html"
+                        style="color: var(--brand-red); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Already
+                        have an account? Login</a>
+                    <a href="rider-status.html"
+                        style="color: var(--brand-dark); text-decoration: none; font-weight: 600; font-size: 0.85rem; opacity: 0.7;">Applied
+                        already? <span style="color: var(--brand-red)">Track Application</span></a>
+                </div>
+            </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">City</label>
-                    <input type="text" class="form-control" id="city" placeholder="Lahore" required>
-                </div>
+            <!-- ===== STEP 2: Vehicle Info ===== -->
+            <div class="step-pane" id="step-2">
+                <div class="step-heading">Your Vehicle</div>
+                <p class="step-subheading">Select your vehicle type and enter your bike/plate number.</p>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Vehicle Type</label>
-                    <select class="form-select" id="vehicle" required>
-                        <option value="">Select Vehicle</option>
-                        <option value="Motorbike">Motorbike</option>
-                        <option value="Bicycle">Bicycle</option>
-                        <option value="Car">Car</option>
-                    </select>
+                <label class="form-label mb-2">Vehicle Type</label>
+                <div class="vehicle-grid">
+                    <div class="vehicle-option selected" onclick="selectVehicle(this, 'Motorbike')">
+                        <span class="vehicle-icon">🏍️</span>
+                        <div class="vehicle-label">Motorbike</div>
+                    </div>
+                    <div class="vehicle-option" onclick="selectVehicle(this, 'Bicycle')">
+                        <span class="vehicle-icon">🚲</span>
+                        <div class="vehicle-label">Bicycle</div>
+                    </div>
+                    <div class="vehicle-option" onclick="selectVehicle(this, 'Car')">
+                        <span class="vehicle-icon">🚗</span>
+                        <div class="vehicle-label">Car</div>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-bold">CNIC Number</label>
-                    <input type="text" class="form-control" id="cnic" placeholder="12345-1234567-1" required>
-                </div>
+                <input type="hidden" id="vehicleType" value="Motorbike">
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Driving License Number</label>
-                    <input type="text" class="form-control" id="license" placeholder="LHR-12345678" required>
+                    <label class="form-label">Vehicle / Bike Number</label>
+                    <input type="text" class="form-control" id="bikeNumber" placeholder="e.g. LHR-6789">
                 </div>
 
-                <button type="submit" class="btn btn-submit">
-                    <i class="fa-solid fa-motorcycle me-2"></i>Start Earning
-                </button>
-
-                <div class="text-center mt-3">
-                    <a href="login.html" class="fw-bold"
-                        style="color: #3b82f6; text-decoration: none; font-size: 1rem;">Already have an account?
-                        Login</a>
+                <div class="d-flex gap-3">
+                    <button class="btn-back flex-shrink-0" onclick="goToStep(1)"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <button class="btn-next" onclick="goToStep(3)">Continue &nbsp;<i
+                            class="fa-solid fa-arrow-right"></i></button>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+
+            <!-- ===== STEP 3: Documents ===== -->
+            <div class="step-pane" id="step-3">
+                <div class="step-heading">ID Documents</div>
+                <p class="step-subheading">Upload clear photos of your CNIC and Driving License for verification.</p>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-12">
+                        <label class="form-label">CNIC Number</label>
+                        <input type="text" class="form-control" id="cnic" placeholder="00000-0000000-0" required>
+                    </div>
+                </div>
+
+                <!-- CNIC Upload -->
+                <div class="mb-4">
+                    <label class="form-label">CNIC Photo</label>
+                    <div class="doc-uploader" id="cnicUploader">
+                        <input type="file" accept="image/*"
+                            onchange="previewDoc(this, 'cnicUploader', 'cnicPreview', 'cnicData')">
+                        <div class="doc-placeholder">
+                            <div class="icon-wrap"><i class="fa-solid fa-id-card"></i></div>
+                            <p class="action-text">Upload CNIC Image</p>
+                            <p>Click here or drag & drop • JPG, PNG</p>
+                        </div>
+                        <img id="cnicPreview" class="doc-preview-img" src="" alt="CNIC Preview">
+                    </div>
+                    <input type="hidden" id="cnicData">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Driving License Number</label>
+                    <input type="text" class="form-control" id="license" placeholder="LHR-00000000" required>
+                </div>
+
+                <!-- License Upload -->
+                <div class="mb-4">
+                    <label class="form-label">License Photo</label>
+                    <div class="doc-uploader" id="licenseUploader">
+                        <input type="file" accept="image/*"
+                            onchange="previewDoc(this, 'licenseUploader', 'licensePreview', 'licenseData')">
+                        <div class="doc-placeholder">
+                            <div class="icon-wrap"><i class="fa-solid fa-car-on"></i></div>
+                            <p class="action-text">Upload License Image</p>
+                            <p>Click here or drag & drop • JPG, PNG</p>
+                        </div>
+                        <img id="licensePreview" class="doc-preview-img" src="" alt="License Preview">
+                    </div>
+                    <input type="hidden" id="licenseData">
+                </div>
+
+                <div class="d-flex gap-3 mb-3">
+                    <button class="btn-back flex-shrink-0" onclick="goToStep(2)"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <button class="btn-submit-app" onclick="submitApplication()">
+                        <i class="fa-solid fa-paper-plane me-2"></i>Submit Application
+                    </button>
+                </div>
+                <p class="text-center small text-muted mb-0">
+                    <i class="fa-solid fa-shield-halved me-1 text-success"></i>Your documents are stored securely and
+                    only used for verification.
+                </p>
+            </div>
+
+        </div><!-- /.app-card -->
+    </div><!-- /.container -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('riderForm').addEventListener('submit', (e) => {
-            e.preventDefault();
+        let currentStep = 1;
+        const totalSteps = 3;
 
-            // Get form data
+        // ============ STEPPER NAVIGATION ============
+        function goToStep(step) {
+            if (step > currentStep && !validateStep(currentStep)) return;
+
+            const prev = currentStep;
+            currentStep = step;
+
+            // Update panes
+            document.querySelectorAll('.step-pane').forEach((pane, i) => {
+                pane.classList.toggle('active', i + 1 === step);
+            });
+
+            // Update stepper indicators
+            document.querySelectorAll('.step-item').forEach((item, i) => {
+                const sNum = i + 1;
+                item.classList.remove('active', 'completed');
+                if (sNum < step) {
+                    item.classList.add('completed');
+                    item.querySelector('.step-circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else if (sNum === step) {
+                    item.classList.add('active');
+                    item.querySelector('.step-circle').textContent = sNum;
+                } else {
+                    item.querySelector('.step-circle').textContent = sNum;
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============ VALIDATION ============
+        function validateStep(step) {
+            if (step === 1) {
+                const firstName = document.getElementById('firstName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const city = document.getElementById('city').value.trim();
+                const password = document.getElementById('password').value;
+
+                if (!firstName) { alert('Please enter your first name.'); return false; }
+                if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return false; }
+                if (!phone) { alert('Please enter your phone number.'); return false; }
+                if (!city) { alert('Please enter your city.'); return false; }
+                if (password.length < 6) { alert('Password must be at least 6 characters.'); return false; }
+
+                // Check if email already taken
+                const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+                if (riders.find(r => r.email.toLowerCase() === email.toLowerCase())) {
+                    alert('❌ This email is already registered!');
+                    return false;
+                }
+            }
+
+            if (step === 2) {
+                const bikeNumber = document.getElementById('bikeNumber').value.trim();
+                if (!bikeNumber) { alert('Please enter your vehicle number.'); return false; }
+            }
+
+            if (step === 3) {
+                const cnic = document.getElementById('cnic').value.trim();
+                const license = document.getElementById('license').value.trim();
+                if (!cnic) { alert('Please enter your CNIC number.'); return false; }
+                if (!license) { alert('Please enter your driving license number.'); return false; }
+            }
+
+            return true;
+        }
+
+        // ============ AVATAR PREVIEW ============
+        function previewAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('avatarPlaceholder').style.display = 'none';
+                const img = document.getElementById('avatarPreviewImg');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                window._profilePicData = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // ============ DOCUMENT PREVIEW ============
+        function previewDoc(input, wrapperId, previewId, dataId) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById(dataId).value = e.target.result;
+                document.getElementById(previewId).src = e.target.result;
+                document.getElementById(wrapperId).classList.add('has-file');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // ============ VEHICLE SELECTION ============
+        function selectVehicle(el, type) {
+            document.querySelectorAll('.vehicle-option').forEach(v => v.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('vehicleType').value = type;
+        }
+
+        // ============ SUBMIT APPLICATION ============
+        function submitApplication() {
+            if (!validateStep(3)) return;
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+
             const riderData = {
                 id: Date.now(),
-                name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
-                email: document.getElementById('email').value.toLowerCase(),
-                phone: document.getElementById('phone').value,
+                name: `${firstName} ${lastName}`.trim(),
+                email: document.getElementById('email').value.toLowerCase().trim(),
+                phone: document.getElementById('phone').value.trim(),
                 password: document.getElementById('password').value,
-                city: document.getElementById('city').value,
-                vehicle: document.getElementById('vehicle').value,
-                cnic: document.getElementById('cnic').value,
-                license: document.getElementById('license').value,
+                city: document.getElementById('city').value.trim(),
+                vehicle: document.getElementById('vehicleType').value,
+                bikeNumber: document.getElementById('bikeNumber').value.trim(),
+                cnic: document.getElementById('cnic').value.trim(),
+                license: document.getElementById('license').value.trim(),
+                // Document images as Data URLs
+                profilePic: window._profilePicData || null,
+                cnicImage: document.getElementById('cnicData').value || null,
+                licenseImage: document.getElementById('licenseData').value || null,
                 date: new Date().toLocaleDateString(),
-                status: 'Active', // Auto-approve riders
+                status: 'Pending',
                 rating: '5.0'
             };
 
-            // Save to rider applications
             let riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
-
-            // Check if email already exists
-            if (riders.find(r => r.email === riderData.email)) {
-                alert('❌ This email is already registered!');
-                return;
-            }
-
             riders.push(riderData);
             localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
 
-            // Success message and redirect
-            alert('✅ Account created successfully!\n\nYou can now login with your credentials.');
+            alert('✅ Application Submitted Successfully!\n\nOur team will review your documents and activate your account within 24 hours. You will be notified via email.');
             window.location.href = 'login.html';
-        });
+        }
     </script>
 </body>
 

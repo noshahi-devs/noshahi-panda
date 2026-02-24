@@ -57,7 +57,7 @@
 **Flow:** Login → Master Dashboard
 
 **Files:**
-- `dashboard-master.html` - Super admin control panel
+- `admin-dashboard.html` - Admin control panel
 - `login.html` - Login (redirects to master dashboard)
 
 **Features:**
