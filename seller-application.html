@@ -307,7 +307,7 @@
                 </div>
             </div>
 
-            <form id="multiStepForm">
+            <form id="multiStepForm" novalidate>
                 <!-- Step 1: Legal Registration -->
                 <div class="form-section active" id="step-1">
                     <h4 class="fw-bold mb-4">Legal Registration Details</h4>
@@ -387,11 +387,13 @@
                             <input type="text" class="form-control mb-2" id="cnicNo" placeholder="35201-XXXXXXX-X"
                                 required>
                             <small class="text-muted d-block mb-2">Upload a clear photo of front/back</small>
-                            <div class="file-upload-box" onclick="simulateUpload('cnic')">
+                            <div class="file-upload-box" onclick="document.getElementById('cnicFile').click()">
                                 <i class="fa-solid fa-id-card"></i>
                                 <div class="small fw-bold">Attach CNIC Photo</div>
                                 <div class="text-muted smaller mt-1" id="cnic-status">No file chosen</div>
                             </div>
+                            <input type="file" id="cnicFile" accept="image/*,.pdf" style="display:none"
+                                onchange="showFileName('cnic', this)">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase opacity-75">National Tax Number
@@ -399,11 +401,13 @@
                             <input type="text" class="form-control mb-2" id="ntnNo"
                                 placeholder="7-digit NTN (XXXXXXX-X)" required>
                             <small class="text-muted d-block mb-2">Upload NTN Registration Certificate</small>
-                            <div class="file-upload-box" onclick="simulateUpload('ntn')">
+                            <div class="file-upload-box" onclick="document.getElementById('ntnFile').click()">
                                 <i class="fa-solid fa-file-invoice"></i>
                                 <div class="small fw-bold">Attach NTN Document</div>
                                 <div class="text-muted smaller mt-1" id="ntn-status">No file chosen</div>
                             </div>
+                            <input type="file" id="ntnFile" accept="image/*,.pdf" style="display:none"
+                                onchange="showFileName('ntn', this)">
                         </div>
                         <div class="col-md-12">
                             <hr class="my-4">
@@ -422,11 +426,13 @@
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase opacity-75">Cancelled Cheque
                                 Photo</label>
-                            <div class="file-upload-box" onclick="simulateUpload('bank')">
+                            <div class="file-upload-box" onclick="document.getElementById('bankFile').click()">
                                 <i class="fa-solid fa-building-columns"></i>
                                 <div class="small fw-bold">Upload Bank Proof</div>
                                 <div class="text-muted smaller mt-1" id="bank-status">No file chosen</div>
                             </div>
+                            <input type="file" id="bankFile" accept="image/*,.pdf" style="display:none"
+                                onchange="showFileName('bank', this)">
                         </div>
                     </div>
                     <div class="d-flex justify-content-between">
@@ -496,20 +502,24 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-uppercase opacity-75">Main Store Cover Image</label>
-                        <div class="file-upload-box" onclick="simulateUpload('cover')">
+                        <div class="file-upload-box" onclick="document.getElementById('coverFile').click()">
                             <i class="fa-solid fa-image"></i>
                             <div class="small fw-bold">Select Cover Photo</div>
                             <div class="text-muted smaller mt-1" id="cover-status">No file chosen</div>
                         </div>
+                        <input type="file" id="coverFile" accept="image/*" style="display:none"
+                            onchange="showFileName('cover', this)">
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-uppercase opacity-75">Signature Dish Photo</label>
-                        <div class="file-upload-box" onclick="simulateUpload('dish')">
+                        <div class="file-upload-box" onclick="document.getElementById('dishFile').click()">
                             <i class="fa-solid fa-utensils"></i>
                             <div class="small fw-bold">Select Dish Photo</div>
                             <div class="text-muted smaller mt-1" id="dish-status">No file chosen</div>
                         </div>
+                        <input type="file" id="dishFile" accept="image/*" style="display:none"
+                            onchange="showFileName('dish', this)">
                     </div>
 
                     <div class="form-check mb-4">
@@ -621,19 +631,51 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function simulateUpload(type) {
+        function showFileName(type, input) {
             const status = document.getElementById(`${type}-status`);
-            status.innerText = "⏳ Uploading...";
-            setTimeout(() => {
-                status.innerHTML = "✅ <span class='text-success'>document_loaded.jpg</span>";
-            }, 1000);
+            if (input.files && input.files.length > 0) {
+                status.innerHTML = "✅ <span class='text-success'>" + input.files[0].name + "</span>";
+            } else {
+                status.innerText = "No file chosen";
+            }
         }
 
         document.getElementById('multiStepForm').addEventListener('submit', (e) => {
             e.preventDefault();
 
-            if (!document.getElementById('finalTerms').checked) {
-                alert('Please agree to terms');
+            // Comprehensive validation check for all steps
+            const allSteps = [1, 2, 3, 4];
+            let firstInvalidStep = -1;
+
+            for (const stepNum of allSteps) {
+                const section = document.getElementById(`step-${stepNum}`);
+                const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
+                let stepValid = true;
+
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox') {
+                        if (!input.checked) {
+                            input.classList.add('is-invalid');
+                            stepValid = false;
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    } else if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        stepValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!stepValid && firstInvalidStep === -1) {
+                    firstInvalidStep = stepNum;
+                }
+            }
+
+            if (firstInvalidStep !== -1) {
+                alert('Please fill in all required fields in Step ' + firstInvalidStep);
+                nextStep(firstInvalidStep);
                 return;
             }
 
@@ -706,6 +748,7 @@
 
                 // Show Success Overlay
                 document.getElementById('displayResName').innerText = resName;
+                document.getElementById('successOverlay').style.display = 'flex';
                 document.getElementById('successOverlay').classList.add('active');
             }, 2000);
         });
