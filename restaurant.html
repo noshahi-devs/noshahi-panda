@@ -247,12 +247,12 @@
 
             // Add dynamic ones from localStorage
             const storedRes = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
-            storedRes.forEach((r, i) => {
+            storedRes.forEach((r) => {
                 allRestaurants.push({
-                    id: `stored-${i}`,
+                    id: r.id, // Use the actual timestamp ID
                     name: r.name,
-                    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
-                    rating: "New",
+                    image: r.image || "https://images.unsplash.com/photo-1414228646450-48e025f16104?w=800", // Use captured image
+                    rating: r.rating || "New",
                     reviews: "0",
                     cuisine: r.cuisine || "Multi-cuisine",
                     address: r.address || "Main Street, Lahore"

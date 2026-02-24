@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-orange: #FF9800;
@@ -148,6 +150,18 @@
             margin-bottom: 0.5rem;
         }
 
+        .img-size-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            display: none;
+        }
+
         .btn-action {
             padding: 0.5rem 1.5rem;
             border-radius: 20px;
@@ -170,6 +184,30 @@
         .nav-pills .nav-link.active {
             background: var(--brand-red);
         }
+
+        .storage-status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .storage-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            width: 100px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 
@@ -181,12 +219,27 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <h1 class="mb-0" id="seller-name">Welcome, Seller!</h1>
-                    <p class="mb-0 opacity-75" id="current-date"></p>
+                    <div class="d-flex align-items-center gap-3">
+                        <p class="mb-0 opacity-75 small" id="current-date"></p>
+                        <div class="storage-status d-none d-md-block">
+                            <div class="d-flex justify-content-between">
+                                <span>Storage Used</span>
+                                <span id="storage-percent">0%</span>
+                            </div>
+                            <div class="storage-bar">
+                                <div class="storage-fill" id="storage-fill"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="index.html" class="btn btn-light rounded-pill px-4">
                         <i class="fa-solid fa-home me-2"></i>Homepage
                     </a>
+                    <button onclick="optimizeStorage()" class="btn btn-warning rounded-pill px-4"
+                        title="Fix errors & clear cache">
+                        <i class="fa-solid fa-broom me-2"></i>Fix Storage
+                    </button>
                     <button onclick="logout()" class="btn btn-outline-light rounded-pill px-4">
                         <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout
                     </button>
@@ -309,9 +362,11 @@
                                     <div class="small">Click to upload photo</div>
                                 </div>
                                 <img id="itemPreview" src="" alt="Preview">
+                                <div id="imageSizeBadge" class="img-size-badge"></div>
                                 <input type="file" id="itemPhoto" accept="image/*" style="display: none;"
                                     onchange="previewItemImage(this)">
                             </div>
+                            <div id="imageFeedback" class="small mt-1 text-danger" style="display: none;"></div>
                             <input type="hidden" id="itemPhotoData">
                         </div>
                         <button type="submit" class="btn w-100 rounded-pill py-2 fw-bold"
@@ -356,8 +411,14 @@
             const sellerData = JSON.parse(localStorage.getItem('noshahi_active_restaurant'));
 
             if (!sellerData) {
-                alert('Please login to access the Seller Dashboard');
-                window.location.href = 'login.html';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Please login to access the Seller Dashboard',
+                    confirmButtonColor: '#E53935'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
             }
 
             // Display seller info
@@ -369,6 +430,7 @@
             // Load dashboard data
             loadDashboard();
             syncGlobalInventory();
+            updateStorageMeter();
 
             function loadDashboard() {
                 loadMenu();
@@ -452,8 +514,15 @@
                 });
 
                 if (updated) {
-                    localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
-                    console.log('Global inventory synced for:', sellerData.name);
+                    try {
+                        localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
+                        console.log('Global inventory synced for:', sellerData.name);
+                    } catch (err) {
+                        console.warn('Could not sync global inventory - storage full', err);
+                        // If global sync fails, we still have the local menu saved.
+                        // We don't alert here to avoid annoying the user on Every refresh, 
+                        // but the items might not show on home page.
+                    }
                 }
             }
 
@@ -539,7 +608,27 @@
                 };
 
                 menu.push(newItem);
-                localStorage.setItem(menuKey, JSON.stringify(menu));
+                try {
+                    localStorage.setItem(menuKey, JSON.stringify(menu));
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Item Added',
+                        text: 'Your menu item is now active!',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } catch (err) {
+                    if (err.name === 'QuotaExceededError') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Storage Full',
+                            text: 'Please delete some old items or use smaller images.',
+                            confirmButtonColor: '#E53935'
+                        });
+                        return;
+                    }
+                    throw err;
+                }
 
                 // SYNC WITH GLOBAL PRODUCTS (for home page visibility)
                 let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
@@ -548,7 +637,9 @@
                     restaurant: sellerData.name,
                     resId: sellerData.id
                 });
-                localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
+                try {
+                    localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
+                } catch (e) { console.error(e); }
 
                 bootstrap.Modal.getInstance(document.getElementById('addMenuModal')).hide();
                 e.target.reset();
@@ -559,15 +650,69 @@
             });
 
             function previewItemImage(input) {
+                const feedback = document.getElementById('imageFeedback');
+                const sizeBadge = document.getElementById('imageSizeBadge');
+                feedback.style.display = 'none';
+
                 if (input.files && input.files[0]) {
+                    const file = input.files[0];
+                    const originalSizeKB = (file.size / 1024).toFixed(1);
+
+                    // Max size limit: 5MB for original file
+                    if (file.size > 5 * 1024 * 1024) {
+                        feedback.textContent = `File is too large (${originalSizeKB}KB). Max limit is 5MB.`;
+                        feedback.style.display = 'block';
+                        input.value = '';
+                        return;
+                    }
+
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        document.getElementById('itemPreview').src = e.target.result;
-                        document.getElementById('itemPreview').style.display = 'block';
-                        document.getElementById('uploadPlaceholder').style.display = 'none';
-                        document.getElementById('itemPhotoData').value = e.target.result;
+                        const img = new Image();
+                        img.src = e.target.result;
+                        img.onload = function () {
+                            // Compression logic
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            // Scale down if too large (Optimized for Storage)
+                            const MAX_DIM = 800;
+                            if (width > MAX_DIM || height > MAX_DIM) {
+                                if (width > height) {
+                                    height *= MAX_DIM / width;
+                                    width = MAX_DIM;
+                                } else {
+                                    width *= MAX_DIM / height;
+                                    height = MAX_DIM;
+                                }
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            // Compress quality (0.6 is ideal for balancing clarity and size)
+                            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                            const compressedSizeKB = (compressedDataUrl.length * 0.75 / 1024).toFixed(1);
+
+                            document.getElementById('itemPreview').src = compressedDataUrl;
+                            document.getElementById('itemPreview').style.display = 'block';
+                            document.getElementById('uploadPlaceholder').style.display = 'none';
+                            document.getElementById('itemPhotoData').value = compressedDataUrl;
+
+                            sizeBadge.textContent = `${compressedSizeKB} KB`;
+                            sizeBadge.style.display = 'block';
+
+                            if (compressedSizeKB > 500) {
+                                feedback.textContent = "Warning: Image is slightly large. Try a smaller photo if you get errors.";
+                                feedback.style.display = 'block';
+                                feedback.className = "small mt-1 text-warning";
+                            }
+                        };
                     };
-                    reader.readAsDataURL(input.files[0]);
+                    reader.readAsDataURL(file);
                 }
             }
 
@@ -579,14 +724,18 @@
                 if (itemIndex !== -1) {
                     // Toggle status
                     menu[itemIndex].status = menu[itemIndex].status === 'Available' ? 'Unavailable' : 'Available';
-                    localStorage.setItem(menuKey, JSON.stringify(menu));
+                    try { localStorage.setItem(menuKey, JSON.stringify(menu)); } catch (e) { console.error(e); }
 
                     // SYNC WITH GLOBAL PRODUCTS
                     let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
                     const prodIndex = allProducts.findIndex(p => p.id === id);
                     if (prodIndex !== -1) {
                         allProducts[prodIndex].status = menu[itemIndex].status;
-                        localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
+                        try {
+                            localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
+                        } catch (err) {
+                            console.error('Global sync failed:', err);
+                        }
                     }
 
                     loadDashboard();
@@ -594,19 +743,29 @@
             }
 
             function deleteMenuItem(id) {
-                if (!confirm('Delete this item?')) return;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This item will be permanently removed from your menu.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#E53935',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const menuKey = `noshahi_menu_${sellerData.id}`;
+                        let menu = JSON.parse(localStorage.getItem(menuKey) || '[]');
+                        menu = menu.filter(item => item.id !== id);
+                        localStorage.setItem(menuKey, JSON.stringify(menu));
 
-                const menuKey = `noshahi_menu_${sellerData.id}`;
-                let menu = JSON.parse(localStorage.getItem(menuKey) || '[]');
-                menu = menu.filter(item => item.id !== id);
-                localStorage.setItem(menuKey, JSON.stringify(menu));
+                        let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+                        allProducts = allProducts.filter(p => p.id !== id);
+                        localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
 
-                // SYNC WITH GLOBAL PRODUCTS
-                let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
-                allProducts = allProducts.filter(p => p.id !== id);
-                localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
-
-                loadDashboard();
+                        loadDashboard();
+                        Swal.fire('Deleted!', 'Your item has been removed.', 'success');
+                    }
+                });
             }
 
             function updateOrderStatus(orderId, newStatus) {
@@ -615,7 +774,7 @@
 
                 if (orderIndex !== -1) {
                     allOrders[orderIndex].status = newStatus;
-                    localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
+                    try { localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders)); } catch (e) { console.error(e); }
                     loadDashboard();
                 }
             }
@@ -629,7 +788,7 @@
 
             function saveDeliveryTime(time) {
                 if (!time || time <= 0) {
-                    alert('Please enter a valid time');
+                    Swal.fire({ icon: 'error', title: 'Invalid Time', text: 'Please enter a valid time in minutes.' });
                     return;
                 }
 
@@ -638,7 +797,7 @@
 
                 if (orderIndex !== -1) {
                     allOrders[orderIndex].deliveryTime = time;
-                    localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
+                    try { localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders)); } catch (e) { console.error(e); }
 
                     // Close modal
                     const modalElement = document.getElementById('setDeliveryTimeModal');
@@ -646,13 +805,65 @@
                     modal.hide();
 
                     loadDashboard();
-                    alert(`✅ Delivery time set to ${time} minutes`);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Time Set',
+                        text: `Delivery time set to ${time} minutes`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
             }
 
             function logout() {
                 localStorage.removeItem('noshahi_active_restaurant');
                 window.location.href = 'login.html';
+            }
+
+            function updateStorageMeter() {
+                const totalQuota = 5 * 1024 * 1024; // 5MB approx
+                let used = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    used += localStorage.getItem(localStorage.key(i)).length * 2; // UTF-16
+                }
+                const percent = Math.min(Math.round((used / totalQuota) * 100), 100);
+
+                const bar = document.getElementById('storage-fill');
+                const text = document.getElementById('storage-percent');
+                if (bar && text) {
+                    bar.style.width = percent + '%';
+                    text.textContent = percent + '%';
+                    if (percent > 80) bar.style.background = '#ffc107';
+                    if (percent > 95) bar.style.background = '#dc3545';
+                }
+            }
+
+            function optimizeStorage() {
+                Swal.fire({
+                    title: 'Optimize Storage?',
+                    text: "This will clear shared product cache to fix errors. Your menu items will stay safe.",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#FFC107',
+                    confirmButtonText: 'Yes, Clean Up'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            localStorage.removeItem('noshahi_all_products');
+                            const orders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+                            if (orders.length > 50) {
+                                localStorage.setItem('noshahi_all_orders', JSON.stringify(orders.slice(-30)));
+                            }
+                            Swal.fire('Optimized!', 'Storage cleared, re-syncing now...', 'success').then(() => {
+                                syncGlobalInventory();
+                                updateStorageMeter();
+                                location.reload();
+                            });
+                        } catch (e) {
+                            Swal.fire('Error', e.message, 'error');
+                        }
+                    }
+                });
             }
         </script>
 </body>

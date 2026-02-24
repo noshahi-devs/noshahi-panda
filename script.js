@@ -251,12 +251,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const categoryFilter = params.get('category');
 
+    // TRENDING DISHES LOGIC
+    const renderTrending = () => {
+        const trendingGrid = document.getElementById('trending-grid');
+        if (!trendingGrid) return;
+
+        // Get all products added by sellers
+        const allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+
+        // If no custom products, use some defaults for demo
+        const defaultTrending = [
+            { name: "Double Beef Zinger", price: "Rs. 650", restaurant: "The Burger Club", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400", rating: "4.9" },
+            { name: "Pesto Pasta", price: "Rs. 890", restaurant: "Pizza Napoletana", image: "https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=400", rating: "4.7" },
+            { name: "Dragon Rolls", price: "Rs. 1100", restaurant: "Chopstick House", image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400", rating: "4.8" },
+            { name: "Quinoa Salad", price: "Rs. 550", restaurant: "The Green Bowl", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400", rating: "4.9" }
+        ];
+
+        const displayTrending = allProducts.length > 0 ? allProducts.map(p => ({
+            name: p.name,
+            price: `Rs. ${p.price}`,
+            restaurant: p.restaurant,
+            image: p.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+            rating: "5.0"
+        })).slice(-4).reverse() : defaultTrending; // Show last 4 added
+
+        renderGrid('trending-grid', displayTrending, true);
+    };
+
     if (categoryFilter) {
+        // Hide trending on filtered views
+        const trendingSection = document.querySelector('.trending-dishes');
+        if (trendingSection) trendingSection.classList.add('d-none');
+
         const lowerFilter = categoryFilter.toLowerCase();
         // FILTERED VIEW: Show items
         const matchingRestaurants = restaurants.filter(r =>
             r.categories.toLowerCase().includes(lowerFilter)
         );
+
 
         // 1. Get products from localStorage added by restaurants
         const storedProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
@@ -394,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         // DEFAULT VIEW: Show main restaurants
         renderGrid('restaurant-grid', restaurants, false);
+        renderTrending();
     }
 
     // --- Search Interaction ---

@@ -12,6 +12,8 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light d-flex align-items-center min-vh-100">
@@ -177,15 +179,29 @@
                     return;
                 }
 
-                alert('❌ Invalid email or password. Please try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Authentication Failed',
+                    text: 'Invalid email or password. Please try again.',
+                    confirmButtonColor: '#E53935'
+                });
                 resetBtn();
             }, 1000);
 
             function showSuccess(msg, sub, url) {
-                document.getElementById('loginMsg').innerText = msg;
-                document.getElementById('loginSub').innerText = sub;
-                document.getElementById('loginOverlay').classList.replace('d-none', 'd-flex');
-                setTimeout(() => { window.location.href = url; }, 1500);
+                Swal.fire({
+                    title: msg,
+                    text: sub,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                }).then(() => {
+                    window.location.href = url;
+                });
             }
 
             function resetBtn() {

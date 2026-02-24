@@ -12,6 +12,8 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light">
@@ -221,7 +223,12 @@
             const originalContent = btn.innerHTML;
 
             if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Not Supported',
+                    text: 'Geolocation is not supported by your browser',
+                    confirmButtonColor: '#E53935'
+                });
                 return;
             }
 
@@ -253,14 +260,24 @@
                         console.error("Error reverse geocoding:", error);
                         btn.innerHTML = originalContent;
                         btn.disabled = false;
-                        alert("Could not fetch address. Please enter manually.");
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Detection Failed',
+                            text: 'Could not fetch address details. Please enter manually.',
+                            confirmButtonColor: '#E53935'
+                        });
                     }
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
                     btn.innerHTML = originalContent;
                     btn.disabled = false;
-                    alert("Unable to retrieve your location. Check your browser permissions.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Permission Denied',
+                        text: 'Unable to retrieve your location. Check your browser permissions.',
+                        confirmButtonColor: '#E53935'
+                    });
                 },
                 { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
             );

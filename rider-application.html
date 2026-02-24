@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-red: #D70F64;
@@ -605,30 +607,35 @@
                 const city = document.getElementById('city').value.trim();
                 const password = document.getElementById('password').value;
 
-                if (!firstName) { alert('Please enter your first name.'); return false; }
-                if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return false; }
-                if (!phone) { alert('Please enter your phone number.'); return false; }
-                if (!city) { alert('Please enter your city.'); return false; }
-                if (password.length < 6) { alert('Password must be at least 6 characters.'); return false; }
+                if (!firstName) { Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter your first name.' }); return false; }
+                if (!email || !email.includes('@')) { Swal.fire({ icon: 'error', title: 'Invalid Email', text: 'Please enter a valid email address.' }); return false; }
+                if (!phone) { Swal.fire({ icon: 'error', title: 'Invalid Phone', text: 'Please enter your phone number.' }); return false; }
+                if (!city) { Swal.fire({ icon: 'error', title: 'City Required', text: 'Please enter your city.' }); return false; }
+                if (password.length < 6) { Swal.fire({ icon: 'warning', title: 'Weak Password', text: 'Password must be at least 6 characters.' }); return false; }
 
                 // Check if email already taken
                 const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
                 if (riders.find(r => r.email.toLowerCase() === email.toLowerCase())) {
-                    alert('❌ This email is already registered!');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Email Taken',
+                        text: 'This email is already registered!',
+                        confirmButtonColor: '#D70F64'
+                    });
                     return false;
                 }
             }
 
             if (step === 2) {
                 const bikeNumber = document.getElementById('bikeNumber').value.trim();
-                if (!bikeNumber) { alert('Please enter your vehicle number.'); return false; }
+                if (!bikeNumber) { Swal.fire({ icon: 'error', title: 'Vehicle Info', text: 'Please enter your vehicle number.' }); return false; }
             }
 
             if (step === 3) {
                 const cnic = document.getElementById('cnic').value.trim();
                 const license = document.getElementById('license').value.trim();
-                if (!cnic) { alert('Please enter your CNIC number.'); return false; }
-                if (!license) { alert('Please enter your driving license number.'); return false; }
+                if (!cnic) { Swal.fire({ icon: 'error', title: 'CNIC Missing', text: 'Please enter your CNIC number.' }); return false; }
+                if (!license) { Swal.fire({ icon: 'error', title: 'License Missing', text: 'Please enter your driving license number.' }); return false; }
             }
 
             return true;
@@ -698,8 +705,14 @@
             riders.push(riderData);
             localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
 
-            alert('✅ Application Submitted Successfully!\n\nOur team will review your documents and activate your account within 24 hours. You will be notified via email.');
-            window.location.href = 'login.html';
+            Swal.fire({
+                title: 'Application Submitted!',
+                text: 'Our team will review your documents and activate your account within 24 hours. You will be notified via email.',
+                icon: 'success',
+                confirmButtonColor: '#D70F64'
+            }).then(() => {
+                window.location.href = 'login.html';
+            });
         }
     </script>
 </body>

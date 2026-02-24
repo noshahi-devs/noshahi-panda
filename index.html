@@ -14,6 +14,8 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -129,6 +131,22 @@
 
             <div class="row g-4" id="restaurant-grid">
                 <!-- Dynamically Populated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Dishes Section -->
+    <section class="trending-dishes py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Trending Today</h2>
+                    <p class="text-muted">Most ordered dishes in your area</p>
+                </div>
+            </div>
+
+            <div class="row g-4" id="trending-grid">
+                <!-- Dynamically Populated from noshahi_all_products -->
             </div>
         </div>
     </section>
@@ -376,9 +394,29 @@
         }
 
         function logoutUser() {
-            localStorage.removeItem('noshahi_active_customer');
-            window.location.href = 'index.html';
+            Swal.fire({
+                title: 'Logging out?',
+                text: "Are you sure you want to end your session?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#E53935',
+                confirmButtonText: 'Yes, Logout'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('noshahi_active_customer');
+                    Swal.fire({
+                        title: 'Logged Out',
+                        text: 'Redirecting...',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                }
+            });
         }
+
     </script>
 
     <!-- Cart Sidebar -->

@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --admin-blue: #1e3a8a;
@@ -526,19 +528,29 @@
             if (isChecked) {
                 // Approving or Reactivating
                 if (app.status === 'Pending') {
-                    if (confirm(`Accept and Activate "${app.name}"?`)) {
-                        const email = app.owner.email;
-                        const password = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
-                        apps[appIndex].status = 'Approved';
-                        apps[appIndex].approvedEmail = email;
-                        apps[appIndex].approvedPassword = password;
-                        localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
-                        syncSellerToSystem(apps[appIndex], email, password);
-                        alert('✅ Restaurant activated successfully!');
-                    } else {
-                        renderApplications();
-                        return;
-                    }
+                    Swal.fire({
+                        title: 'Accept Application?',
+                        text: `Are you sure you want to approve "${app.name}"?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: 'Yes, Approve'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const email = app.owner.email;
+                            const password = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+                            apps[appIndex].status = 'Approved';
+                            apps[appIndex].approvedEmail = email;
+                            apps[appIndex].approvedPassword = password;
+                            localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+                            syncSellerToSystem(apps[appIndex], email, password);
+                            Swal.fire('Activated!', 'Restaurant is now live.', 'success');
+                            renderApplications();
+                        } else {
+                            renderApplications();
+                        }
+                    });
+                    return;
                 } else if (app.status === 'Suspended') {
                     apps[appIndex].status = 'Approved';
                     localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
@@ -546,14 +558,25 @@
                 }
             } else {
                 // Suspending
-                if (confirm(`Are you sure you want to SUSPEND "${app.name}"?`)) {
-                    apps[appIndex].status = 'Suspended';
-                    localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
-                    updateRestaurantStatus(id, 'Suspended');
-                } else {
-                    renderApplications();
-                    return;
-                }
+                Swal.fire({
+                    title: 'Suspend Restaurant?',
+                    text: `Are you sure you want to suspend "${app.name}"? Access will be revoked.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Yes, Suspend'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        apps[appIndex].status = 'Suspended';
+                        localStorage.setItem('noshahi_seller_applications', JSON.stringify(apps));
+                        updateRestaurantStatus(id, 'Suspended');
+                        Swal.fire('Suspended!', 'The account has been restricted.', 'info');
+                        renderApplications();
+                    } else {
+                        renderApplications();
+                    }
+                });
+                return;
             }
             renderApplications();
         }
@@ -637,7 +660,12 @@
                 !document.getElementById('verify-ntn').checked ||
                 !document.getElementById('verify-license').checked ||
                 !document.getElementById('verify-bank').checked) {
-                alert('Please verify all documents by checking the boxes before approval.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Incomplete Audit',
+                    text: 'Please verify all documents before approval.',
+                    confirmButtonColor: '#ef4444'
+                });
                 return;
             }
 
@@ -669,7 +697,12 @@
                     syncSellerToSystem(apps[appIndex], email, pass);
 
                     // SUCCESS
-                    alert('✅ Restaurant Approved! Your credentials have been sent to ' + email);
+                    Swal.fire({
+                        title: 'Activation Successful!',
+                        text: 'Credentials generated and sent to seller.',
+                        icon: 'success',
+                        confirmButtonColor: '#10b981'
+                    });
 
                     // Reset UI
                     approveBtn.disabled = false;
@@ -779,17 +812,41 @@
                 const rider = riders[index];
 
                 if (isChecked) {
-                    if (!confirm(`Activate rider "${rider.name}"?`)) { renderRiders(); return; }
-                    riders[index].status = 'Active';
-                    localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
-                    alert(`✅ Rider "${rider.name}" is now Active!`);
+                    Swal.fire({
+                        title: 'Activate Rider?',
+                        text: `Allow "${rider.name}" to start taking orders?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#10b981'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            riders[index].status = 'Active';
+                            localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+                            Swal.fire('Activated!', 'Rider is now online.', 'success');
+                            renderRiders();
+                        } else {
+                            renderRiders();
+                        }
+                    });
                 } else {
-                    if (!confirm(`SUSPEND rider "${rider.name}"?`)) { renderRiders(); return; }
-                    riders[index].status = 'Suspended';
-                    localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
-                    alert(`⚠️ Rider "${rider.name}" has been Suspended.`);
+                    Swal.fire({
+                        title: 'Suspend Rider?',
+                        text: `Are you sure you want to suspend "${rider.name}"?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            riders[index].status = 'Suspended';
+                            localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+                            Swal.fire('Suspended!', 'Rider account limited.', 'info');
+                            renderRiders();
+                        } else {
+                            renderRiders();
+                        }
+                    });
                 }
-                renderRiders();
+                return;
             }
         }
 

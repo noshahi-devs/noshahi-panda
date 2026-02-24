@@ -12,6 +12,8 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light d-flex align-items-center min-vh-100">
@@ -123,7 +125,12 @@
 
             // Check if email already exists
             if (customers.some(c => c.email === userData.email)) {
-                alert('An account with this email already exists!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Account Exists',
+                    text: 'An account with this email already exists!',
+                    confirmButtonColor: '#E53935'
+                });
                 return;
             }
 
@@ -139,13 +146,17 @@
                 // Auto-login after signup
                 localStorage.setItem('noshahi_active_customer', JSON.stringify(userData));
 
-                // Show Success Overlay
-                document.getElementById('successOverlay').classList.replace('d-none', 'd-flex');
-
-                // Redirect after a short delay
-                setTimeout(() => {
+                // Show Success Popup
+                Swal.fire({
+                    title: 'Welcome Aboard!',
+                    text: 'Account created successfully! Redirecting...',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
                     window.location.href = 'index.html';
-                }, 2000);
+                });
             }, 1000);
         });
     </script>
