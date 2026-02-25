@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: #ffffff;
             min-height: 100vh;
             padding: 2rem 0;
             color: var(--brand-dark);
@@ -24,11 +24,23 @@
             background: white;
             border-radius: 30px;
             padding: 2.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
             max-width: 800px;
             margin: 0 auto;
             position: relative;
             overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        .application-card:hover {
+            transform: translateY(-8px) scale(1.002);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 35px 50px -12px rgba(0, 0, 0, 0.2);
         }
 
         .progress-container {
@@ -41,10 +53,10 @@
             background: #eee;
             border-radius: 10px;
             position: absolute;
-            top: 50%;
+            top: 20px;
+            /* Align with center of 40px circles */
             left: 0;
             width: 100%;
-            transform: translateY(-50%);
             z-index: 1;
         }
 
@@ -63,6 +75,15 @@
             z-index: 2;
         }
 
+        .step-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            width: 100px;
+            text-align: center;
+        }
+
         .step-item {
             width: 40px;
             height: 40px;
@@ -75,33 +96,30 @@
             font-weight: 700;
             transition: all 0.3s;
             cursor: pointer;
+            margin-bottom: 8px;
         }
 
-        .step-item.active {
+        .step-wrapper.active .step-item {
             border-color: var(--brand-red);
             color: var(--brand-red);
             transform: scale(1.1);
             background: white;
         }
 
-        .step-item.completed {
+        .step-wrapper.completed .step-item {
             background: var(--brand-red);
             border-color: var(--brand-red);
             color: white;
         }
 
         .step-label {
-            position: absolute;
-            top: 45px;
             font-size: 0.75rem;
             font-weight: 600;
-            white-space: nowrap;
             color: #888;
-            left: 50%;
-            transform: translateX(-50%);
+            transition: all 0.3s;
         }
 
-        .step-item.active .step-label {
+        .step-wrapper.active .step-label {
             color: var(--brand-red);
         }
 
@@ -282,8 +300,35 @@
             display: inline-block;
         }
 
-        .btn-loading .btn-text {
-            opacity: 0.7;
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0;
+            }
+
+            .application-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+                margin: 0 10px;
+            }
+
+            .progress-container {
+                margin-bottom: 2rem;
+            }
+
+            .brand-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .btn-action {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .d-flex.justify-content-between,
+            .d-flex.justify-content-end {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -302,20 +347,20 @@
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <div class="steps-nav">
-                    <div class="step-item active" id="step-nav-1">
-                        1
+                    <div class="step-wrapper active" id="step-nav-1" onclick="nextStep(1)">
+                        <div class="step-item">1</div>
                         <span class="step-label">Legal</span>
                     </div>
-                    <div class="step-item" id="step-nav-2">
-                        2
+                    <div class="step-wrapper" id="step-nav-2" onclick="nextStep(2)">
+                        <div class="step-item">2</div>
                         <span class="step-label">Documents</span>
                     </div>
-                    <div class="step-item" id="step-nav-3">
-                        3
+                    <div class="step-wrapper" id="step-nav-3" onclick="nextStep(3)">
+                        <div class="step-item">3</div>
                         <span class="step-label">Menu</span>
                     </div>
-                    <div class="step-item" id="step-nav-4">
-                        4
+                    <div class="step-wrapper" id="step-nav-4" onclick="nextStep(4)">
+                        <div class="step-item">4</div>
                         <span class="step-label">Photos</span>
                     </div>
                 </div>
@@ -393,35 +438,34 @@
 
                 <!-- Step 2: Essential Documents -->
                 <div class="form-section" id="step-2">
-                    <h4 class="fw-bold mb-4">CNIC & NTN Verification</h4>
+                    <h4 class="fw-bold mb-4">CNIC Verification</h4>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase opacity-75">Owner's CNIC
                                 Number</label>
                             <input type="text" class="form-control mb-2" id="cnicNo" placeholder="35201-XXXXXXX-X"
                                 required>
-                            <small class="text-muted d-block mb-2">Upload a clear photo of front/back</small>
+                            <small class="text-muted d-block mb-2">Upload a clear photo of CNIC Front</small>
                             <div class="file-upload-box" onclick="document.getElementById('cnicFile').click()">
                                 <i class="fa-solid fa-id-card"></i>
-                                <div class="small fw-bold">Attach CNIC Photo</div>
+                                <div class="small fw-bold">Attach CNIC Front Photo</div>
                                 <div class="text-muted smaller mt-1" id="cnic-status">No file chosen</div>
                             </div>
                             <input type="file" id="cnicFile" accept="image/*,.pdf" style="display:none"
                                 onchange="showFileName('cnic', this)">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase opacity-75">National Tax Number
-                                (NTN)</label>
-                            <input type="text" class="form-control mb-2" id="ntnNo"
-                                placeholder="7-digit NTN (XXXXXXX-X)" required>
-                            <small class="text-muted d-block mb-2">Upload NTN Registration Certificate</small>
-                            <div class="file-upload-box" onclick="document.getElementById('ntnFile').click()">
-                                <i class="fa-solid fa-file-invoice"></i>
-                                <div class="small fw-bold">Attach NTN Document</div>
-                                <div class="text-muted smaller mt-1" id="ntn-status">No file chosen</div>
+                            <label class="form-label fw-bold small text-uppercase opacity-75"></label>
+                            <div style="height: 48px; border: none; background: transparent;"
+                                class="mb-2 d-none d-md-block"></div>
+                            <small class="text-muted d-block mb-2">Upload a clear photo of CNIC Back</small>
+                            <div class="file-upload-box" onclick="document.getElementById('cnicBackFile').click()">
+                                <i class="fa-solid fa-id-card-clip"></i>
+                                <div class="small fw-bold">Attach CNIC Back Photo</div>
+                                <div class="text-muted smaller mt-1" id="cnicBack-status">No file chosen</div>
                             </div>
-                            <input type="file" id="ntnFile" accept="image/*,.pdf" style="display:none"
-                                onchange="showFileName('ntn', this)">
+                            <input type="file" id="cnicBackFile" accept="image/*,.pdf" style="display:none"
+                                onchange="showFileName('cnicBack', this)">
                         </div>
                         <div class="col-md-12">
                             <hr class="my-4">
@@ -498,8 +542,16 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-uppercase opacity-75">Password for Dashboard</label>
-                        <input type="password" class="form-control" id="password" placeholder="Min 6 characters"
-                            required>
+                        <div class="input-group password-field-container">
+                            <span class="input-group-text bg-light border-0"><i
+                                    class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Min 6 characters"
+                                required>
+                            <button type="button" class="password-toggle-icon"
+                                onclick="togglePasswordVisibility('password', 'sellerEyeIcon')">
+                                <i class="fa-solid fa-eye" id="sellerEyeIcon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between">
                         <button type="button" class="btn btn-action btn-prev" onclick="nextStep(2)"><i
@@ -639,7 +691,7 @@
             document.getElementById(`step-${step}`).classList.add('active');
 
             // Update Nav
-            document.querySelectorAll('.step-item').forEach((item, index) => {
+            document.querySelectorAll('.step-wrapper').forEach((item, index) => {
                 if (index + 1 < step) {
                     item.classList.add('completed');
                     item.classList.remove('active');
@@ -797,11 +849,15 @@
                     firstName: document.getElementById('firstName').value,
                     lastName: document.getElementById('lastName').value,
                     email: document.getElementById('email').value.toLowerCase(),
-                    phone: document.getElementById('phone').value,
-                    cnic: document.getElementById('cnicNo').value
+                    phone: document.getElementById('phone').value.trim(),
+                    city: document.getElementById('city')?.value || '',
+                    address: document.getElementById('address').value.trim(),
+                    cnicNo: document.getElementById('cnicNo').value.trim()
                 },
-                taxInfo: {
-                    ntn: document.getElementById('ntnNo').value
+                documents: {
+                    cnicFront: document.getElementById('cnicFile').files[0]?.name || null,
+                    cnicBack: document.getElementById('cnicBackFile').files[0]?.name || null,
+                    bankProof: document.getElementById('bankFile').files[0]?.name || null
                 },
                 bankInfo: {
                     name: document.getElementById('bankName').value,
@@ -813,10 +869,9 @@
                     priceRange: document.getElementById('priceRange').value,
                     hours: document.getElementById('openTime').value + ' - ' + document.getElementById('closeTime').value
                 },
-                password: document.getElementById('password').value,
                 date: new Date().toLocaleDateString(),
                 status: 'Pending',
-                image: capturedCoverImage // Save the captured image
+                image: capturedCoverImage
             };
 
             // Simulate server delay for premium feel
@@ -884,6 +939,7 @@
             }, 2000);
         });
     </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

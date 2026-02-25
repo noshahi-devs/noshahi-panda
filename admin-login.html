@@ -33,8 +33,14 @@
                             </div>
                             <div class="mb-4 text-start">
                                 <label class="form-label small fw-bold">Password</label>
-                                <input type="password" id="adminPassword" class="form-control bg-light border-0 py-3"
-                                    placeholder="••••••••" required>
+                                <div class="input-group password-field-container">
+                                    <input type="password" id="adminPassword"
+                                        class="form-control bg-light border-0 py-3" placeholder="••••••••" required>
+                                    <button type="button" class="password-toggle-icon"
+                                        onclick="togglePasswordVisibility('adminPassword', 'adminEyeIcon')">
+                                        <i class="fa-solid fa-eye" id="adminEyeIcon"></i>
+                                    </button>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-brand-red w-100 py-3 fw-bold shadow-sm">
                                 Enter Dashboard <i class="fa-solid fa-shield-halved ms-2"></i>
@@ -79,6 +85,7 @@
             }
         });
     </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

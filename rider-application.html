@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            background: #ffffff;
             min-height: 100vh;
             padding: 2.5rem 0;
         }
@@ -28,9 +28,21 @@
             background: white;
             border-radius: 28px;
             padding: 2.5rem;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
             max-width: 620px;
             margin: 0 auto;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        .app-card:hover {
+            transform: translateY(-8px) scale(1.002);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 35px 50px -12px rgba(0, 0, 0, 0.2);
         }
 
         /* --- Stepper --- */
@@ -366,7 +378,7 @@
             background: #E2E8F0;
         }
 
-        /* --- Logo --- */
+        /* Logo */
         .app-logo {
             width: 52px;
             height: 52px;
@@ -379,6 +391,52 @@
             font-size: 1.5rem;
             font-weight: 900;
             margin: 0 auto 1.5rem;
+        }
+
+        /* --- Premium Password Toggle --- */
+        .password-field-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .password-field-container .form-control {
+            padding-right: 48px !important;
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent !important;
+            border: none !important;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            outline: none !important;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .password-toggle-icon:hover {
+            color: var(--brand-red);
+            background: rgba(215, 15, 100, 0.05) !important;
+        }
+
+        .password-toggle-icon:active {
+            transform: translateY(-50%) scale(0.9);
+        }
+
+        .password-toggle-icon i {
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -448,8 +506,14 @@
                 </div>
                 <div class="mb-4">
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password"
-                        placeholder="Create a strong password (min. 6 chars)" required minlength="6">
+                    <div class="password-field-container">
+                        <input type="password" class="form-control" id="password"
+                            placeholder="Create a strong password (min. 6 chars)" required minlength="6">
+                        <button type="button" class="password-toggle-icon"
+                            onclick="togglePasswordVisibility('password', 'riderEyeIcon')">
+                            <i class="fa-solid fa-eye" id="riderEyeIcon"></i>
+                        </button>
+                    </div>
                 </div>
                 <button class="btn-next" onclick="goToStep(2)">Continue &nbsp;<i
                         class="fa-solid fa-arrow-right"></i></button>
@@ -568,7 +632,23 @@
         let currentStep = 1;
         const totalSteps = 3;
 
+        // ============ PASSWORD TOGGLE ============
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
         // ============ STEPPER NAVIGATION ============
+
         function goToStep(step) {
             if (step > currentStep && !validateStep(currentStep)) return;
 

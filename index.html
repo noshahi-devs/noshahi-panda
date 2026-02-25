@@ -33,7 +33,7 @@
 
             <div class="d-flex align-items-center order-lg-3">
                 <a href="login.html" class="nav-btn-link d-none d-md-block">Login</a>
-                <a href="signup.html" class="btn btn-brand-red ms-3">Sign up</a>
+                <a href="javascript:void(0)" class="btn btn-brand-red ms-3" onclick="showSignupOption()">Sign up</a>
                 <a href="javascript:void(0)" class="cart-icon ms-3" onclick="toggleCart()">
                     <i class="fa-solid fa-basket-shopping"></i>
                     <span class="cart-badge">0</span>
@@ -55,7 +55,8 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li class="nav-item d-lg-none"><a href="login.html" class="nav-link">Login</a></li>
-                    <li class="nav-item d-lg-none"><a href="signup.html" class="nav-link">Sign up</a></li>
+                    <li class="nav-item d-lg-none"><a href="javascript:void(0)" class="nav-link"
+                            onclick="showSignupOption()">Sign up</a></li>
                 </ul>
             </div>
         </div>
@@ -273,43 +274,30 @@
                 <div class="menu-section mb-4">
                     <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Discover</h6>
                     <a href="index.html" class="menu-link active"><i class="fa-solid fa-house me-3"></i> Home</a>
+                    <a href="javascript:void(0)" onclick="showOrderHistory()" class="menu-link"><i
+                            class="fa-solid fa-clock-rotate-left me-3"></i> My Orders</a>
                     <a href="index.html?category=Healthy" class="menu-link"><i class="fa-solid fa-percent me-3"></i> Top
                         Offers</a>
                     <a href="index.html#restaurant-grid" class="menu-link"><i class="fa-solid fa-utensils me-3"></i> All
                         Cuisines</a>
                 </div>
 
-                <div class="menu-section mb-4">
-                    <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Partner with
-                        us</h6>
-                    <a href="seller-onboarding.html" class="menu-link"><i class="fa-solid fa-store me-3"></i> Join as
-                        Seller</a>
-                    <a href="rider-application.html" class="menu-link"><i class="fa-solid fa-motorcycle me-3"></i> Join
-                        as Rider</a>
-                </div>
-
-                <div class="menu-section">
-                    <h6 class="text-uppercase text-muted fw-bold small mb-3" style="letter-spacing: 1px;">Information
-                    </h6>
-                    <a href="#" class="menu-link"><i class="fa-solid fa-circle-info me-3"></i> Help Center</a>
-                    <a href="admin-login.html" class="menu-link"><i class="fa-solid fa-shield-halved me-3"></i> Admin
-                        Portal</a>
-                </div>
-            </div>
-
-            <div class="mt-auto" id="sidebar-auth-section">
-                <div class="p-3 rounded-4 mb-4" style="background: var(--soft-bg);">
-                    <h6 class="fw-bold mb-1">Get Started</h6>
-                    <p class="text-muted small mb-0">Join our community today</p>
-                </div>
-                <div class="d-flex flex-column gap-3">
-                    <a href="login.html" class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold border-2">Log
-                        in</a>
-                    <a href="signup.html" class="btn btn-sidebar-signup w-100 py-3 rounded-pill fw-bold shadow-sm">Sign
-                        up</a>
-                </div>
             </div>
         </div>
+
+        <div class="mt-auto" id="sidebar-auth-section">
+            <div class="p-3 rounded-4 mb-4" style="background: var(--soft-bg);">
+                <h6 class="fw-bold mb-1">Get Started</h6>
+                <p class="text-muted small mb-0">Join our community today</p>
+            </div>
+            <div class="d-flex flex-column gap-3">
+                <a href="login.html" class="btn btn-outline-dark w-100 py-3 rounded-pill fw-bold border-2">Log
+                    in</a>
+                <a href="javascript:void(0)" class="btn btn-sidebar-signup w-100 py-3 rounded-pill fw-bold shadow-sm"
+                    onclick="showSignupOption()">Sign up</a>
+            </div>
+        </div>
+    </div>
     </div>
     <div id="active-order-bar" class="fixed-bottom d-none animate__animated animate__slideInUp"
         style="z-index: 2000; bottom: 20px;">
@@ -354,17 +342,19 @@
                             <i class="fa-solid fa-user-circle me-1 text-orange"></i> Hi, ${activeCustomer.firstName}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-3 mt-2">
-                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-clock-rotate-left me-2 opacity-50"></i> Orders</a></li>
+                            <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="showOrderHistory()"><i class="fa-solid fa-clock-rotate-left me-2 opacity-50"></i> Orders</a></li>
                             <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-heart me-2 opacity-50"></i> Favorites</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item py-2 text-danger" href="#" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
                         </ul>
                     </div>
-                    <a href="#" class="cart-icon" onclick="toggleCart()">
+                    <a href="javascript:void(0)" class="cart-icon" onclick="toggleCart()">
                         <i class="fa-solid fa-basket-shopping"></i>
                         <span class="cart-badge">0</span>
                     </a>
                 `;
+                // Sync cart immediately after header update
+                if (window.updateCart) window.updateCart();
 
                 // Also update Sidebar Auth Section
                 const sidebarAuth = document.getElementById('sidebar-auth-section');

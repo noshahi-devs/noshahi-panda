@@ -12,6 +12,7 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
@@ -46,13 +47,18 @@
                             <div class="mb-3">
                                 <label class="form-label small fw-bold d-flex justify-content-between">
                                     Password
-                                    <a href="#" class="text-brand-red text-decoration-none small">Forgot?</a>
+                                    <a href="javascript:void(0)" onclick="showForgotPasswordPopup()"
+                                        class="text-brand-red text-decoration-none small">Forgot?</a>
                                 </label>
-                                <div class="input-group">
+                                <div class="input-group password-field-container">
                                     <span class="input-group-text bg-light border-0"><i
                                             class="fa-solid fa-lock text-muted"></i></span>
-                                    <input type="password" class="form-control bg-light border-0"
+                                    <input type="password" id="loginPassword" class="form-control bg-light border-0"
                                         placeholder="Enter password">
+                                    <button type="button" class="password-toggle-icon"
+                                        onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')">
+                                        <i class="fa-solid fa-eye" id="loginEyeIcon"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="mb-4 form-check">
@@ -73,8 +79,9 @@
                         </form>
                     </div>
                     <div class="bg-white border-top p-4 text-center">
-                        <p class="small mb-1 text-muted">Don't have an account? <a href="signup.html"
-                                class="text-brand-red fw-bold text-decoration-none">Sign up</a></p>
+                        <p class="small mb-1 text-muted">Don't have an account? <a href="javascript:void(0)"
+                                onclick="showSignupOption()" class="text-brand-red fw-bold text-decoration-none">Sign
+                                up</a></p>
                         <p class="small mb-0"><a href="seller-track.html" class="text-muted text-decoration-none"><i
                                     class="fa-solid fa-magnifying-glass me-1" style="font-size: 0.7rem;"></i> Track
                                 seller application</a></p>
@@ -99,6 +106,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
     <script>
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();

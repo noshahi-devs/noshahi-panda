@@ -15,6 +15,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Global Service Script -->
+    <script src="script.js"></script>
     <style>
         :root {
             --brand-red: #D70F64;
@@ -237,6 +239,9 @@
             <button class="nav-link-admin" data-section="section-reviews"><i class="fa-solid fa-star"></i> Reviews
                 Feed</button>
 
+            <div class="nav-category">System</div>
+            <button class="nav-link-admin" onclick="showChangePasswordPopup()"><i class="fa-solid fa-shield-halved"></i>
+                Security Settings</button>
         </nav>
 
         <div class="mt-auto pt-4">

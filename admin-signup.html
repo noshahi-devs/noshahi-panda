@@ -41,20 +41,39 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label small fw-bold">Admin Code (Security Code)</label>
-                                    <input type="password" id="adminCode" class="form-control bg-light border-0 py-2"
-                                        placeholder="Enter Registration Code" required>
+                                    <div class="input-group password-field-container">
+                                        <input type="password" id="adminCode"
+                                            class="form-control bg-light border-0 py-2"
+                                            placeholder="Enter Registration Code" required>
+                                        <button type="button" class="password-toggle-icon"
+                                            onclick="togglePasswordVisibility('adminCode', 'codeEyeIcon')">
+                                            <i class="fa-solid fa-eye" id="codeEyeIcon"></i>
+                                        </button>
+                                    </div>
                                     <div class="form-text small">Use code: <strong>pandaAdmin2024</strong> for demo.
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Create Password</label>
-                                    <input type="password" id="adminPass" class="form-control bg-light border-0 py-2"
-                                        required>
+                                    <div class="input-group password-field-container">
+                                        <input type="password" id="adminPass"
+                                            class="form-control bg-light border-0 py-2" required>
+                                        <button type="button" class="password-toggle-icon"
+                                            onclick="togglePasswordVisibility('adminPass', 'passEyeIcon')">
+                                            <i class="fa-solid fa-eye" id="passEyeIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Confirm Password</label>
-                                    <input type="password" id="adminPassConfirm"
-                                        class="form-control bg-light border-0 py-2" required>
+                                    <div class="input-group password-field-container">
+                                        <input type="password" id="adminPassConfirm"
+                                            class="form-control bg-light border-0 py-2" required>
+                                        <button type="button" class="password-toggle-icon"
+                                            onclick="togglePasswordVisibility('adminPassConfirm', 'confirmEyeIcon')">
+                                            <i class="fa-solid fa-eye" id="confirmEyeIcon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -129,6 +148,7 @@
             });
         });
     </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

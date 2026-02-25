@@ -515,15 +515,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // Already handled by .search-group button listener if they are the same
     // Consolidated above
 
-    // --- Cart Persistence ---
-    window.toggleCart = function () {
-        document.querySelector('.cart-sidebar').classList.toggle('active');
-        document.querySelector('.cart-overlay').classList.toggle('active');
+    // Global Password Toggle Visibility
+    window.togglePasswordVisibility = function (inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleIcon = document.getElementById(iconId);
+
+        if (passwordInput && toggleIcon) {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
     };
 
-    // Initialize Cart Icon Click
-    const cartIcon = document.querySelector('.cart-icon');
-    if (cartIcon) cartIcon.addEventListener('click', toggleCart);
+    // --- Cart Persistence ---
+    window.toggleCart = function () {
+        const sidebar = document.querySelector('.cart-sidebar');
+        const overlay = document.querySelector('.cart-overlay');
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    };
+
+    // Cart icon click listener removed to prevent double-toggling (using onclick in HTML)
 
     let cart = JSON.parse(localStorage.getItem('pandaCart') || '[]');
 
@@ -594,6 +614,249 @@ document.addEventListener('DOMContentLoaded', () => {
     window.removeItem = function (index) {
         cart.splice(index, 1);
         updateCart();
+    };
+
+    // --- Global Premium Signup Popup ---
+    window.showSignupOption = function () {
+        Swal.fire({
+            title: '<h4 class="fw-bold mb-0">Join Noshahi Panda</h4>',
+            html: `
+                <div class="p-2">
+                    <p class="text-muted mb-4 small">Choose your path to get started</p>
+                    <div class="d-flex flex-column gap-3">
+                        <a href="signup.html" class="signup-role-tile">
+                            <div class="tile-icon bg-danger-subtle text-danger">
+                                <i class="fa-solid fa-user-tag"></i>
+                            </div>
+                            <div class="tile-content text-start">
+                                <div class="tile-title">As a Customer</div>
+                                <p class="tile-desc mb-0 text-muted small">Order the best food near you</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted ms-auto small"></i>
+                        </a>
+                        
+                        <a href="rider-application.html" class="signup-role-tile">
+                            <div class="tile-icon bg-primary-subtle text-primary">
+                                <i class="fa-solid fa-motorcycle"></i>
+                            </div>
+                            <div class="tile-content text-start">
+                                <div class="tile-title">As a Rider</div>
+                                <p class="tile-desc mb-0 text-muted small">Earn money on your schedule</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted ms-auto small"></i>
+                        </a>
+                        
+                        <a href="seller-onboarding.html" class="signup-role-tile">
+                            <div class="tile-icon bg-warning-subtle text-warning">
+                                <i class="fa-solid fa-store"></i>
+                            </div>
+                            <div class="tile-content text-start">
+                                <div class="tile-title">As a Seller</div>
+                                <p class="tile-desc mb-0 text-muted small">Grow your business with us</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-muted ms-auto small"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-top text-center">
+                    <p class="small text-muted mb-0">Already have an account? <a href="login.html" class="text-brand-red fw-bold text-decoration-none">Log in</a></p>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            width: window.innerWidth < 500 ? '92%' : '440px',
+            customClass: {
+                popup: 'rounded-5 border-0 shadow-lg signup-option-popup',
+                title: 'text-start ps-4 pt-4'
+            }
+        });
+    };
+
+    // --- Global Premium Security Popups ---
+    window.showChangePasswordPopup = function () {
+        Swal.fire({
+            title: '<h4 class="fw-bold mb-0">Change Password</h4>',
+            html: `
+                <div class="p-2 text-start">
+                    <p class="text-muted mb-4 small">Update your security credentials</p>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Current Password</label>
+                        <input type="password" id="currentPassword" class="form-control rounded-3 border-light-subtle bg-light" placeholder="••••••••">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">New Password</label>
+                        <input type="password" id="newPassword" class="form-control rounded-3 border-light-subtle bg-light" placeholder="Min 6 characters">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-control rounded-3 border-light-subtle bg-light" placeholder="Repeat new password">
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Update Password',
+            confirmButtonColor: '#E53935',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'rounded-5 border-0 shadow-lg',
+                title: 'text-start ps-4 pt-4'
+            },
+            preConfirm: () => {
+                const currentP = document.getElementById('currentPassword').value;
+                const newP = document.getElementById('newPassword').value;
+                const confirmP = document.getElementById('confirmPassword').value;
+
+                if (!currentP || !newP || !confirmP) {
+                    Swal.showValidationMessage('Please fill in all fields');
+                    return false;
+                }
+                if (newP.length < 6) {
+                    Swal.showValidationMessage('New password must be at least 6 characters');
+                    return false;
+                }
+                if (newP !== confirmP) {
+                    Swal.showValidationMessage('Passwords do not match');
+                    return false;
+                }
+                return { currentP, newP };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Here we would normally call an API. 
+                // For this demo, let's just simulate success.
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Your password has been updated securely.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    customClass: { popup: 'rounded-5' }
+                });
+            }
+        });
+    };
+
+    window.showForgotPasswordPopup = function () {
+        Swal.fire({
+            title: '<h4 class="fw-bold mb-0">Reset Password</h4>',
+            html: `
+                <div class="p-2 text-start">
+                    <p class="text-muted mb-4 small">Enter your email and we'll send a code</p>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address</label>
+                        <input type="email" id="resetEmail" class="form-control rounded-3 border-light-subtle bg-light" placeholder="name@example.com">
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Send Reset Link',
+            confirmButtonColor: '#E53935',
+            customClass: {
+                popup: 'rounded-5 border-0 shadow-lg',
+                title: 'text-start ps-4 pt-4'
+            },
+            preConfirm: () => {
+                const email = document.getElementById('resetEmail').value;
+                if (!email) {
+                    Swal.showValidationMessage('Please entering your email');
+                    return false;
+                }
+                return email;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Link Sent!',
+                    text: 'Please check your inbox for reset instructions.',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    customClass: { popup: 'rounded-5' }
+                });
+            }
+        });
+    };
+
+    window.showOrderHistory = function () {
+        const activeCustomer = JSON.parse(localStorage.getItem('noshahi_active_customer'));
+        if (!activeCustomer) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Sign In Required',
+                text: 'Please log in to see your order history.',
+                confirmButtonColor: '#E53935'
+            });
+            return;
+        }
+
+        const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+        // Filter by either customerEmail or matching name (for backward compatibility)
+        const myOrders = allOrders.filter(o =>
+            o.customerEmail === activeCustomer.email ||
+            o.customer === `${activeCustomer.firstName} ${activeCustomer.lastName}`
+        );
+
+        if (myOrders.length === 0) {
+            Swal.fire({
+                title: '<h4 class="fw-bold mb-0">No Orders Yet</h4>',
+                html: `
+                    <div class="text-center py-4">
+                        <i class="fa-solid fa-basket-shopping fs-1 text-muted opacity-25 mb-3"></i>
+                        <p class="text-muted small">You haven't placed any orders yet. <br>Order something delicious today!</p>
+                    </div>
+                `,
+                confirmButtonText: 'Start Ordering',
+                confirmButtonColor: '#E53935',
+                customClass: { popup: 'rounded-5 border-0' }
+            });
+            return;
+        }
+
+        let ordersHtml = `
+            <div class="p-2 text-start" style="max-height: 450px; overflow-y: auto;">
+                <p class="text-muted mb-4 small">Your recent culinary journey with us</p>
+                <div class="d-flex flex-column gap-3">
+        `;
+
+        myOrders.forEach(order => {
+            const statusClass = order.status === 'Delivered' ? 'success' : (order.status === 'Ready' ? 'info' : 'warning');
+
+            ordersHtml += `
+                <div class="p-3 rounded-4 border border-light-subtle bg-white shadow-sm">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="fw-bold mb-0">${order.restaurant}</h6>
+                            <span class="small text-muted">${order.date}</span>
+                        </div>
+                        <span class="badge bg-${statusClass}-subtle text-${statusClass} rounded-pill px-3" style="font-size: 0.7rem;">${order.status}</span>
+                    </div>
+                    <div class="small text-muted mb-2">
+                        <i class="fa-solid fa-utensils me-1"></i> ${order.items.map(i => i.name).join(', ')}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="fw-bold text-brand-red">${order.total}</span>
+                        <span class="small text-muted">ID: #${order.id}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        ordersHtml += `
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: '<h4 class="fw-bold mb-0">My Orders</h4>',
+            html: ordersHtml,
+            showConfirmButton: false,
+            showCloseButton: true,
+            width: '480px',
+            customClass: {
+                popup: 'rounded-5 border-0 shadow-lg',
+                title: 'text-start ps-4 pt-4'
+            }
+        });
     };
 
     // Initial population
