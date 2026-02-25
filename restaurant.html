@@ -108,6 +108,62 @@
             box-shadow: 0 5px 15px rgba(215, 15, 100, 0.3);
         }
 
+        /* Category Nav */
+        .category-nav-wrapper {
+            position: sticky;
+            top: 70px;
+            background: white;
+            z-index: 95;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .category-nav {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            scrollbar-width: none;
+        }
+
+        .category-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 600;
+            white-space: nowrap;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .category-link.active {
+            color: var(--brand-red);
+            border-bottom-color: var(--brand-red);
+        }
+
+        .category-section-title {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            position: relative;
+        }
+
+        .category-section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--brand-red);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .menu-item-card {
@@ -162,13 +218,21 @@
         </div>
     </header>
 
+    <!-- Category Navigation -->
+    <div class="category-nav-wrapper">
+        <div class="container">
+            <div class="category-nav" id="categoryNav">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="container py-5">
         <div class="row">
             <div class="col-lg-8">
-                <h3 class="fw-bold mb-4">Available Menu</h3>
                 <div id="menuContainer">
-                    <!-- Menu Items Loaded via JS -->
+                    <!-- Menu Sections Loaded via JS -->
                     <div class="text-center py-5">
                         <div class="spinner-border text-danger" role="status"></div>
                     </div>
@@ -185,18 +249,19 @@
                     </div>
                     <div class="mb-3">
                         <div class="small text-muted mb-1">Opening Hours</div>
-                        <div class="fw-bold">11:00 AM - 12:00 AM</div>
+                        <div class="fw-bold" id="resHours">11:00 AM - 12:00 AM</div>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between mb-2">
                         <span>Minimum Order</span>
-                        <span class="fw-bold">Rs. 300</span>
+                        <span class="fw-bold" id="resMinOrder">Rs. 300</span>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
                         <span>Delivery Fee</span>
-                        <span class="fw-bold text-success">FREE</span>
+                        <span class="fw-bold text-success" id="resDeliveryFee">FREE</span>
                     </div>
-                    <button class="btn btn-outline-danger w-100 rounded-pill py-2 fw-bold">
+                    <button onclick="shareRestaurant()" id="shareBtn"
+                        class="btn btn-outline-danger w-100 rounded-pill py-2 fw-bold">
                         <i class="fa-solid fa-share-nodes me-2"></i> Share Restaurant
                     </button>
                 </div>
@@ -223,7 +288,12 @@
                 <span class="text-muted">Delivery Fee</span>
                 <span class="text-success fw-bold">FREE</span>
             </div>
-            <a href="checkout.html" class="btn btn-brand-red w-100 py-3 fw-bold rounded-3 shadow-lg"
+            <div id="min-order-warning" class="alert alert-warning small py-2 d-none mb-3">
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                Min. order is <span id="cart-min-order-val">Rs. 300</span>
+            </div>
+            <a href="javascript:void(0)" id="checkoutBtn" onclick="proceedToCheckout()"
+                class="btn btn-brand-red w-100 py-3 fw-bold rounded-3 shadow-lg"
                 style="background: var(--brand-red); color: white;">Checkout</a>
         </div>
     </div>
@@ -255,7 +325,10 @@
                     rating: r.rating || "New",
                     reviews: "0",
                     cuisine: r.cuisine || "Multi-cuisine",
-                    address: r.address || "Main Street, Lahore"
+                    address: r.address || "Main Street, Lahore",
+                    hours: r.hours || r.operatingDetails?.hours || "11:00 AM - 12:00 AM",
+                    minOrder: r.minOrder || r.operatingDetails?.minOrder || 300,
+                    deliveryFee: r.deliveryFee || r.operatingDetails?.deliveryFee || 0
                 });
             });
 
@@ -266,6 +339,9 @@
                 return;
             }
 
+            // Global ref for cart logic
+            window.activeRestaurant = restaurant;
+
             // Fill Header Info
             document.getElementById('resHero').style.backgroundImage = `url('${restaurant.image}')`;
             document.getElementById('resName').innerText = restaurant.name;
@@ -273,6 +349,12 @@
             document.getElementById('resReviews').innerText = `${restaurant.reviews} reviews`;
             document.getElementById('resCuisine').innerText = restaurant.cuisine;
             document.getElementById('resAddress').innerText = restaurant.address || "123 Food Street, Gulberg III, Lahore";
+            document.getElementById('resHours').innerText = restaurant.hours;
+            document.getElementById('resMinOrder').innerText = `Rs. ${restaurant.minOrder}`;
+            document.getElementById('resDeliveryFee').innerText = restaurant.deliveryFee == 0 ? "FREE" : `Rs. ${restaurant.deliveryFee}`;
+
+            // Update min order val in warning
+            document.getElementById('cart-min-order-val').innerText = `Rs. ${restaurant.minOrder}`;
 
             // --- Load Menu Items ---
             const menuContainer = document.getElementById('menuContainer');
@@ -284,30 +366,100 @@
 
             // 2. Generate fallback / demo items if no real items
             const demoMenuItems = [
-                { name: "Special Signature Dish", desc: "Our chef's special recipe made with premium ingredients and secret spices.", price: "850", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300" },
-                { name: "Premium Combo Meal", desc: "A full satisfaction meal including main course, side dish, and a refreshing drink.", price: "1250", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300" },
-                { name: "Daily Delight", desc: "Freshly prepared every day with seasonal vegetables and tender marinated protein.", price: "650", image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=300" }
+                { name: "Special Signature Dish", desc: "Our chef's special recipe made with premium ingredients and secret spices.", price: "850", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300", category: "Chef's Special" },
+                { name: "Premium Combo Meal", desc: "A full satisfaction meal including main course, side dish, and a refreshing drink.", price: "1250", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300", category: "Deals" },
+                { name: "Double Cheese Burger", desc: "Two beef patties with extra melted cheddar.", price: "750", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300", category: "Burgers" },
+                { name: "Classic Zinger", desc: "Crispy chicken breast with fresh lettuce and mayo.", price: "550", image: "https://images.unsplash.com/photo-1513185158878-8d8ae1997028?w=300", category: "Burgers" },
+                { name: "Margherita Pizza", desc: "Fresh basil, tomatoes, and mozzarella.", price: "990", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300", category: "Pizza" },
+                { name: "Daily Delight", desc: "Freshly prepared every day with seasonal vegetables and tender marinated protein.", price: "650", image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=300", category: "Chef's Special" }
             ];
 
             const finalMenu = realMenuItems.length > 0 ? realMenuItems : demoMenuItems;
 
-            finalMenu.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'menu-item-card';
-                card.innerHTML = `
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="fw-bold mb-0">${item.name}</h5>
-                            <button class="add-btn" onclick="addToCart('${item.name}', 'Rs. ${item.price}', '${item.image || restaurant.image}', '${restaurant.name}')">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
+            // --- Group Menu by Category ---
+            const groupedMenu = finalMenu.reduce((groups, item) => {
+                const category = item.category || 'More Items';
+                if (!groups[category]) groups[category] = [];
+                groups[category].push(item);
+                return groups;
+            }, {});
+
+            // Render Category Nav
+            const categoryNav = document.getElementById('categoryNav');
+            categoryNav.innerHTML = '';
+
+            Object.keys(groupedMenu).forEach((category, index) => {
+                const catId = `category-${category.replace(/\s+/g, '-').toLowerCase()}`;
+                const navLink = document.createElement('a');
+                navLink.href = `#${catId}`;
+                navLink.className = `category-link ${index === 0 ? 'active' : ''}`;
+                navLink.innerText = category;
+                navLink.onclick = (e) => {
+                    e.preventDefault();
+                    document.getElementById(catId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Custom offset scroll because of sticky header
+                    const offset = 130; // height of both headers
+                    const elementPosition = document.getElementById(catId).getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                };
+                categoryNav.appendChild(navLink);
+            });
+
+            // Render Grouped Menu
+            Object.keys(groupedMenu).forEach(category => {
+                const catId = `category-${category.replace(/\s+/g, '-').toLowerCase()}`;
+
+                // Category Title
+                const title = document.createElement('h3');
+                title.id = catId;
+                title.className = 'category-section-title';
+                title.innerText = category;
+                menuContainer.appendChild(title);
+
+                // Items in this category
+                groupedMenu[category].forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'menu-item-card';
+                    card.innerHTML = `
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold mb-0">${item.name}</h5>
+                                <button class="add-btn" onclick="addToCart('${item.name}', 'Rs. ${item.price}', '${item.image || restaurant.image}', '${restaurant.name}')">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <p class="text-muted small mb-3">${item.desc || 'No description available for this item.'}</p>
+                            <div class="fw-bold fs-5 text-dark">Rs. ${item.price}</div>
                         </div>
-                        <p class="text-muted small mb-3">${item.desc || 'No description available for this item.'}</p>
-                        <div class="fw-bold fs-5 text-dark">Rs. ${item.price}</div>
-                    </div>
-                    <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'}" class="menu-item-img border shadow-sm">
-                `;
-                menuContainer.appendChild(card);
+                        <img src="${item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300'}" class="menu-item-img border shadow-sm">
+                    `;
+                    menuContainer.appendChild(card);
+                });
+            });
+
+            // Scroll Spy for Category Nav
+            window.addEventListener('scroll', () => {
+                const categories = Object.keys(groupedMenu).map(cat =>
+                    `category-${cat.replace(/\s+/g, '-').toLowerCase()}`
+                );
+
+                let current = '';
+                const offset = 140;
+
+                categories.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element && window.pageYOffset >= element.offsetTop - offset) {
+                        current = id;
+                    }
+                });
+
+                document.querySelectorAll('.category-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
             });
 
             // --- Cart Logic (Ported from script.js) ---
@@ -374,6 +526,71 @@
 
                 badge.innerText = count;
                 totalSpan.innerText = `Rs. ${total}`;
+
+                // --- Minimum Order Validation ---
+                const warning = document.getElementById('min-order-warning');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                const minOrder = window.activeRestaurant ? window.activeRestaurant.minOrder : 300;
+
+                if (total > 0 && total < minOrder) {
+                    warning.classList.remove('d-none');
+                    checkoutBtn.classList.add('disabled', 'opacity-50');
+                    checkoutBtn.style.pointerEvents = 'none';
+                } else {
+                    warning.classList.add('d-none');
+                    checkoutBtn.classList.remove('disabled', 'opacity-50');
+                    checkoutBtn.style.pointerEvents = 'auto';
+                }
+            };
+
+            window.proceedToCheckout = function () {
+                const total = cart.reduce((sum, item) => sum + (parseInt(item.price.replace(/[^\d]/g, '')) * item.quantity), 0);
+                const minOrder = window.activeRestaurant ? window.activeRestaurant.minOrder : 300;
+
+                if (total < minOrder) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Minimum Order Required',
+                        text: `Your order total (Rs. ${total}) is below the minimum required amount (Rs. ${minOrder}).`,
+                        confirmButtonColor: '#E53935'
+                    });
+                    return;
+                }
+                window.location.href = 'checkout.html';
+            };
+
+            window.shareRestaurant = function () {
+                const url = window.location.href;
+                const shareData = {
+                    title: restaurant.name + ' - Noshahi Panda',
+                    text: 'Check out ' + restaurant.name + ' on Noshahi Panda!',
+                    url: url
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData).catch(err => console.log('Error sharing', err));
+                } else {
+                    // Fallback to Clipboard
+                    navigator.clipboard.writeText(url).then(() => {
+                        const btn = document.getElementById('shareBtn');
+                        const originalText = btn.innerHTML;
+                        btn.innerHTML = '<i class="fa-solid fa-check me-2"></i> Link Copied!';
+                        btn.classList.replace('btn-outline-danger', 'btn-success');
+
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.classList.replace('btn-success', 'btn-outline-danger');
+                        }, 2000);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Link Copied',
+                            text: 'Restaurant link copied to clipboard!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    });
+                }
             };
 
             window.changeQty = function (index, delta) {

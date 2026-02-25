@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-orange: #FF9800;
@@ -305,9 +307,9 @@
                     <div class="cancel-order-container text-center">
                         <p class="small text-muted mb-3">Change of plans? You can cancel your order if the restaurant
                             hasn't started preparing it.</p>
-                        <a href="index.html" class="btn-cancel-link">
+                        <button onclick="cancelOrder()" class="btn-cancel-link border-0">
                             <i class="fa-solid fa-xmark"></i> Cancel My Order
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -502,7 +504,12 @@
 
             window.submitReview = () => {
                 if (selectedRating === 0) {
-                    alert('Please select a star rating!');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Rating Required',
+                        text: 'Please select a star rating!',
+                        confirmButtonColor: '#E53935'
+                    });
                     return;
                 }
 
@@ -532,8 +539,53 @@
 
                 bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
                 localStorage.removeItem('noshahi_active_order');
-                alert('Thank you for your feedback!');
-                window.location.href = 'index.html';
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thank You!',
+                    text: 'Thank you for your feedback!',
+                    confirmButtonColor: '#E53935',
+                    timer: 3000,
+                    timerProgressBar: true
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            };
+
+            window.cancelOrder = () => {
+                Swal.fire({
+                    title: 'Cancel Order?',
+                    text: "Are you sure you want to cancel your order?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#E53935',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Cancel it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const activeOrder = JSON.parse(localStorage.getItem('noshahi_active_order') || '{}');
+
+                        // Update status in master orders list
+                        let allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+                        const orderIdx = allOrders.findIndex(o => o.id === activeOrder.id);
+                        if (orderIdx !== -1) {
+                            allOrders[orderIdx].status = 'Cancelled';
+                            localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
+                        }
+
+                        // Remove active tracking
+                        localStorage.removeItem('noshahi_active_order');
+
+                        Swal.fire({
+                            title: 'Order Cancelled',
+                            text: 'Your order has been cancelled.',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = 'index.html';
+                        });
+                    }
+                });
             };
 
             setTimeout(animateRider, 3000);

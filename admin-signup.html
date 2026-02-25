@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light d-flex align-items-center min-vh-100">
@@ -82,19 +84,34 @@
             const confirm = document.getElementById('adminPassConfirm').value;
 
             if (code !== 'pandaAdmin2024') {
-                alert('Invalid security code. Registration denied.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Code',
+                    text: 'Invalid security code. Registration denied.',
+                    confirmButtonColor: '#E53935'
+                });
                 return;
             }
 
             if (pass !== confirm) {
-                alert('Passwords do not match!');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Mismatch',
+                    text: 'Passwords do not match!',
+                    confirmButtonColor: '#E53935'
+                });
                 return;
             }
 
             let admins = JSON.parse(localStorage.getItem('noshahi_admins') || '[]');
 
             if (admins.some(a => a.email === email)) {
-                alert('Email already registered as amin.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Account Exists',
+                    text: 'Email already registered as amin.',
+                    confirmButtonColor: '#E53935'
+                });
                 return;
             }
 
@@ -102,8 +119,14 @@
             admins.push(newAdmin);
             localStorage.setItem('noshahi_admins', JSON.stringify(admins));
 
-            alert('✅ Admin registration successful! Please login.');
-            window.location.href = 'admin-login.html';
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Successful',
+                text: 'Admin account created! Please login.',
+                confirmButtonColor: '#E53935'
+            }).then(() => {
+                window.location.href = 'admin-login.html';
+            });
         });
     </script>
 </body>

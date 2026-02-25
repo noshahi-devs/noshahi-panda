@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light d-flex align-items-center min-vh-100">
@@ -68,7 +70,12 @@
                 // IMPORTANT: Use admin-dashboard.html as the primary admin panel
                 window.location.href = 'admin-dashboard.html';
             } else {
-                alert('Invalid Admin credentials. Please try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'Invalid Admin credentials. Please try again.',
+                    confirmButtonColor: '#E53935'
+                });
             }
         });
     </script>

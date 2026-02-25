@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-red: #D70F64;
@@ -603,12 +605,26 @@
                 allOrders[index].status = 'Picked Up';
                 localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
                 loadDashboard();
-                alert('✅ Order Accepted! Navigation instructions sent to your map.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Accepted',
+                    text: '✅ Order Accepted! Navigation instructions sent to your map.',
+                    confirmButtonColor: '#00B14F'
+                });
             }
         }
 
-        function completeDelivery(orderId) {
-            if (!confirm('Please confirm that the package has been handed over to the customer.')) return;
+        async function completeDelivery(orderId) {
+            const result = await Swal.fire({
+                title: 'Confirm Delivery',
+                text: 'Please confirm that the package has been handed over to the customer.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00B14F',
+                confirmButtonText: 'Yes, Delivered'
+            });
+
+            if (!result.isConfirmed) return;
 
             let allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
             const index = allOrders.findIndex(o => o.id === orderId);
@@ -617,8 +633,12 @@
                 allOrders[index].status = 'Delivered';
                 localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders));
 
-                // Switch to history tab after alert
-                alert('🎉 Job Well Done! Rs. 150 added to your wallet.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Job Completed',
+                    text: '🎉 Job Well Done! Rs. 150 added to your wallet.',
+                    confirmButtonColor: '#00B14F'
+                });
                 loadDashboard();
             }
         }

@@ -893,18 +893,33 @@
             new bootstrap.Modal(document.getElementById('riderReviewModal')).show();
         }
 
-        function approveRider(id) {
+        async function approveRider(id) {
             let riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
             const index = riders.findIndex(r => r.id === id);
             if (index === -1) return;
 
-            if (!confirm(`Activate rider "${riders[index].name}"?`)) return;
-            riders[index].status = 'Active';
-            localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+            const result = await Swal.fire({
+                title: 'Activate Rider?',
+                text: `Are you sure you want to approve "${riders[index].name}"?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                confirmButtonText: 'Yes, Activate'
+            });
 
-            bootstrap.Modal.getInstance(document.getElementById('riderReviewModal')).hide();
-            alert(`✅ Rider "${riders[index].name}" has been Activated!`);
-            renderRiders();
+            if (result.isConfirmed) {
+                riders[index].status = 'Active';
+                localStorage.setItem('noshahi_all_riders', JSON.stringify(riders));
+
+                bootstrap.Modal.getInstance(document.getElementById('riderReviewModal')).hide();
+                Swal.fire({
+                    title: 'Rider Activated',
+                    text: `✅ Rider "${riders[index].name}" has been successfully activated!`,
+                    icon: 'success',
+                    confirmButtonColor: '#10b981'
+                });
+                renderRiders();
+            }
         }
 
         // Initialize

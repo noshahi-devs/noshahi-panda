@@ -288,6 +288,11 @@
                     <i class="fa-solid fa-burger me-2"></i>Menu
                 </button>
             </li>
+            <li class="nav-item ms-2">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#settings-tab">
+                    <i class="fa-solid fa-gear me-2"></i>Settings
+                </button>
+            </li>
         </ul>
 
         <!-- Tab Content -->
@@ -318,6 +323,49 @@
                         <i class="fa-solid fa-utensils fa-3x mb-3"></i>
                         <p>No menu items yet. Add your first item!</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane fade" id="settings-tab">
+                <h4 class="mb-4">Restaurant Profile</h4>
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <form id="profileForm">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Restaurant Name</label>
+                                <input type="text" class="form-control" id="resName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Cuisine Type</label>
+                                <input type="text" class="form-control" id="resCuisine"
+                                    placeholder="e.g. Fast Food, Italian">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Street Address</label>
+                                <input type="text" class="form-control" id="resAddress" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Opening Hours</label>
+                                <input type="text" class="form-control" id="resHours"
+                                    placeholder="e.g. 11:00 AM - 11:00 PM">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Min Order (Rs.)</label>
+                                <input type="number" class="form-control" id="resMinOrder" value="300">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Delivery Fee (Rs.)</label>
+                                <input type="number" class="form-control" id="resDeliveryFee" value="100">
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-brand-red rounded-pill px-5 py-2 fw-bold"
+                                    style="background: var(--brand-red); color: white;">
+                                    Save Profile Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -436,7 +484,57 @@
                 loadMenu();
                 loadOrders();
                 updateStats();
+                loadProfile();
             }
+
+            function loadProfile() {
+                // Load from sellerData (active sesssion)
+                document.getElementById('resName').value = sellerData.name || '';
+                document.getElementById('resCuisine').value = sellerData.cuisine || '';
+                document.getElementById('resAddress').value = sellerData.address || '';
+                document.getElementById('resHours').value = sellerData.hours || '';
+                document.getElementById('resMinOrder').value = sellerData.minOrder || 300;
+                document.getElementById('resDeliveryFee').value = sellerData.deliveryFee || 100;
+            }
+
+            // Profile Form Submission
+            document.getElementById('profileForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const updatedData = {
+                    ...sellerData,
+                    name: document.getElementById('resName').value,
+                    cuisine: document.getElementById('resCuisine').value,
+                    address: document.getElementById('resAddress').value,
+                    hours: document.getElementById('resHours').value,
+                    minOrder: document.getElementById('resMinOrder').value,
+                    deliveryFee: document.getElementById('resDeliveryFee').value
+                };
+
+                // 1. Update active session
+                localStorage.setItem('noshahi_active_restaurant', JSON.stringify(updatedData));
+
+                // 2. Refresh sellerData variable in memory
+                Object.assign(sellerData, updatedData);
+
+                // 3. Update master restaurants list
+                let allRestaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+                const index = allRestaurants.findIndex(r => r.id === sellerData.id);
+                if (index !== -1) {
+                    allRestaurants[index] = { ...allRestaurants[index], ...updatedData };
+                    localStorage.setItem('noshahi_all_restaurants', JSON.stringify(allRestaurants));
+                }
+
+                // 4. Update UI labels
+                document.getElementById('seller-name').textContent = `Welcome, ${updatedData.name}!`;
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated',
+                    text: 'Your restaurant information has been saved successfully!',
+                    confirmButtonColor: '#E53935'
+                });
+            });
 
             function loadMenu() {
                 const menuKey = `noshahi_menu_${sellerData.id}`;
@@ -482,10 +580,13 @@
                     <div class="text-end">
                         <h6 class="mb-2 fw-bold" style="color: var(--brand-red);">Rs. ${item.price}</h6>
                         <div class="d-flex gap-1 justify-content-end">
-                            <button onclick="toggleAvailability(${item.id})" class="btn btn-sm btn-outline-${statusColor}" style="border-radius: 10px; font-size: 0.75rem;">
+                            <button onclick="toggleAvailability(${item.id})" class="btn btn-sm btn-outline-${statusColor}" style="border-radius: 10px; font-size: 0.75rem;" title="Toggle Availability">
                                 <i class="fa-solid fa-toggle-${isAvailable ? 'on' : 'off'}"></i>
                             </button>
-                            <button onclick="deleteMenuItem(${item.id})" class="btn btn-sm btn-outline-danger" style="border-radius: 10px; font-size: 0.75rem;">
+                            <button onclick="editMenuItem(${item.id})" class="btn btn-sm btn-outline-primary" style="border-radius: 10px; font-size: 0.75rem;" title="Edit Item">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+                            <button onclick="deleteMenuItem(${item.id})" class="btn btn-sm btn-outline-danger" style="border-radius: 10px; font-size: 0.75rem;" title="Delete Item">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -580,73 +681,196 @@
 
             function updateStats() {
                 const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
-                const myOrders = allOrders.filter(o => o.restaurant === sellerData.name);
 
+                // Match by restaurant name OR by resId for maximum reliability
+                const myOrders = allOrders.filter(o =>
+                    o.restaurant === sellerData.name ||
+                    o.resId == sellerData.id
+                );
+
+                // Calculate total revenue — handle "Rs. 1,200", "1200", "Rs.1200" etc.
                 const revenue = myOrders.reduce((sum, o) => {
-                    const amount = parseInt(o.total.replace(/[^0-9]/g, ''));
-                    return sum + amount;
+                    const raw = String(o.total || '0').replace(/[^\d.]/g, '');
+                    return sum + (parseFloat(raw) || 0);
                 }, 0);
 
-                document.getElementById('total-revenue').textContent = `Rs. ${revenue.toLocaleString()}`;
+                // Active (pending) orders — preparing or ready
+                const activeOrders = myOrders.filter(o =>
+                    ['Preparing', 'Ready', 'pending', 'Pending'].includes(o.status)
+                ).length;
+
+                // Today's revenue
+                const today = new Date().toDateString();
+                const todayRevenue = myOrders
+                    .filter(o => {
+                        try { return new Date(o.date).toDateString() === today; } catch { return false; }
+                    })
+                    .reduce((sum, o) => {
+                        const raw = String(o.total || '0').replace(/[^\d.]/g, '');
+                        return sum + (parseFloat(raw) || 0);
+                    }, 0);
+
+                // Update stat cards
+                document.getElementById('total-revenue').innerHTML =
+                    `Rs. ${revenue.toLocaleString()}
+                    <div style="font-size:0.75rem; font-weight:500; color:#28a745;">
+                        Today: Rs. ${todayRevenue.toLocaleString()}
+                    </div>`;
+
+                document.getElementById('total-orders').innerHTML =
+                    `${myOrders.length}
+                    <div style="font-size:0.75rem; font-weight:500; color:${activeOrders > 0 ? '#E53935' : '#6c757d'};">
+                        ${activeOrders > 0 ? `${activeOrders} Active` : 'No Active'}
+                    </div>`;
             }
 
-            // Add menu item
+            // Auto-refresh stats every 10 seconds to catch new orders
+            setInterval(() => {
+                loadOrders();
+                updateStats();
+            }, 10000);
+
+            // Add/Edit menu item
+            let editingItemId = null;
+
             document.getElementById('addMenuForm').addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 const menuKey = `noshahi_menu_${sellerData.id}`;
                 const menu = JSON.parse(localStorage.getItem(menuKey) || '[]');
 
-                const newItem = {
-                    id: Date.now(),
-                    name: document.getElementById('itemName').value,
-                    desc: document.getElementById('itemDesc').value,
-                    category: document.getElementById('itemCategory').value,
-                    price: document.getElementById('itemPrice').value,
-                    image: document.getElementById('itemPhotoData').value || null,
-                    status: 'Available'
-                };
+                if (editingItemId !== null) {
+                    // ---- EDIT MODE ----
+                    const index = menu.findIndex(i => i.id === editingItemId);
+                    if (index !== -1) {
+                        menu[index].name = document.getElementById('itemName').value;
+                        menu[index].desc = document.getElementById('itemDesc').value;
+                        menu[index].category = document.getElementById('itemCategory').value;
+                        menu[index].price = document.getElementById('itemPrice').value;
+                        const newPhoto = document.getElementById('itemPhotoData').value;
+                        if (newPhoto) menu[index].image = newPhoto;
 
-                menu.push(newItem);
-                try {
-                    localStorage.setItem(menuKey, JSON.stringify(menu));
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Item Added',
-                        text: 'Your menu item is now active!',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } catch (err) {
-                    if (err.name === 'QuotaExceededError') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Storage Full',
-                            text: 'Please delete some old items or use smaller images.',
-                            confirmButtonColor: '#E53935'
-                        });
-                        return;
+                        try {
+                            localStorage.setItem(menuKey, JSON.stringify(menu));
+                        } catch (err) { console.error(err); }
+
+                        // Sync edit to global products
+                        let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+                        const gi = allProducts.findIndex(p => p.id === editingItemId);
+                        if (gi !== -1) {
+                            allProducts[gi] = { ...allProducts[gi], ...menu[index] };
+                            try { localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts)); } catch (e) { }
+                        }
+
+                        Swal.fire({ icon: 'success', title: 'Item Updated!', timer: 1800, showConfirmButton: false });
                     }
-                    throw err;
+                    editingItemId = null;
+                } else {
+                    // ---- ADD MODE ----
+                    const newItem = {
+                        id: Date.now(),
+                        name: document.getElementById('itemName').value,
+                        desc: document.getElementById('itemDesc').value,
+                        category: document.getElementById('itemCategory').value,
+                        price: document.getElementById('itemPrice').value,
+                        image: document.getElementById('itemPhotoData').value || null,
+                        status: 'Available'
+                    };
+
+                    menu.push(newItem);
+                    try {
+                        localStorage.setItem(menuKey, JSON.stringify(menu));
+                        Swal.fire({ icon: 'success', title: 'Item Added', text: 'Your menu item is now active!', timer: 2000, showConfirmButton: false });
+                    } catch (err) {
+                        if (err.name === 'QuotaExceededError') {
+                            Swal.fire({ icon: 'error', title: 'Storage Full', text: 'Please delete some old items or use smaller images.', confirmButtonColor: '#E53935' });
+                            return;
+                        }
+                        throw err;
+                    }
+
+                    // Sync new item to global products
+                    let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
+                    allProducts.push({ ...newItem, restaurant: sellerData.name, resId: sellerData.id });
+                    try { localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts)); } catch (e) { console.error(e); }
                 }
 
-                // SYNC WITH GLOBAL PRODUCTS (for home page visibility)
-                let allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
-                allProducts.push({
-                    ...newItem,
-                    restaurant: sellerData.name,
-                    resId: sellerData.id
-                });
-                try {
-                    localStorage.setItem('noshahi_all_products', JSON.stringify(allProducts));
-                } catch (e) { console.error(e); }
-
-                bootstrap.Modal.getInstance(document.getElementById('addMenuModal')).hide();
+                // Close modal and reset form
+                const modalEl = document.querySelector('.modal.show');
+                if (modalEl) bootstrap.Modal.getInstance(modalEl).hide();
                 e.target.reset();
                 document.getElementById('itemPreview').style.display = 'none';
                 document.getElementById('uploadPlaceholder').style.display = 'block';
                 document.getElementById('itemPhotoData').value = '';
                 loadDashboard();
+            });
+
+            // Edit menu item — opens modal pre-filled
+            window.editMenuItem = function (id) {
+                const menuKey = `noshahi_menu_${sellerData.id}`;
+                const menu = JSON.parse(localStorage.getItem(menuKey) || '[]');
+                const item = menu.find(i => i.id === id);
+                if (!item) return;
+
+                editingItemId = id;
+
+                document.getElementById('itemName').value = item.name;
+                document.getElementById('itemDesc').value = item.desc;
+                document.getElementById('itemCategory').value = item.category;
+                document.getElementById('itemPrice').value = item.price;
+                document.getElementById('itemPhotoData').value = '';
+
+                // Show existing photo as preview
+                if (item.image) {
+                    document.getElementById('itemPreview').src = item.image;
+                    document.getElementById('itemPreview').style.display = 'block';
+                    document.getElementById('uploadPlaceholder').style.display = 'none';
+                } else {
+                    document.getElementById('itemPreview').style.display = 'none';
+                    document.getElementById('uploadPlaceholder').style.display = 'block';
+                }
+
+                // Open the same modal
+                const modalEl = document.getElementById('addMenuModal') ||
+                    document.querySelector('[data-bs-target*="addMenu"]')?.closest('.modal');
+
+                // Find the modal by looking for the form's parent modal
+                const formModal = document.getElementById('addMenuForm').closest('.modal');
+                if (formModal) {
+                    new bootstrap.Modal(formModal).show();
+                }
+            };
+
+            // Reset form every time the modal is opened via "Add Item" button
+            document.querySelectorAll('[data-bs-target]').forEach(btn => {
+                const target = btn.getAttribute('data-bs-target');
+                if (target && target.includes('Modal')) {
+                    btn.addEventListener('click', () => {
+                        editingItemId = null;
+                        // Clear all form fields
+                        document.getElementById('addMenuForm').reset();
+                        document.getElementById('itemPhotoData').value = '';
+                        document.getElementById('itemPreview').style.display = 'none';
+                        document.getElementById('uploadPlaceholder').style.display = 'block';
+                        const sizeBadge = document.getElementById('imageSizeBadge');
+                        if (sizeBadge) sizeBadge.style.display = 'none';
+                        const feedback = document.getElementById('imageFeedback');
+                        if (feedback) feedback.style.display = 'none';
+                    });
+                }
+            });
+
+            // Also listen on the modal's show event as a fallback
+            document.getElementById('addMenuForm').closest('.modal')?.addEventListener('show.bs.modal', function (e) {
+                // Only reset if it's NOT triggered by editMenuItem (editingItemId would be set)
+                if (editingItemId === null) {
+                    document.getElementById('addMenuForm').reset();
+                    document.getElementById('itemPhotoData').value = '';
+                    document.getElementById('itemPreview').style.display = 'none';
+                    document.getElementById('uploadPlaceholder').style.display = 'block';
+                    const sizeBadge = document.getElementById('imageSizeBadge');
+                    if (sizeBadge) sizeBadge.style.display = 'none';
+                }
             });
 
             function previewItemImage(input) {

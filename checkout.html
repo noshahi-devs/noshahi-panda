@@ -214,8 +214,8 @@
             document.getElementById('checkout-subtotal').innerText = `Rs. ${subtotal || 0}`;
             document.getElementById('checkout-total').innerText = `Rs. ${subtotal ? subtotal + 99 : 0}`;
 
-            // Auto-detect location on load
-            detectLocation();
+            // Location is only detected when user clicks the button
+
         });
 
         function detectLocation() {

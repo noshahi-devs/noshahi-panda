@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-red: #D70F64;
@@ -585,7 +587,7 @@
                             <td class="fw-bold text-brand-red">Rs. ${sale.amount}</td>
                             <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Delivered</span></td>
                             <td class="text-end pe-4">
-                                <button class="btn btn-sm btn-light border-0 me-1" onclick="alert('Viewing order details...')">
+                                <button class="btn btn-sm btn-light border-0 me-1" onclick="Swal.fire({ title: 'Order Details', text: 'Viewing order details...', icon: 'info', confirmButtonColor: '#D70F64' })">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
                             </td>
@@ -656,42 +658,66 @@
 
                 if (isChecked) {
                     if (restaurant.status === 'Pending') {
-                        if (confirm(`Accept and Activate "${restaurant.name}"?`)) {
-                            restaurants[resIndex].status = 'Approved';
-                            if (appIndex !== -1) {
-                                apps[appIndex].status = 'Approved';
-                                // Generate credentials if missing
-                                if (!apps[appIndex].approvedEmail) {
-                                    apps[appIndex].approvedEmail = apps[appIndex].owner.email;
-                                    apps[appIndex].approvedPassword = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
+                        Swal.fire({
+                            title: 'Accept Application?',
+                            text: `Are you sure you want to approve "${restaurant.name}"?`,
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#10b981',
+                            confirmButtonText: 'Yes, Approve'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                restaurants[resIndex].status = 'Approved';
+                                if (appIndex !== -1) {
+                                    apps[appIndex].status = 'Approved';
+                                    if (!apps[appIndex].approvedEmail) {
+                                        apps[appIndex].approvedEmail = apps[appIndex].owner.email;
+                                        apps[appIndex].approvedPassword = 'PANDA-' + Math.floor(1000 + Math.random() * 9000);
 
-                                    // Add to Auth storage
-                                    let sellerAuth = getStore('noshahi_seller_auth');
-                                    sellerAuth.push({
-                                        email: apps[appIndex].approvedEmail,
-                                        password: apps[appIndex].approvedPassword,
-                                        restaurantId: id
-                                    });
-                                    setStore('noshahi_seller_auth', sellerAuth);
+                                        let sellerAuth = getStore('noshahi_seller_auth');
+                                        sellerAuth.push({
+                                            email: apps[appIndex].approvedEmail,
+                                            password: apps[appIndex].approvedPassword,
+                                            restaurantId: id
+                                        });
+                                        setStore('noshahi_seller_auth', sellerAuth);
+                                    }
                                 }
+                                setStore('noshahi_all_restaurants', restaurants);
+                                setStore('noshahi_seller_applications', apps);
+                                Swal.fire('Restaurant Activated', '✅ Restaurant activated successfully!', 'success');
+                                renderRestaurants();
+                                renderAll();
+                            } else {
+                                renderRestaurants();
                             }
-                            alert('✅ Restaurant activated successfully!');
-                        } else {
-                            renderRestaurants();
-                            return;
-                        }
+                        });
+                        return;
                     } else {
                         restaurants[resIndex].status = 'Approved';
                         if (appIndex !== -1) apps[appIndex].status = 'Approved';
                     }
                 } else {
-                    if (confirm(`Are you sure you want to SUSPEND "${restaurant.name}"?`)) {
-                        restaurants[resIndex].status = 'Suspended';
-                        if (appIndex !== -1) apps[appIndex].status = 'Suspended';
-                    } else {
-                        renderRestaurants();
-                        return;
-                    }
+                    Swal.fire({
+                        title: 'Suspend Restaurant?',
+                        text: `Are you sure you want to SUSPEND "${restaurant.name}"?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            restaurants[resIndex].status = 'Suspended';
+                            if (appIndex !== -1) apps[appIndex].status = 'Suspended';
+                            setStore('noshahi_all_restaurants', restaurants);
+                            setStore('noshahi_seller_applications', apps);
+                            Swal.fire('Suspended', 'Restaurant has been suspended.', 'info');
+                            renderRestaurants();
+                            renderAll();
+                        } else {
+                            renderRestaurants();
+                        }
+                    });
+                    return;
                 }
 
                 setStore('noshahi_all_restaurants', restaurants);
@@ -746,18 +772,30 @@
                 const newStatus = isChecked ? 'Active' : 'Suspended';
 
                 if (!isChecked) {
-                    if (!confirm(`Are you sure you want to SUSPEND rider "${rider.name}"?`)) {
-                        renderRiders();
-                        return;
-                    }
+                    Swal.fire({
+                        title: 'Suspend Rider?',
+                        text: `Are you sure you want to SUSPEND rider "${rider.name}"?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            riders[riderIndex].status = newStatus;
+                            setStore('noshahi_all_riders', riders);
+                            Swal.fire('Suspended', `Rider "${rider.name}" is now suspended!`, 'info');
+                            renderRiders();
+                            renderAll();
+                        } else {
+                            renderRiders();
+                        }
+                    });
+                } else {
+                    riders[riderIndex].status = newStatus;
+                    setStore('noshahi_all_riders', riders);
+                    Swal.fire('Activated', `✅ Rider "${rider.name}" is now active!`, 'success');
+                    renderRiders();
+                    renderAll();
                 }
-
-                riders[riderIndex].status = newStatus;
-                setStore('noshahi_all_riders', riders);
-
-                alert(`Rider "${rider.name}" is now ${newStatus.toLowerCase()}!`);
-                renderRiders();
-                renderAll();
             };
 
             window.viewProfile = (type, idx) => {

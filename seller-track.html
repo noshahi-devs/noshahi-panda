@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -209,7 +211,12 @@
             if (app) {
                 showResult(app);
             } else {
-                alert('No application found with this email. Please check your spelling or register first.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Not Found',
+                    text: 'No application found with this email. Please check your spelling or register first.',
+                    confirmButtonColor: '#E53935'
+                });
             }
         });
 

@@ -166,7 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 time: "25-35 min",
                 fee: "Free Delivery",
                 image: res.image || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&h=300&fit=crop",
-                offer: "New"
+                offer: "New",
+                address: res.address || ""
             };
         });
 
@@ -411,8 +412,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         // Update Title
-        const titleElem = document.querySelector('.restaurant-section h2');
+        const titleElem = document.getElementById('grid-title');
         if (titleElem) titleElem.innerText = `Top ${categoryFilter} Nearby`;
+
+        const resetBtn = document.getElementById('reset-filters');
+        if (resetBtn) resetBtn.classList.remove('d-none');
 
         // Hide other sections
         // Render the filtered grid
@@ -443,14 +447,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Filter restaurants based on name or category
                 const filteredRes = restaurants.filter(r =>
                     r.name.toLowerCase().includes(val) ||
-                    r.categories.toLowerCase().includes(val)
+                    r.categories.toLowerCase().includes(val) ||
+                    (r.address && r.address.toLowerCase().includes(val))
                 );
 
                 // Also search in items
                 const allProducts = JSON.parse(localStorage.getItem('noshahi_all_products') || '[]');
                 const filteredProducts = allProducts.filter(p =>
                     p.name.toLowerCase().includes(val) ||
-                    p.category.toLowerCase().includes(val)
+                    p.category.toLowerCase().includes(val) ||
+                    (p.restaurant && p.restaurant.toLowerCase().includes(val))
                 ).map(p => ({
                     name: p.name,
                     price: `Rs. ${p.price}`,
@@ -461,8 +467,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }));
 
                 // Update grid title
-                const titleElem = document.querySelector('.restaurant-section h2');
+                const titleElem = document.getElementById('grid-title');
                 if (titleElem) titleElem.innerText = `Search Results for "${val}"`;
+
+                const resetBtn = document.getElementById('reset-filters');
+                if (resetBtn) resetBtn.classList.remove('d-none');
 
                 // If we have items matching, show items. If only restaurants, show restaurants.
                 if (filteredProducts.length > 0) {
@@ -477,20 +486,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Global reset function
+    window.resetSearch = function () {
+        if (searchInput) searchInput.value = '';
+        if (heroInput) heroInput.value = '';
+
+        const resetBtn = document.getElementById('reset-filters');
+        if (resetBtn) resetBtn.classList.add('d-none');
+
+        const titleElem = document.getElementById('grid-title');
+        if (titleElem) titleElem.innerText = 'Popular Restaurants';
+
+        // Show trending section again
+        const trendingSection = document.querySelector('.trending-dishes');
+        if (trendingSection) trendingSection.classList.remove('d-none');
+
+        // Clear URL params without reload
+        const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.pushState({ path: newurl }, '', newurl);
+
+        renderGrid('restaurant-grid', restaurants, false);
+        renderTrending();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     // --- Hero Search "Find Food" Button ---
-    const heroFindBtn = document.querySelector('.hero-content .btn-brand-red');
-    const heroInput = document.querySelector('.hero-content .form-control');
-    if (heroFindBtn) {
-        heroFindBtn.addEventListener('click', () => {
-            const val = heroInput.value.trim();
-            if (val) {
-                searchInput.value = val;
-                searchBtn.click();
-            } else {
-                document.getElementById('restaurant-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        });
-    }
+    // Already handled by .search-group button listener if they are the same
+    // Consolidated above
 
     // --- Cart Persistence ---
     window.toggleCart = function () {

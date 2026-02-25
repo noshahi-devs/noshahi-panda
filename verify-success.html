@@ -12,6 +12,8 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-light d-flex align-items-center min-vh-100">
@@ -37,6 +39,18 @@
         </div>
     </div>
 
+    <script>
+        window.onload = () => {
+            Swal.fire({
+                title: 'Successfully Verified!',
+                text: 'Your email address has been confirmed. Welcome to Noshahi Panda!',
+                icon: 'success',
+                confirmButtonColor: '#D70F64',
+                timer: 4000,
+                timerProgressBar: true
+            });
+        };
+    </script>
 </body>
 
 </html>
