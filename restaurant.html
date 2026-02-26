@@ -475,7 +475,14 @@
                 if (existing) {
                     existing.quantity += 1;
                 } else {
-                    cart.push({ name, price, img, restaurant: restaurantName, quantity: 1 });
+                    cart.push({
+                        name,
+                        price,
+                        img,
+                        restaurant: restaurantName,
+                        resId: window.activeRestaurant?.id || null,
+                        quantity: 1
+                    });
                 }
                 updateCartUI();
                 if (!document.querySelector('.cart-sidebar').classList.contains('active')) {

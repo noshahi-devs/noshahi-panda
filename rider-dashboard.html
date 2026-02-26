@@ -456,6 +456,10 @@
 
         // Initialize Tracker
         loadDashboard();
+        setInterval(loadDashboard, 8000);
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'noshahi_all_orders') loadDashboard();
+        });
 
         function loadDashboard() {
             const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
@@ -466,8 +470,24 @@
             updateStats(allOrders);
         }
 
+        function normalize(v) {
+            return String(v || '').trim().toLowerCase();
+        }
+
+        function isNearbyForRider(order) {
+            const riderCity = normalize(riderData.city);
+            const orderCity = normalize(order.pickupRequestCity || (order.address || '').split(',').pop());
+            if (!riderCity || !orderCity) return true;
+            return riderCity === orderCity;
+        }
+
         function renderAvailable(orders) {
-            const available = orders.filter(o => o.status === 'Ready' && !o.riderId);
+            const available = orders.filter(o => {
+                if (o.status !== 'Ready' || o.riderId) return false;
+                const targeted = Array.isArray(o.pickupRequestRiderIds) ? o.pickupRequestRiderIds : [];
+                if (!targeted.length) return isNearbyForRider(o);
+                return targeted.includes(riderData.id) || isNearbyForRider(o);
+            });
             const container = document.getElementById('available-list');
 
             if (available.length === 0) {

@@ -552,7 +552,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existing) {
             existing.quantity += 1;
         } else {
-            cart.push({ name, price, img, restaurant, quantity: 1 });
+            const normalizedRestaurant = String(restaurant || '').trim().toLowerCase();
+            const matchedRes = (window.PandaData?.restaurants || []).find(r =>
+                String(r.name || '').trim().toLowerCase() === normalizedRestaurant
+            );
+            cart.push({ name, price, img, restaurant, resId: matchedRes?.id || null, quantity: 1 });
         }
         updateCart();
         if (!document.querySelector('.cart-sidebar').classList.contains('active')) {

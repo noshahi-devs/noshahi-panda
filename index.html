@@ -374,8 +374,10 @@
                 }
             }
 
-            // Only show bar if an order was placed AND cart is empty AND status is active
-            if (activeOrder && cart.length === 0 && activeOrder.status === 'active') {
+            // Show bar for any ongoing order
+            const activeStatus = String(activeOrder?.status || '').toLowerCase();
+            const showTrackingBar = activeOrder && cart.length === 0 && !['delivered', 'cancelled'].includes(activeStatus);
+            if (showTrackingBar) {
                 const orderBar = document.getElementById('active-order-bar');
                 const resNameDisplay = document.getElementById('active-order-res-name');
 

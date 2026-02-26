@@ -292,9 +292,19 @@
             // Save active order info for tracking and reviews
             const activeCustomer = JSON.parse(localStorage.getItem('noshahi_active_customer'));
 
+            const normalize = (v) => String(v || '').trim().toLowerCase();
+            const orderRestaurant = String(cartItems[0]?.restaurant || 'Unknown').trim();
+            let orderResId = cartItems[0]?.resId || null;
+            if (!orderResId && orderRestaurant !== 'Unknown') {
+                const allRestaurants = JSON.parse(localStorage.getItem('noshahi_all_restaurants') || '[]');
+                const matched = allRestaurants.find(r => normalize(r.name) === normalize(orderRestaurant));
+                if (matched) orderResId = matched.id;
+            }
+
             const activeOrder = {
                 id: Math.floor(1000 + Math.random() * 9000),
-                restaurant: cartItems[0] ? cartItems[0].restaurant : 'Unknown',
+                restaurant: orderRestaurant,
+                resId: orderResId,
                 items: cartItems,
                 customer: activeCustomer ? `${activeCustomer.firstName} ${activeCustomer.lastName}` : "Guest User",
                 customerEmail: activeCustomer ? activeCustomer.email : "guest",
@@ -304,7 +314,7 @@
                 status: 'Preparing',
                 address: `${document.getElementById('streetAddress').value}, ${document.getElementById('city').value}`
             };
-            localStorage.setItem('noshahi_active_order', JSON.stringify({ ...activeOrder, status: 'active' }));
+            localStorage.setItem('noshahi_active_order', JSON.stringify(activeOrder));
 
             // Add to master orders list for Seller Dashboard
             let allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');

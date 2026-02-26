@@ -640,7 +640,12 @@
 
             function loadOrders() {
                 const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
-                const myOrders = allOrders.filter(o => o.restaurant === sellerData.name);
+                const normalize = (v) => String(v || '').trim().toLowerCase();
+                const sellerName = normalize(sellerData.name);
+                const myOrders = allOrders.filter(o =>
+                    (o.resId != null && String(o.resId) === String(sellerData.id)) ||
+                    normalize(o.restaurant) === sellerName
+                );
                 const ordersList = document.getElementById('orders-list');
 
                 document.getElementById('total-orders').textContent = myOrders.length;
@@ -681,9 +686,10 @@
                                 <button onclick="openSetTimeModal(${order.id})" class="btn btn-sm btn-outline-secondary rounded-pill">
                                     <i class="fa-solid fa-clock me-1"></i> ${order.deliveryTime ? 'Update Time' : 'Set Time'}
                                 </button>
-                                <button onclick="updateOrderStatus(${order.id}, 'Ready')" class="btn btn-sm btn-action" style="background: #0dcaf0; color: white;">Mark Ready</button>
+                                <button onclick="updateOrderStatus(${order.id}, 'Ready')" class="btn btn-sm btn-action" style="background: #0dcaf0; color: white;">Accept & Send to Riders</button>
                             ` : ''}
-                            ${order.status === 'Ready' ? `<button onclick="updateOrderStatus(${order.id}, 'Delivered')" class="btn btn-sm btn-action" style="background: #198754; color: white;">Mark Delivered</button>` : ''}
+                            ${order.status === 'Ready' ? `<span class="badge bg-info-subtle text-info-emphasis px-3 py-2">Waiting Rider Pickup</span>` : ''}
+                            ${order.status === 'Picked Up' ? `<span class="badge bg-primary-subtle text-primary-emphasis px-3 py-2">Rider On The Way</span>` : ''}
                         </div>
                     </div>
                 </div>
@@ -692,10 +698,12 @@
 
             function updateStats() {
                 const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+                const normalize = (v) => String(v || '').trim().toLowerCase();
+                const sellerName = normalize(sellerData.name);
 
                 // Match by restaurant name OR by resId for maximum reliability
                 const myOrders = allOrders.filter(o =>
-                    o.restaurant === sellerData.name ||
+                    normalize(o.restaurant) === sellerName ||
                     o.resId == sellerData.id
                 );
 
@@ -1009,6 +1017,30 @@
 
                 if (orderIndex !== -1) {
                     allOrders[orderIndex].status = newStatus;
+                    if (newStatus === 'Ready') {
+                        // Dispatch to nearby riders in the same city (fallback to all active riders if city unavailable)
+                        const normalize = (v) => String(v || '').trim().toLowerCase();
+                        const order = allOrders[orderIndex];
+                        const allRiders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+                        const activeRiders = allRiders.filter(r => ['active', 'approved'].includes(normalize(r.status)));
+
+                        const orderCity = normalize(
+                            (order.address || '').split(',').pop() ||
+                            sellerData.city ||
+                            sellerData.owner?.city ||
+                            ''
+                        );
+
+                        let nearbyRiders = activeRiders;
+                        if (orderCity) {
+                            nearbyRiders = activeRiders.filter(r => normalize(r.city) === orderCity);
+                        }
+                        if (!nearbyRiders.length) nearbyRiders = activeRiders;
+
+                        order.pickupRequestAt = new Date().toISOString();
+                        order.pickupRequestCity = orderCity || 'unknown';
+                        order.pickupRequestRiderIds = nearbyRiders.map(r => r.id);
+                    }
                     try { localStorage.setItem('noshahi_all_orders', JSON.stringify(allOrders)); } catch (e) { console.error(e); }
                     loadDashboard();
                 }

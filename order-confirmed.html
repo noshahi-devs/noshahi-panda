@@ -418,6 +418,7 @@
             let riderMarker = L.marker(restaurantCoords, { icon: riderIcon }).addTo(map);
 
             let progress = 0;
+            let rideTimer = null;
             const animateRider = () => {
                 if (progress <= 1) {
                     const lat = restaurantCoords[0] + (userCoords[0] - restaurantCoords[0]) * progress;
@@ -439,7 +440,7 @@
                         document.getElementById('eta-timer').innerText = "2 Mins";
                     }
 
-                    setTimeout(animateRider, 500);
+                    rideTimer = setTimeout(animateRider, 500);
                 } else {
                     document.getElementById('step-3').classList.remove('active');
                     document.getElementById('step-3').classList.add('completed');
@@ -458,6 +459,58 @@
                     }, 1500);
                 }
             };
+
+            function setTrackingState(status) {
+                const s = String(status || '').toLowerCase();
+                const step2 = document.getElementById('step-2');
+                const step3 = document.getElementById('step-3');
+                const step4 = document.getElementById('step-4');
+
+                if (s === 'preparing') {
+                    step2.classList.add('active');
+                    step3.classList.remove('active', 'completed');
+                    step4.classList.remove('active', 'completed');
+                    document.getElementById('eta-timer').innerText = "18 Mins";
+                    progress = 0;
+                    riderMarker.setLatLng(restaurantCoords);
+                    if (rideTimer) { clearTimeout(rideTimer); rideTimer = null; }
+                    return;
+                }
+
+                if (s === 'ready') {
+                    step2.classList.add('completed');
+                    step2.classList.remove('active');
+                    step2.querySelector('i').className = 'fa-solid fa-check';
+                    step3.classList.add('active');
+                    step4.classList.remove('active', 'completed');
+                    document.getElementById('eta-timer').innerText = "Waiting Rider";
+                    progress = 0;
+                    riderMarker.setLatLng(restaurantCoords);
+                    if (rideTimer) { clearTimeout(rideTimer); rideTimer = null; }
+                    return;
+                }
+
+                if (s === 'picked up' && !rideTimer && progress < 1) {
+                    step2.classList.add('completed');
+                    step2.classList.remove('active');
+                    step3.classList.add('active');
+                    document.getElementById('eta-timer').innerText = "12 Mins";
+                    animateRider();
+                    return;
+                }
+
+                if (s === 'delivered') {
+                    step2.classList.add('completed');
+                    step2.classList.remove('active');
+                    step3.classList.add('completed');
+                    step3.classList.remove('active');
+                    step4.classList.add('active');
+                    document.getElementById('eta-timer').innerText = "Arrived!";
+                    progress = 1;
+                    riderMarker.setLatLng(userCoords);
+                    if (rideTimer) { clearTimeout(rideTimer); rideTimer = null; }
+                }
+            }
 
             const chatForm = document.getElementById('chat-form');
             const chatBox = document.getElementById('chat-box');
@@ -588,7 +641,16 @@
                 });
             };
 
-            setTimeout(animateRider, 3000);
+            const syncTracking = () => {
+                const activeOrder = JSON.parse(localStorage.getItem('noshahi_active_order') || '{}');
+                let status = activeOrder.status || 'Preparing';
+                const allOrders = JSON.parse(localStorage.getItem('noshahi_all_orders') || '[]');
+                const idx = allOrders.findIndex(o => o.id === activeOrder.id);
+                if (idx !== -1) status = allOrders[idx].status || status;
+                setTrackingState(status);
+            };
+            syncTracking();
+            setInterval(syncTracking, 4000);
         });
     </script>
 </body>
