@@ -440,11 +440,13 @@
                 <div class="form-section" id="step-2">
                     <h4 class="fw-bold mb-4">CNIC Verification</h4>
                     <div class="row g-3 mb-4">
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase opacity-75">Owner's CNIC
                                 Number</label>
                             <input type="text" class="form-control mb-2" id="cnicNo" placeholder="35201-XXXXXXX-X"
                                 required>
+                        </div>
+                        <div class="col-md-6">
                             <small class="text-muted d-block mb-2">Upload a clear photo of CNIC Front</small>
                             <div class="file-upload-box" onclick="document.getElementById('cnicFile').click()">
                                 <i class="fa-solid fa-id-card"></i>
@@ -455,9 +457,6 @@
                                 onchange="showFileName('cnic', this)">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase opacity-75"></label>
-                            <div style="height: 48px; border: none; background: transparent;"
-                                class="mb-2 d-none d-md-block"></div>
                             <small class="text-muted d-block mb-2">Upload a clear photo of CNIC Back</small>
                             <div class="file-upload-box" onclick="document.getElementById('cnicBackFile').click()">
                                 <i class="fa-solid fa-id-card-clip"></i>
@@ -469,21 +468,21 @@
                         </div>
                         <div class="col-md-12">
                             <hr class="my-4">
-                            <h5 class="fw-bold mb-3">Bank Account Details</h5>
+                            <h5 class="fw-bold mb-3">Bank Account Details <span class="text-muted small">(Optional)</span></h5>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase opacity-75">Bank Name</label>
+                            <label class="form-label fw-bold small text-uppercase opacity-75">Bank Name (Optional)</label>
                             <input type="text" class="form-control" id="bankName" placeholder="e.g. HBL / Meezan Bank">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase opacity-75">Account Number /
-                                IBAN</label>
+                            <label class="form-label fw-bold small text-uppercase opacity-75">Account Number / IBAN
+                                (Optional)</label>
                             <input type="text" class="form-control" id="accountNo"
                                 placeholder="PKXX XXXX XXXX XXXX XXXX">
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase opacity-75">Cancelled Cheque
-                                Photo</label>
+                                Photo (Optional)</label>
                             <div class="file-upload-box" onclick="document.getElementById('bankFile').click()">
                                 <i class="fa-solid fa-building-columns"></i>
                                 <div class="small fw-bold">Upload Bank Proof</div>
@@ -584,20 +583,20 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-uppercase opacity-75">Signature Dish Photo</label>
-                        <div class="file-upload-box" id="dish-upload-container"
-                            onclick="document.getElementById('dishFile').click()">
-                            <div id="dish-preview-content">
+                        <label class="form-label fw-bold small text-uppercase opacity-75">Menu Photo</label>
+                        <div class="file-upload-box" id="menu-upload-container"
+                            onclick="document.getElementById('menuFile').click()">
+                            <div id="menu-preview-content">
                                 <i class="fa-solid fa-utensils"></i>
-                                <div class="small fw-bold">Select Dish Photo</div>
-                                <div class="text-muted smaller mt-1" id="dish-status">No file chosen</div>
+                                <div class="small fw-bold">Select Menu Photo</div>
+                                <div class="text-muted smaller mt-1" id="menu-status">No file chosen</div>
                             </div>
-                            <img id="dish-preview-img"
+                            <img id="menu-preview-img"
                                 style="display:none; width:100%; height:150px; object-fit:cover; border-radius:12px;">
-                            <div id="dish-size-badge" class="img-size-badge" style="display:none;"></div>
+                            <div id="menu-size-badge" class="img-size-badge" style="display:none;"></div>
                         </div>
-                        <input type="file" id="dishFile" accept="image/*" style="display:none"
-                            onchange="showFileName('dish', this)">
+                        <input type="file" id="menuFile" accept="image/*" style="display:none"
+                            onchange="showFileName('menu', this)">
                     </div>
 
                     <div class="form-check mb-4">
@@ -658,6 +657,9 @@
     <script>
         let currentStep = 1;
         let capturedCoverImage = null;
+        let capturedCnicFrontImage = null;
+        let capturedCnicBackImage = null;
+        let capturedBankProofImage = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -748,18 +750,19 @@
             const previewContent = document.getElementById(`${type}-preview-content`);
 
             if (input.files && input.files.length > 0) {
+                const file = input.files[0];
                 status.innerHTML = "Submitting... <div class='spinner-border spinner-border-sm text-danger'></div>";
 
                 const reader = new FileReader();
                 reader.onload = async function (e) {
-                    // COMPRESS IMAGE TO SAVE SPACE
-                    const compressed = await compressImage(e.target.result);
-                    const compressedSizeKB = (compressed.length * 0.75 / 1024).toFixed(1);
+                    const isImageFile = file.type && file.type.startsWith('image/');
+                    const compressed = isImageFile ? await compressImage(e.target.result) : null;
+                    const compressedSizeKB = compressed ? (compressed.length * 0.75 / 1024).toFixed(1) : null;
 
-                    status.innerHTML = "✅ <span class='text-success'>" + input.files[0].name + "</span>";
+                    status.innerHTML = "Uploaded <span class='text-success'>" + file.name + "</span>";
 
-                    if (type === 'cover' || type === 'dish') {
-                        if (previewImg && previewContent) {
+                    if (type === 'cover' || type === 'menu') {
+                        if (previewImg && previewContent && compressed) {
                             previewImg.src = compressed;
                             previewImg.style.display = 'block';
                             previewContent.style.display = 'none';
@@ -775,8 +778,11 @@
                     if (type === 'cover') {
                         capturedCoverImage = compressed;
                     }
+                    if (type === 'cnic') capturedCnicFrontImage = compressed;
+                    if (type === 'cnicBack') capturedCnicBackImage = compressed;
+                    if (type === 'bank') capturedBankProofImage = compressed;
                 };
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(file);
             } else {
                 status.innerText = "No file chosen";
                 if (previewImg) previewImg.style.display = 'none';
@@ -857,7 +863,10 @@
                 documents: {
                     cnicFront: document.getElementById('cnicFile').files[0]?.name || null,
                     cnicBack: document.getElementById('cnicBackFile').files[0]?.name || null,
-                    bankProof: document.getElementById('bankFile').files[0]?.name || null
+                    bankProof: document.getElementById('bankFile').files[0]?.name || null,
+                    cnicFrontImage: capturedCnicFrontImage,
+                    cnicBackImage: capturedCnicBackImage,
+                    bankProofImage: capturedBankProofImage
                 },
                 bankInfo: {
                     name: document.getElementById('bankName').value,

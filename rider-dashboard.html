@@ -483,10 +483,12 @@
 
         function renderAvailable(orders) {
             const available = orders.filter(o => {
-                if (o.status !== 'Ready' || o.riderId) return false;
+                const status = normalize(o.status);
+                if (status !== 'ready' || o.riderId) return false;
                 const targeted = Array.isArray(o.pickupRequestRiderIds) ? o.pickupRequestRiderIds : [];
                 if (!targeted.length) return isNearbyForRider(o);
-                return targeted.includes(riderData.id) || isNearbyForRider(o);
+                const targetedForMe = targeted.map(id => String(id)) .includes(String(riderData.id));
+                return targetedForMe || isNearbyForRider(o);
             });
             const container = document.getElementById('available-list');
 

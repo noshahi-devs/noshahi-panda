@@ -111,8 +111,8 @@
         document.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
-            const email = document.querySelector('input[type="email"]').value.toLowerCase();
-            const password = document.querySelector('input[type="password"]').value;
+            const email = (document.querySelector('input[type="email"]')?.value || '').trim().toLowerCase();
+            const password = document.getElementById('loginPassword')?.value || '';
 
             // Show Loading
             btn.disabled = true;
@@ -133,7 +133,66 @@
                     }
                 }
 
-                // 2. Check for Pending/Direct Seller Applications (Legacy/Safety)
+                // 2. Check if this is a registered rider
+                const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+                const rider = riders.find(r =>
+                    String(r?.email || '').trim().toLowerCase() === email &&
+                    String(r?.password || '') === password
+                );
+
+                if (rider) {
+                    const riderStatus = String(rider.status || '').trim().toLowerCase();
+                    if (riderStatus === 'pending') {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Under Review',
+                            text: 'Your application is still UNDER REVIEW. You can track your progress on our Application Tracker page.',
+                            confirmButtonColor: '#D70F64'
+                        }).then(() => {
+                            window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
+                        });
+                        return;
+                    }
+                    if (riderStatus === 'suspended') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Account Suspended',
+                            text: 'Your account has been SUSPENDED. Please check the Application Tracker for more details.',
+                            confirmButtonColor: '#D70F64'
+                        }).then(() => {
+                            window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
+                        });
+                        return;
+                    }
+                    localStorage.setItem('noshahi_active_rider', JSON.stringify(rider));
+                    showSuccess('Welcome, ' + rider.name, 'Redirecting to Rider Dashboard...', 'rider-dashboard.html');
+                    return;
+                }
+
+                // Demo fail-safe: auto-create Abaid rider in case localStorage was cleared in this browser.
+                if (email === 'abaid455@rider.com' && password === '123456') {
+                    const demoRider = {
+                        id: 455001,
+                        name: 'Abaid 455',
+                        email: 'abaid455@rider.com',
+                        password: '123456',
+                        city: 'Lahore',
+                        vehicle: 'Motorbike',
+                        status: 'Active',
+                        rating: '4.9',
+                        date: new Date().toLocaleDateString()
+                    };
+                    const ridersDb = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
+                    if (!ridersDb.find(r => String(r?.email || '').toLowerCase() === demoRider.email)) {
+                        ridersDb.push(demoRider);
+                        localStorage.setItem('noshahi_all_riders', JSON.stringify(ridersDb));
+                    }
+                    localStorage.setItem('noshahi_active_rider', JSON.stringify(demoRider));
+                    showSuccess('Welcome, ' + demoRider.name, 'Redirecting to Rider Dashboard...', 'rider-dashboard.html');
+                    return;
+                }
+
+                // 3. Check for Pending/Direct Seller Applications (Legacy/Safety)
                 const apps = JSON.parse(localStorage.getItem('noshahi_seller_applications') || '[]');
                 const directSeller = apps.find(a => a.owner.email.toLowerCase() === email && a.password === password);
 
@@ -149,38 +208,6 @@
                         resetBtn();
                         return;
                     }
-                }
-
-                // 3. Check if this is a registered rider
-                const riders = JSON.parse(localStorage.getItem('noshahi_all_riders') || '[]');
-                const rider = riders.find(r => r.email.toLowerCase() === email && r.password === password);
-
-                if (rider) {
-                    if (rider.status === 'Pending') {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Under Review',
-                            text: 'Your application is still UNDER REVIEW. You can track your progress on our Application Tracker page.',
-                            confirmButtonColor: '#D70F64'
-                        }).then(() => {
-                            window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
-                        });
-                        return;
-                    }
-                    if (rider.status === 'Suspended') {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Account Suspended',
-                            text: 'Your account has been SUSPENDED. Please check the Application Tracker for more details.',
-                            confirmButtonColor: '#D70F64'
-                        }).then(() => {
-                            window.location.href = 'rider-status.html?q=' + encodeURIComponent(email);
-                        });
-                        return;
-                    }
-                    localStorage.setItem('noshahi_active_rider', JSON.stringify(rider));
-                    showSuccess('Welcome, ' + rider.name, 'Redirecting to Rider Dashboard...', 'rider-dashboard.html');
-                    return;
                 }
 
                 // 4. Check if this is a registered customer
